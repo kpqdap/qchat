@@ -27,7 +27,7 @@ export const UploadDocument = async (formData: FormData): Promise<ServerActionRe
       response: splitDocuments,
     };
   } catch (e) {
-    console.error(`UploadDocument: Error - ${e.message}`);
+    console.error(`UploadDocument: Error - ${(e as Error).message}`);
     return {
       success: false,
       error: (e as Error).message,
@@ -102,7 +102,7 @@ export const IndexDocuments = async (fileName: string, docs: string[], chatThrea
       response: documentsToIndex,
     };
   } catch (e) {
-    console.error(`IndexDocuments: Error - ${e.message}`);
+    console.error(`IndexDocuments: Error - ${(e as Error).message}`);
     return {
       success: false,
       error: (e as Error).message,

@@ -55,8 +55,8 @@ export const simpleSearch = async (
     search: filter?.search || "*",
     facets: filter?.facets || [],
     filter: filter?.filter || "",
-    // Removed 'vectors' as it's not a valid parameter for the search operation
     top: filter?.top || 10,
+    vectors: []
   };
 
   const resultDocuments = (await fetcher(url, {
@@ -82,14 +82,24 @@ export const similaritySearchVectorWithScore = async (
 
   const url = `${baseIndexUrl()}/docs/search?api-version=${process.env.AZURE_SEARCH_API_VERSION}`;
 
+  type AzureCogRequestObject = {
+    search: string;
+    facets: string[];
+    filter: string;
+    vectors: AzureCogVectorField[];
+    top: number;
+    vectorQueries: AzureCogVectorField[];
+  };
+
   const searchBody: AzureCogRequestObject = {
     search: filter?.search || "*",
     facets: filter?.facets || [],
     filter: filter?.filter || "",
+    vectors: [],
+    top: filter?.top || k,
     vectorQueries: [
       { vector: embeddings.data[0].embedding, fields: "embedding", k: k, kind: "vector" },
     ],
-    top: filter?.top || k,
   };
 
   const resultDocuments = (await fetcher(url, {
