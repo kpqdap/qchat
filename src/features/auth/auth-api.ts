@@ -15,21 +15,40 @@ const configureIdentityProvider = () => {
     process.env.AZURE_AD_TENANT_ID
   ) {
     providers.push(
-      AzureADProvider({
-        clientId: process.env.AZURE_AD_CLIENT_ID!,
-        clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-        tenantId: process.env.AZURE_AD_TENANT_ID!,
-        async profile(profile) {
+      // AzureADProvider({
+      //   clientId: process.env.AZURE_AD_CLIENT_ID!,
+      //   clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      //   tenantId: process.env.AZURE_AD_TENANT_ID!,
+      //   async profile(profile) {
 
-          const newProfile = {
+      //     const newProfile = {
+      //       ...profile,
+      //       // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
+      //       id: profile.sub,
+      //       isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+      //     }
+      //     return newProfile;
+      //   }
+      // }),
+      {
+        id: "azure-ad",
+        name: "azure-ad",
+        type: "oauth",
+        version: '2.0',
+        authorization: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
+        token: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
+        userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+        profileUrl: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+        profile: (profile) => {
+          return {
             ...profile,
-            // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
             id: profile.sub,
+            name: profile.name,
+            email: profile.email,
             isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
           }
-          return newProfile;
         }
-      })
+      }
     );
   }
 
