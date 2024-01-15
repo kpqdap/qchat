@@ -35,8 +35,23 @@ const configureIdentityProvider = () => {
         name: "azure-ad",
         type: "oauth",
         version: '2.0',
-        authorization: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
-        token: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
+        clientId: process.env.AZURE_AD_CLIENT_ID!,
+        clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+        authorization: {
+          url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
+          params: {
+            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad", 
+            response_type: "code"
+          }
+        },
+        token: {
+          url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
+          params: {
+            grantType: "authorization_code",
+            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad",
+            idToken: true
+          }
+        },
         userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
         profileUrl: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
         profile: (profile) => {
