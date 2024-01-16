@@ -1,20 +1,21 @@
 import React, { useState, useEffect  } from 'react';
-import { PromptSuggestion } from '../../chat-services/chat-thread-service';
+// import { PromptButtons } from '../../chat-services/chat-thread-service';
+import { PromptButtons } from '../../chat-services/prompt-buttons';
+
 
 interface Prop {
   onPromptSelected: (prompt: string) => void;
+  selectedPrompt: string | undefined;
 }
 
+export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt }) => {
 
-export const PromptButton: React.FC<Prop> = ({ onPromptSelected }) => {
-  const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
   const [prompts, setPrompts] = useState<string[]>([]);
-  
 
     useEffect(() => {
       const fetchPrompts = async () => {
         try {
-          const data = await PromptSuggestion();
+          const data = await PromptButtons();
           setPrompts(data);
         } catch (error) {
           console.error('Error fetching prompts from backend:', error);
@@ -25,7 +26,6 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected }) => {
     }, []);
 
   const handlePromptClick = (prompt: string) => {
-    setSelectedPrompt(prompt);
     onPromptSelected(prompt);
   };
 
@@ -35,8 +35,7 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected }) => {
         <button
           key={index}
           onClick={() => handlePromptClick(prompt)}
-          className={`bg-gray-300 rounded cursor-pointer ${selectedPrompt === prompt ? 'bg-blue-500' : ''}`}
-        >
+          className={`bg-gray-300 rounded cursor-pointer ${selectedPrompt === prompt ? 'bg-blue-500' : ''}`} >
           {prompt}
         </button>
       ))}
