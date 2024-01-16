@@ -37,18 +37,16 @@ const configureIdentityProvider = () => {
             redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad",
           }
         },
-        async profile(profile) {
-
-          const newProfile = {
+        userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+        profileUrl: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+        profile: (profile) => {
+          return {
             ...profile,
-            // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
             id: profile.sub,
-            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase()),
-            name: profile.tuo_account?.profile.nickname,
-            email: profile.tuo_account?.email,
-            image: profile.tuo_account?.profile.profile_image_url,
+            name: profile.name,
+            email: profile.email,
+            // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
           }
-          return newProfile;
         }
       }),
       // {
@@ -142,6 +140,7 @@ export const options: NextAuthOptions = {
       if (user?.isAdmin) {
        token.isAdmin = user.isAdmin
       }
+      console.log(token, user, account, profile)
       if(account){
         token.accessToken = account.access_token
         console.log(token.accessToken)
