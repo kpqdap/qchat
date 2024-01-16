@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
-  MessageCircle,
   PanelLeftClose,
   PanelRightClose,
   Lightbulb,
@@ -37,15 +36,6 @@ export const MainMenu = () => {
         >
           <Link href="/" title="Home">
             <Home />
-          </Link>
-        </Button>
-        <Button
-          asChild
-          className="rounded-full w-[40px] h-[40px] p-2 text-primary"
-          variant={"outline"}
-        >
-          <Link href="/" title="Chat">
-            <MessageCircle />
           </Link>
         </Button>
         {session?.user?.isAdmin ? (
