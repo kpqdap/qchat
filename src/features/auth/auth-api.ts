@@ -37,6 +37,14 @@ const configureIdentityProvider = () => {
         version: '2.0',
         clientId: process.env.AZURE_AD_CLIENT_ID!,
         clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+        // authorization: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth" + new URLSearchParams({
+        //   redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad", 
+        //   response_type: "code"
+        // }),
+        // token: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token" + new URLSearchParams({
+        //   grantType: "authorization_code",
+        //   redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad"
+        // }),
         authorization: {
           url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
           params: {
@@ -48,8 +56,7 @@ const configureIdentityProvider = () => {
           url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
           params: {
             grantType: "authorization_code",
-            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad",
-            idToken: true
+            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad"
           }
         },
         userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
@@ -106,9 +113,18 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
+    // async signIn({user, account, profile}) {
+    //   console.log("user", user, account, profile);
+    //   return true;
+    // },
     async jwt({token, user, account, profile, isNewUser, session}) {
       if (user?.isAdmin) {
        token.isAdmin = user.isAdmin
+      }
+      if(account){
+        token.accessToken = account.access_token
+        console.log(token.accessToken)
+        console.log(profile)
       }
       return token
     },
