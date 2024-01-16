@@ -15,40 +15,15 @@ const configureIdentityProvider = () => {
     process.env.AZURE_AD_TENANT_ID
   ) {
     providers.push(
-      // AzureADProvider({
-      //   clientId: process.env.AZURE_AD_CLIENT_ID!,
-      //   clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      //   tenantId: process.env.AZURE_AD_TENANT_ID!,
-      //   async profile(profile) {
-
-      //     const newProfile = {
-      //       ...profile,
-      //       // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
-      //       id: profile.sub,
-      //       isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
-      //     }
-      //     return newProfile;
-      //   }
-      // }),
-      {
-        id: "azure-ad",
-        name: "azure-ad",
-        type: "oauth",
-        version: '2.0',
+      AzureADProvider({
         clientId: process.env.AZURE_AD_CLIENT_ID!,
         clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-        // authorization: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth" + new URLSearchParams({
-        //   redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad", 
-        //   response_type: "code"
-        // }),
-        // token: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token" + new URLSearchParams({
-        //   grantType: "authorization_code",
-        //   redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad"
-        // }),
+        tenantId: process.env.AZURE_AD_TENANT_ID!,
+        wellKnown: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/.well-known/openid-configuration",
         authorization: {
           url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
           params: {
-            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad", 
+            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad", 
             response_type: "code"
           }
         },
@@ -56,21 +31,61 @@ const configureIdentityProvider = () => {
           url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
           params: {
             grantType: "authorization_code",
-            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad"
+            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad"
           }
         },
-        userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
-        profileUrl: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
-        profile: (profile) => {
-          return {
+        async profile(profile) {
+
+          const newProfile = {
             ...profile,
+            // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
             id: profile.sub,
-            name: profile.name,
-            email: profile.email,
             isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
           }
+          return newProfile;
         }
-      }
+      }),
+      // {
+      //   id: "azure-ad",
+      //   name: "azure-ad",
+      //   type: "oauth",
+      //   version: '2.0',
+      //   clientId: process.env.AZURE_AD_CLIENT_ID!,
+      //   clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      //   // authorization: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth" + new URLSearchParams({
+      //   //   redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad", 
+      //   //   response_type: "code"
+      //   // }),
+      //   // token: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token" + new URLSearchParams({
+      //   //   grantType: "authorization_code",
+      //   //   redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad"
+      //   // }),
+      //   authorization: {
+      //     url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
+      //     params: {
+      //       redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad", 
+      //       response_type: "code"
+      //     }
+      //   },
+      //   token: {
+      //     url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
+      //     params: {
+      //       grantType: "authorization_code",
+      //       redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/signin/azure-ad"
+      //     }
+      //   },
+      //   userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+      //   profileUrl: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+      //   profile: (profile) => {
+      //     return {
+      //       ...profile,
+      //       id: profile.sub,
+      //       name: profile.name,
+      //       email: profile.email,
+      //       isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+      //     }
+      //   }
+      // }
     );
   }
 
@@ -126,6 +141,7 @@ export const options: NextAuthOptions = {
         console.log(token.accessToken)
         console.log(profile)
       }
+      console.log(token)
       return token
     },
     async session({session, token, user }) {
