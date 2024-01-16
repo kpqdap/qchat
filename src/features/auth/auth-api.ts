@@ -23,6 +23,7 @@ const configureIdentityProvider = () => {
         authorization: {
           url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
           params: {
+            client_id: process.env.AZURE_AD_CLIENT_ID!,
             redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad", 
             response_type: "code"
           }
@@ -30,8 +31,10 @@ const configureIdentityProvider = () => {
         token: {
           url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
           params: {
+            client_id: process.env.AZURE_AD_CLIENT_ID!,
+            clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
             grantType: "authorization_code",
-            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad"
+            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad",
           }
         },
         async profile(profile) {
@@ -40,7 +43,10 @@ const configureIdentityProvider = () => {
             ...profile,
             // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
             id: profile.sub,
-            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase()),
+            name: profile.tuo_account?.profile.nickname,
+            email: profile.tuo_account?.email,
+            image: profile.tuo_account?.profile.profile_image_url,
           }
           return newProfile;
         }
@@ -128,10 +134,10 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
-    // async signIn({user, account, profile}) {
-    //   console.log("user", user, account, profile);
-    //   return true;
-    // },
+    async signIn({user, account, profile}) {
+      console.log("user", user, account, profile);
+      return true;
+    },
     async jwt({token, user, account, profile, isNewUser, session}) {
       if (user?.isAdmin) {
        token.isAdmin = user.isAdmin
