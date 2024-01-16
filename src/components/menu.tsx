@@ -49,7 +49,7 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
     <Link
       className={cn(
         props.className,
-        "items-center text-sm font-medium flex gap-2 p-2 py-1 rounded-md hover:bg-primary/25",
+        "items-center text-sm font-medium flex gap-2 p-2 py-1 hover:bg-primary/25",
         props.isSelected && "bg-primary/25"
       )}
       href={props.href}

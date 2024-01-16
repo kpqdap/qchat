@@ -6,7 +6,6 @@ import { CheckIcon, ClipboardIcon, UserCircle, ThumbsUp, ThumbsDown } from "luci
 import { FC, useState } from "react";
 import { Markdown } from "../markdown/markdown";
 import Typography from "../typography";
-import { Avatar, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import Modal from "../ui/modal";
 import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
@@ -90,60 +89,20 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
   return (
     <div
       className={cn(
-        "container mx-auto max-w-4xl py-6 flex flex-col ",
-        props.type === "assistant" ? "items-start" : "items-end"
+        "container mx-auto py-1 flex flex-col items-start"
       )}
     >
       <div
         className={cn(
-          "flex flex-col max-w-[690px] border rounded-lg overflow-hidden p-4 gap-8"
+          "flex flex-col overflow-hidden p-1 gap-4"
         )}
       >
         <div className="flex justify-between items-center w-full">
-          <Typography variant="h5" className="capitalize text-sm flex-1">
+          <Typography variant="h4" className="capitalize flex-1 text-primary">
             {props.name}
           </Typography>
 
-          {/* Render the button only for system (assistant) messages */}
-          {props.type === "assistant" && (
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              title="Copy text"
-              onClick={handleCopyButton}
-            >
-              {isIconChecked ? (
-                <CheckIcon size={16} />
-              ) : (
-                <ClipboardIcon size={16} />
-              )}
-            </Button>
-          )}
 
-          {props.type === "assistant" && (
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              title="Thumbs up"
-              className="justify-right flex"
-              onClick={handleThumbsUpClick}
-              style={buttonStyleThumbsUp}
-            >
-              <ThumbsUp size={16} />
-            </Button>
-          )}
-
-          {props.type === "assistant" && (
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              title="Thumbs down"
-              className="justify-right flex"
-              onClick={openModal}
-            >
-              <ThumbsDown size={16} />
-            </Button>
-          )}
           
           <Modal chatThreadId={props.chatMessageId}
             open={isModalOpen}
@@ -153,17 +112,59 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
             }}
           />
         </div>
-
         <div
           className={cn(
-            "p-4 prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none",
-            props.type === "assistant"
-              ? "bg-secondary"
-              : "bg-primary text-white"
+            "prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none bg-card"
           )}
         >
           <Markdown content={props.message} />
         </div>
+      {props.type === "assistant" && (
+        <div className="flex items-left w-full">
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            title="Copy text"
+            onClick={handleCopyButton}
+          >
+            {isIconChecked ? (
+              <CheckIcon size={14} />
+            ) : (
+              <ClipboardIcon size={14} />
+            )}
+          </Button>
+
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            title="Thumbs up"
+            className="justify-right flex"
+            onClick={handleThumbsUpClick}
+            style={buttonStyleThumbsUp}
+          >
+            <ThumbsUp size={14} />
+          </Button>
+
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            title="Thumbs down"
+            className="justify-right flex"
+            onClick={openModal}
+          >
+            <ThumbsDown size={14} />
+          </Button>
+
+          <Modal 
+            chatThreadId={props.chatMessageId}
+            open={isModalOpen}
+            onClose={closeModal}
+            onSubmit={(chatMessageId, feedback, reason) => {
+              handleModalSubmit(feedback, reason);
+            }}
+          />
+        </div>
+      )}
       </div>
     </div>
   );
