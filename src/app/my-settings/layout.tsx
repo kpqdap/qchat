@@ -1,4 +1,3 @@
-import { MainMenu } from "@/features/main-menu/menu";
 import { AI_NAME } from "@/features/theme/customise";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +14,7 @@ export default async function RootLayout({
 }) {
   return (
     <>
-      <div className="flex-1 flex overflow-hidden bg-card/70">
+      <div className="flex-1 flex overflow-hidden bg-card">
         {children}
       </div>
     </>

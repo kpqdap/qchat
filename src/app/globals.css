@@ -149,4 +149,18 @@
   .lg:h-5vh {
     height: 5vh; /* original height for large screens */
   }
+
+  @keyframes spin {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+  }
+
+  .loader {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+  }
+
+  .loader-more {
+      animation-delay: 0.5s; /* Half the duration of the animation */
+  }
 }

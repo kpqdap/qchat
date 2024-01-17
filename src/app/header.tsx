@@ -2,6 +2,7 @@ import React from 'react';
 import { Mail } from 'lucide-react';
 import QgovSvg from '@/components/ui/qldgovlogo';
 import Typography from "@/components/typography";
+import UserComponent from '@/components/ui/user-login-logout';
 
 const Sidebar: React.FC = () => {
     return (
@@ -30,10 +31,7 @@ const Header: React.FC = () => {
                     </a>
 
                     <div>
-                        <a href="mailto:qchat@chde.qld.gov.au" className="flex items-center">
-                            <Mail className="w-4 h-4 mr-2" />
-                            <Typography variant="h5">Contact us</Typography>
-                        </a>
+                        <UserComponent />
                     </div>
                 </div>
             </div>
