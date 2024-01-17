@@ -63,6 +63,7 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
           //   trackEventClientSide('Streaming_Message_Received', { sessionId: chatThread.id, userId: userId });
           // }
         } catch (e) {
+          console.log(e)
           // if (appInsights && e instanceof Error) {
           //   trackExceptionClientSide(e, "StreamingError");
           // }
@@ -79,6 +80,7 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
     return new StreamingTextResponse(stream);
   } catch (e: unknown) {
     const customErrorName = "ChatAPIError";
+    console.log(e)
     // if (appInsights && e instanceof Error) {
     //   trackExceptionClientSide(e, customErrorName);
     // }
