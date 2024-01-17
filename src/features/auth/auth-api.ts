@@ -95,16 +95,20 @@ const configureIdentityProvider = () => {
  */
 async function refreshAccessToken(token: JWT) {
   try{
-    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT! + "?" + new URLSearchParams({
-      client_id: process.env.AZURE_AD_CLIENT_ID!,
-      client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-      grant_type: "refresh_token"
-    })
+    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
 
+    const formData = new URLSearchParams({
+        client_id: process.env.AZURE_AD_CLIENT_ID!,
+        client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken as string
+      })
+      
     const response = await fetch(tokenUrl, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
+      body: formData,
       method: "POST",
     })
 
