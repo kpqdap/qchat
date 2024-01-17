@@ -13,7 +13,6 @@ export default async function RootLayout({
 }) {
   return (
     <>
-      <MainMenu />
       <div className="flex-1">{children}</div>
     </>
   );

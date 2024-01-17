@@ -1,25 +1,16 @@
-# Azure Chat Updates
+# Queensland Government QChat
 
-Below are the updates for the Azure Chat Solution accelerator
+Below are the updates for the Queensland Government QChat Virtual Assistant.
 
-## 📂 Chat with file
+## 📂 Chat with file (Updated Instructions)
 
-- In the chat with file feature, you can now see citations within the responses. Simply click on the citation to access the related context.
+- The "Chat with file" feature allows you to upload documents directly into your chat. To use this feature, please follow these steps:
+  1. Select the document icon in the chat interface.
+  2. Choose the document you wish to upload from your device.
+  3. Click 'Upload' to add the file to your chat. Please ensure you complete the upload process before sending your message.
+  4. Note that this feature is available when starting a new chat by clicking "Chat with file."
+- Citations within responses are now visible, and you can click on them for related context.
+- It's now possible to upload files to existing chats, enabling multiple file interactions within a single chat session.
 
-- You can now upload files to existing chats, allowing you to chat with multiple files simultaneously.
-
-## 🎙️ Speech
-
-Ability to use Azure Speech in conversations. This feature is not enabled by default. To enable this feature, you must set the environment variable `PUBLIC_SPEECH_ENABLED=true` along with the Azure Speech subscription key and region.
-
-```
-PUBLIC_SPEECH_ENABLED=true
-AZURE_SPEECH_REGION="REGION"
-AZURE_SPEECH_KEY="1234...."
-```
-
-## 🔑 Environment variable change
-
-Please note that the solution has been upgraded to utilise the most recent version of the OpenAI JavaScript SDK, necessitating the use of the `OPENAI_API_KEY` environment variable.
-
-Ensure that you update the variable name in both your '.env' file and the configuration within Azure App Service or Key Vault, changing it from `AZURE_OPENAI_API_KEY` to `OPENAI_API_KEY`.
+## 🔑 Important Note:
+- A new **Sensitivity Selector** has been added to help categorize the sensitivity of the information in your documents. Despite this feature, please remember that Protected Information should not be uploaded at any time.

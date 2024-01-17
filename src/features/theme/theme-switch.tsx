@@ -5,18 +5,18 @@ import { useTheme } from "next-themes";
 
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
-export function ThemeToggle() {
+export function ThemeSwitch() {
   const { setTheme, theme } = useTheme();
   return (
     <Tabs
       defaultValue={theme}
-      className="flex flex-col rounded-full overflow-hidden"
+      className="flex flex-row rounded-full overflow-hidden"
     >
-      <TabsList className="flex flex-col items-stretch justify-stretch flex-1">
-      <TabsTrigger
+      <TabsList className="flex flex-row items-center justify-center flex-1"> 
+        <TabsTrigger
           value="dark"
           onClick={() => setTheme("dark")}
-          className="h-[40px] w-[40px]  rounded-full"
+          className="h-[40px] w-[40px] rounded-full"
         >
           <Moon size={18} />
         </TabsTrigger>

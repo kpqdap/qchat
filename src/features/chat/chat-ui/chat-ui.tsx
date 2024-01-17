@@ -12,7 +12,7 @@ export const ChatUI: FC<Prop> = () => {
   const { messages } = useChatContext();
 
   return (
-    <div className="h-full relative overflow-hidden flex-1 bg-card rounded-md shadow-md">
+    <div className="h-full relative overflow-auto flex-1 bg-card shadow-md">
     {messages.length !== 0 ? (
       <ChatMessageContainer/>
     ) : (

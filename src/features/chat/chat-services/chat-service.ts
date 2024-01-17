@@ -4,7 +4,7 @@ import "server-only";
 import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { CosmosDBContainer } from "../../common/cosmos";
-import { ChatMessageModel, MESSAGE_ATTRIBUTE } from "./models";
+import { ChatMessageModel, MESSAGE_ATTRIBUTE, ChatSentiment } from "./models";
 import { userHashedId } from "@/features/auth/helpers";
 
 export const FindAllChats = async (chatThreadID: string) => {
@@ -69,6 +69,7 @@ export const FindChatMessageByID = async (id: string) => {
 export const CreateUserFeedbackChatId = async (
   chatMessageId: string,
   feedback: string,
+  sentiment: 'unspecified' | 'positive' | 'negative',
   reason: string,
   ) => {
 
@@ -79,6 +80,7 @@ export const CreateUserFeedbackChatId = async (
     if (chatMessageModel.length !== 0) {
     const message = chatMessageModel[0];
     message.feedback = feedback;
+    message.sentiment = sentiment as ChatSentiment;
     message.reason = reason;
 
     const itemToUpdate = {
@@ -143,6 +145,7 @@ export const newChatModel = (): ChatMessageModel => {
     - You will answer questions truthfully and accurately.
     - You will respond to questions in accordance with rules of Queensland government.`,
     feedback: "",
+    sentiment: "neutral",
     reason: "",
   };
 };

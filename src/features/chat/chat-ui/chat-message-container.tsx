@@ -9,6 +9,7 @@ import { ChatHeader } from "./chat-header";
 
 interface Props {
   chatId: string;
+  sentiment: string;
 };
 
 export const ChatMessageContainer = () => {

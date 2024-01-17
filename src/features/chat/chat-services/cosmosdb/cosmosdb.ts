@@ -1,11 +1,5 @@
-import {
-  FindAllChats,
-  UpsertChat,
-} from "@/features/chat/chat-services/chat-service";
-import {
-  ChatMessageModel,
-  MESSAGE_ATTRIBUTE,
-} from "@/features/chat/chat-services/models";
+import { FindAllChats, UpsertChat } from "@/features/chat/chat-services/chat-service";
+import { ChatMessageModel, MESSAGE_ATTRIBUTE } from "@/features/chat/chat-services/models";
 import { CosmosDBContainer } from "@/features/common/cosmos";
 import { uniqueId } from "@/features/common/util";
 import { ChatCompletionMessage } from "openai/resources";
@@ -47,6 +41,7 @@ export class CosmosDBChatMessageHistory {
       context: citations,
       systemPrompt: process.env.System_Prompt! ,
       feedback: "",
+      sentiment: "neutral",
       reason: "",
     };
 
