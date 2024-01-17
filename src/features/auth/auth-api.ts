@@ -19,17 +19,36 @@ const configureIdentityProvider = () => {
         clientId: process.env.AZURE_AD_CLIENT_ID!,
         clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
         tenantId: process.env.AZURE_AD_TENANT_ID!,
-        async profile(profile) {
-
-          const newProfile = {
-            ...profile,
-            // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
-            id: profile.sub,
-            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+        wellKnown: process.env.AZURE_AD_OPENID_CONFIGURATION!,
+        authorization: {
+          url: process.env.AZURE_AD_AUTHORIZATION_ENDPOINT!,
+          params: {
+            client_id: process.env.AZURE_AD_CLIENT_ID!,
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!, 
+            response_type: "code"
           }
-          return newProfile;
+        },
+        token: {
+          url: process.env.AZURE_AD_TOKEN_ENDPOINT!,
+          params: {
+            client_id: process.env.AZURE_AD_CLIENT_ID!,
+            clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+            grantType: "authorization_code",
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!,
+          }
+        },
+        userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT!,
+        profileUrl: process.env.AZURE_AD_USERINFO_ENDPOINT!,
+        profile: (profile) => {
+          return {
+            ...profile,
+            id: profile.sub,
+            name: profile.name,
+            email: profile.email,
+            // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+          }
         }
-      })
+      }),
     );
   }
 
@@ -72,9 +91,15 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
+    async signIn({user, account, profile}) {
+      return true;
+    },
     async jwt({token, user, account, profile, isNewUser, session}) {
       if (user?.isAdmin) {
        token.isAdmin = user.isAdmin
+      }
+      if(account){
+        token.accessToken = account.access_token
       }
       return token
     },
