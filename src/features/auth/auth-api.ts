@@ -166,7 +166,7 @@ export const options: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    // maxAge: 5*60*60, //set session expiry to 5 hours
+    maxAge: 5*60*60, //set session expiry to 5 hours
   },
 };
 
