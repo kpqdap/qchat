@@ -1,6 +1,7 @@
 import Typography from "@/components/typography";
 import { Card } from "@/components/ui/card";
-import { FC } from "react";
+import { trackEventClientSide } from "@/features/common/app-insights";
+import { FC, FormEvent, useRef, useState } from "react";
 import { useChatContext } from "../chat-context";
 import { ChatFileUI } from "../chat-file/chat-file-ui";
 import { ChatStyleSelector } from "./chat-style-selector";
@@ -11,14 +12,26 @@ import { PromptButton } from "./prompt-buttons-UI";
 interface Prop {}
 
 export const ChatMessageEmptyState: FC<Prop> = (props) => {
+  
+  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
+  const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
 
   const handlePromptSelected = (prompt: string) => {
-    // send it to backend for getting the prompt button from the ai.
-    console.log('Selected prompt:', prompt);
+    setSelectedPrompt(prompt);
+    setInput(prompt);
+
+    try {
+      setInput(prompt);
+      trackEventClientSide('Prompt_Button_Click', { input: "Prompt button suggestion" });
+      setTimeout(() => {
+        handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
+      }, 0);
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   };
 
   const { fileState } = useChatContext();
-
   const { showFileUpload } = fileState;
 
   return (
@@ -57,10 +70,8 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       </Card>
       
       <Card className="col-span-5">
-        <PromptButton onPromptSelected={handlePromptSelected} />
+        <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
       </Card>
-
-    </div>
-    
+    </div>  
   );
 };

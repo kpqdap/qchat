@@ -22,7 +22,7 @@ export interface ChatMessageModel {
 export type ConversationStyle = "creative" | "balanced" | "precise";
 export type ConversationSensitivity = "official" | "sensitive" | "protected";
 export type ChatType = "simple" | "data" | "mssql";
-export type FeedbackType = "harmful" | "untrue" | "unhelpful";
+export type FeedbackType = "harmful / unsafe" | "untrue" | "unhelpful";
 export type ChatRole = "system" | "user" | "assistant" | "function";
 
 export interface ChatThreadModel {
@@ -51,6 +51,7 @@ export interface PromptGPTBody {
 
 export interface PromptGPTProps extends PromptGPTBody {
   messages: Message[];
+  promptButton : string;
 }
 
 export interface ChatDocumentModel {
