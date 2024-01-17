@@ -26,14 +26,17 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
   const [feedback, setFeedback] = useState('');
   const [reason, setReason] = useState('');
 
+  console.log("Props:", props);
+
   const toggleButton = (buttonId: string) => {
     switch (buttonId) {
-      case 'thumbsUp':
+      case 'ThumbsUp':
         setThumbsUpClicked(prevState => !prevState);
         setThumbsDownClicked(false);
         setIsIconChecked(false);
+        CreateUserFeedbackChatId(props.chatMessageId, '', 'positive', '');
         break;
-      case 'thumbsDown':
+      case 'ThumbsDown':
         setThumbsDownClicked(prevState => !prevState);
         setThumbsUpClicked(false);
         setIsIconChecked(false);
@@ -54,11 +57,11 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     navigator.clipboard.writeText(messageWithAttribution);
   };
 
-  async function handleModalSubmit(feedback: string, reason: string): Promise<void> {
+  async function handleModalSubmit(feedback: string, sentiment: string, reason: string): Promise<void> {
     setFeedback(feedback);
     setReason(reason);
     setIsModalOpen(false);
-    CreateUserFeedbackChatId(props.chatMessageId, feedback, reason);
+    CreateUserFeedbackChatId(props.chatMessageId, feedback, 'negative', reason);
 
   };
 
@@ -72,18 +75,12 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     setIsModalOpen(false);
   };
 
-  const buttonStyleThumbsUp = {
-    backgroundColor: thumbsUpClicked ? 'lightblue' : 'transparent',
-  } as React.CSSProperties;
-
-  const buttonStyleThumbsDown = {
-    backgroundColor: thumbsDownClicked ? 'lightblue' : 'transparent',
-  } as React.CSSProperties;
-
-
   const handleThumbsUpClick = () => {
-    toggleButton('thumbsUp');
+    toggleButton('ThumbsUp');
+  };
 
+  const handleThumbsDownClick = () => {
+    toggleButton('ThumbsDown');
   };
 
   return (
@@ -108,7 +105,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
             open={isModalOpen}
             onClose={closeModal}
             onSubmit={(chatMessageId, feedback, reason) => {
-              handleModalSubmit(feedback, reason);
+              handleModalSubmit(feedback, 'negative', reason);
             }}
           />
         </div>
@@ -140,11 +137,13 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
             title="Thumbs up"
             className="justify-right flex"
             onClick={handleThumbsUpClick}
-            style={buttonStyleThumbsUp}
           >
-            <ThumbsUp size={14} />
+            {thumbsUpClicked ? (
+              <CheckIcon size={14} />
+            ) : (
+              <ThumbsUp size={14} />
+            )}
           </Button>
-
           <Button
             variant={"ghost"}
             size={"sm"}
@@ -152,15 +151,20 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
             className="justify-right flex"
             onClick={openModal}
           >
-            <ThumbsDown size={14} />
+            {thumbsDownClicked ? (
+              <CheckIcon size={14} />
+            ) : (
+              <ThumbsDown size={14} />
+            )}
           </Button>
 
           <Modal 
             chatThreadId={props.chatMessageId}
             open={isModalOpen}
             onClose={closeModal}
-            onSubmit={(chatMessageId, feedback, reason) => {
-              handleModalSubmit(feedback, reason);
+            onSubmit={(chatMessageId: string, feedback: string, reason: string): void => {
+              handleModalSubmit(feedback, "negative", reason);
+              handleThumbsDownClick();
             }}
           />
         </div>

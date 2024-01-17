@@ -89,4 +89,64 @@
   body {
     @apply bg-background text-foreground;
   }
+  header {
+    @apply h-28vh; /* Custom class for 10% viewport height */
+  }
+
+  main {
+    @apply h-75vh; /* Custom class for 80% viewport height */
+  }
+
+  footer {
+    @apply h-5vh; /* Custom class for 10% viewport height */
+  }
+}
+
+@layer utilities {
+  /* Height for 28% of viewport height */
+  .h-28vh {
+    height: 20vh;
+    min-height: 200px;
+    max-height: 200px; /* maximum height */
+  }
+  .sm:h-28vh {
+    height: 20vh; /* smaller height for small screens */
+  }
+  .md:h-28vh {
+    height: 20vh; /* medium height for medium screens */
+  }
+  .lg:h-28vh {
+    height: 20vh; /* original height for large screens */
+  }
+
+  /* Height for 75% of viewport height */
+  .h-75vh {
+    height: 80vh;
+    min-height: 300px; /* minimum height */
+  }
+  .sm:h-75vh {
+    height: 80vh; /* smaller height for small screens */
+  }
+  .md:h-75vh {
+    height: 80vh; /* medium height for medium screens */
+  }
+  .lg:h-75vh {
+    height: 80vh; /* original height for large screens */
+  }
+
+  /* Height for 5% of viewport height */
+  .h-5vh {
+    height: 5vh;
+    min-height: 50px; /* minimum height */
+    max-height: 100px; /* maximum height */
+  }
+  .sm:h-5vh {
+    height: 4vh; /* smaller height for small screens */
+  }
+  .md:h-5vh {
+    height: 6vh; /* medium height for medium screens */
+  }
+  .lg:h-5vh {
+    height: 5vh; /* original height for large screens */
+  }
 }

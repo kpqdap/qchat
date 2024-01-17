@@ -8,6 +8,8 @@ import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "./header";
 import Footer from "./footer";
+import NavBar from '@/components/ui/navbar';
+
 
 
 export const dynamic = "force-dynamic";
@@ -32,27 +34,24 @@ export default function RootLayout({
         >
           <Providers>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <div className="flex flex-col w-full h-full">
+              <header className="header flex flex-col w-full overflow-auto">
                 <Header />
-              </div>
-                <div className="flex flex-col w-full h-full">
+                <NavBar />
+              </header>
+                <main className="main flex flex-col w-full h-75vh">
                   <div
                     className={cn(
                       notoSans.className,
-                      "flex w-full p-2 h-full gap-2 bg-primary"
+                      "flex w-full h-full gap-2 bg-primary"
                     )}
                   >
                     {children}
                   </div>
-                </div>
-              
+                </main>
               <Toaster />
             </ThemeProvider>
           </Providers>
         </GlobalConfigProvider>
-        <div className="flex flex-col w-full h-full">
-          <Footer />
-          </div>
       </body>
     </html>
   );

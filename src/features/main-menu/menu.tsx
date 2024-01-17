@@ -20,52 +20,52 @@ export const MainMenu = () => {
   const { data: session } = useSession();
   const { isMenuOpen, toggleMenu } = useMenuContext();
   return (
-    <div className="flex flex-col justify-between p-2">
-      <div className="flex gap-2  flex-col  items-center">
-        <Button
-          onClick={toggleMenu}
-          className="rounded-full w-[40px] h-[40px] p-1 text-primary"
-          variant={"outline"}
-        >
-          {isMenuOpen ? <PanelLeftClose /> : <PanelRightClose />}
-        </Button>
-        <Button
-          asChild
-          className="rounded-full w-[40px] h-[40px] p-1 text-primary"
-          variant={"outline"}
-        >
-          <Link href="/" title="Home">
-            <Home />
-          </Link>
-        </Button>
-        {session?.user?.isAdmin ? (
-          <Button
-            asChild
-            className="rounded-full w-[40px] h-[40px] p-2 text-primary"
-            variant={"outline"}
-          >
-            <Link href="/reporting" title="Reporting">
-              <LayoutDashboard />
-            </Link>
-          </Button>
-        ) : (
-          <></>
-        )}
+  <div className="flex flex-col justify-between p-2">
+    <div className="flex gap-2  flex-col  items-center">
+      <Button
+        onClick={toggleMenu}
+        className="rounded-full w-[40px] h-[40px] p-1 text-primary"
+        variant={"outline"}
+      >
+        {isMenuOpen ? <PanelLeftClose /> : <PanelRightClose />}
+      </Button>
+      <Button
+        asChild
+        className="rounded-full w-[40px] h-[40px] p-1 text-primary"
+        variant={"outline"}
+      >
+        <Link href="/" title="Home">
+          <Home />
+        </Link>
+      </Button>
+      {session?.user?.isAdmin ? (
         <Button
           asChild
           className="rounded-full w-[40px] h-[40px] p-2 text-primary"
           variant={"outline"}
         >
-          <Link href="/change-log" title="change log" className="relative">
-            <Lightbulb />
-            <UpdateIndicator />
+          <Link href="/reporting" title="Reporting">
+            <LayoutDashboard />
           </Link>
         </Button>
-      </div>
-      <div className="flex flex-col gap-2 items-center">
-        <ThemeToggle />
-        <UserProfile />
-      </div>
+      ) : (
+        <></>
+      )}
+      <Button
+        asChild
+        className="rounded-full w-[40px] h-[40px] p-2 text-primary"
+        variant={"outline"}
+      >
+        <Link href="/change-log" title="change log" className="relative">
+          <Lightbulb />
+          <UpdateIndicator />
+        </Link>
+      </Button>
     </div>
+    <div className="flex flex-col gap-2 items-center">
+      <ThemeToggle />
+      <UserProfile />
+    </div>
+  </div>
   );
 };

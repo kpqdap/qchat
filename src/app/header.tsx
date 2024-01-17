@@ -22,11 +22,11 @@ const Sidebar: React.FC = () => {
 
 const Header: React.FC = () => {
     return (
-        <header className="background " role="banner">
+        <div className="background " role="banner">
             <div className="bg-[#09549F] text-white p-4">
                 <div className="container mx-auto flex justify-between items-center">
-                    <a href="https://www.qld.gov.au" className="flex items-center">
-                        <Typography variant="h5">qchat.qld.gov.au</Typography>
+                    <a href="https://qchat.ai.qld.gov.au" className="flex items-center">
+                        <Typography variant="h5">qchat.ai.qld.gov.au</Typography>
                     </a>
 
                     <div>
@@ -43,7 +43,7 @@ const Header: React.FC = () => {
                     <Sidebar />
                 </div>
             </div>
-        </header>
+        </div>
     );
 };
 

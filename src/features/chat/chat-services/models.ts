@@ -14,9 +14,10 @@ export interface ChatMessageModel {
   role: ChatRole;
   context: string;
   type: "CHAT_MESSAGE";
-  systemPrompt: string;
   feedback: string;
+  sentiment: ChatSentiment;
   reason: string;
+  systemPrompt: string;
 }
 
 export type ConversationStyle = "creative" | "balanced" | "precise";
@@ -24,6 +25,7 @@ export type ConversationSensitivity = "official" | "sensitive" | "protected";
 export type ChatType = "simple" | "data" | "mssql";
 export type FeedbackType = "harmful" | "untrue" | "unhelpful";
 export type ChatRole = "system" | "user" | "assistant" | "function";
+export type ChatSentiment = "neutral" | "positive" | "negative";
 
 export interface ChatThreadModel {
   id: string;
