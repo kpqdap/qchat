@@ -24,7 +24,7 @@ export default async function Home() {
 
 const loadContent = async () => {
   return await fs.readFile(
-    process.cwd() + "/app/change-log/update.md",
+    process.cwd() + "./update.md",
     "utf8"
   );
 };

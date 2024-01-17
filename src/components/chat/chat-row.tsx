@@ -26,8 +26,6 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
   const [feedback, setFeedback] = useState('');
   const [reason, setReason] = useState('');
 
-  console.log("Props:", props);
-
   const toggleButton = (buttonId: string) => {
     switch (buttonId) {
       case 'ThumbsUp':
