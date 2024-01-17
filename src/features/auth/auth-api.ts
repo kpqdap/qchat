@@ -3,6 +3,7 @@ import { Provider } from "next-auth/providers";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { hashValue } from "./helpers";
+import { JWT } from "next-auth/jwt";
 
 const configureIdentityProvider = () => {
   const providers: Array<Provider> = [];
@@ -87,6 +88,51 @@ const configureIdentityProvider = () => {
   return providers;
 };
 
+/**
+ * Takes a token, and returns a new token with updated
+ * `accessToken` and `expiresIn`. If an error occurs,
+ * returns the old token and an error property
+ */
+async function refreshAccessToken(token: JWT) {
+  try{
+    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT! + "?" + new URLSearchParams({
+      client_id: process.env.AZURE_AD_CLIENT_ID!,
+      client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
+      grant_type: "refresh_token"
+    })
+
+    const response = await fetch(tokenUrl, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
+    })
+
+    const refreshedTokens = await response.json()
+
+    if (!response.ok) {
+      throw refreshedTokens
+    }
+
+    token.accessToken = refreshedTokens.access_token,
+    token.refreshToken = refreshedTokens.refresh_token,
+    token.expiresIn = Date.now() + (refreshedTokens as any).expires_in as number * 1000,
+    token.refreshExpiresIn = Date.now() + (refreshedTokens as any).refresh_expires_in as number * 1000
+
+    return {
+      ...token,
+    }
+
+  }
+  catch(e){
+    console.log(e)
+    return {
+      ...token,
+      e: "RefreshAccessTokenError",
+    }
+  }
+}
+
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
@@ -94,14 +140,24 @@ export const options: NextAuthOptions = {
     async signIn({user, account, profile}) {
       return true;
     },
-    async jwt({token, user, account, profile, isNewUser, session}) {
+    async jwt({token, user, account, profile, session}) {
       if (user?.isAdmin) {
        token.isAdmin = user.isAdmin
       }
       if(account){
         token.accessToken = account.access_token
+        token.refreshToken = account.refresh_token
+        token.expiresIn = Date.now() + (account as any).expires_in as number * 1000
+        token.refreshExpiresIn = Date.now() + (account as any).refresh_expires_in as number * 1000
       }
-      return token
+
+      // Return previous token if the access token has not expired yet
+      if (Date.now() < (token.expiresIn as number)) {
+        return token
+      }
+
+      // Access token has expired, try to update it
+      return refreshAccessToken(token)
     },
     async session({session, token, user }) {
       session.user.isAdmin = token.isAdmin as string
@@ -110,8 +166,9 @@ export const options: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 5*60*60, //set session expiry to 5 hours
+    // maxAge: 5*60*60, //set session expiry to 5 hours
   },
 };
 
 export const handlers = NextAuth(options);
+
