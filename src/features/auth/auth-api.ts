@@ -19,26 +19,26 @@ const configureIdentityProvider = () => {
         clientId: process.env.AZURE_AD_CLIENT_ID!,
         clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
         tenantId: process.env.AZURE_AD_TENANT_ID!,
-        wellKnown: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/.well-known/openid-configuration",
+        wellKnown: process.env.AZURE_AD_OPENID_CONFIGURATION!,
         authorization: {
-          url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/auth",
+          url: process.env.AZURE_AD_AUTHORIZATION_ENDPOINT!,
           params: {
             client_id: process.env.AZURE_AD_CLIENT_ID!,
-            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad", 
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!, 
             response_type: "code"
           }
         },
         token: {
-          url: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/token",
+          url: process.env.AZURE_AD_TOKEN_ENDPOINT!,
           params: {
             client_id: process.env.AZURE_AD_CLIENT_ID!,
             clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
             grantType: "authorization_code",
-            redirect_uri: "https://qchat-dev.ai.qld.gov.au/api/auth/callback/azure-ad",
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!,
           }
         },
-        userinfo: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
-        profileUrl: "https://www.uat.auth.qld.gov.au/auth/realms/tell-us-once/protocol/openid-connect/userinfo",
+        userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT!,
+        profileUrl: process.env.AZURE_AD_USERINFO_ENDPOINT!,
         profile: (profile) => {
           return {
             ...profile,
