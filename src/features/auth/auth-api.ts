@@ -98,7 +98,6 @@ export const options: NextAuthOptions = {
       if (user?.isAdmin) {
        token.isAdmin = user.isAdmin
       }
-      console.log(token, user, account, profile)
       if(account){
         token.accessToken = account.access_token
       }
