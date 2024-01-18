@@ -147,39 +147,38 @@ export const updateChatThreadTitle = async (
     return updatedChatThread.resource!;
   }
 
-  async function generateChatName(chatMessage: string): Promise <string> 
-  
-  {
-    const openAI = OpenAIInstance();
+    async function generateChatName(chatMessage: string): Promise<string> {
+      const openAI = OpenAIInstance();
     
-    try {
-      const name = await openAI.chat.completions.create({
-        messages: [
-          {
-            role: "system",
-            content: `- create a succinct title, limited to five words and 20 characters, for the following chat """ ${chatMessage}""" conversation with a generative AI assistant:
-            - this title should effectively summarise the main topic or theme of the chat.
-            -  it will be used in the app's navigation interface, so it should be easily undestandable and reflective of the chat's content 
-            to help users quickly grasp what the conversation was about.`
-          },
-        ],
-        model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
-      });
-      
-      if (name.choices && name.choices[0] && name.choices[0].message && name.choices[0].message.content ){
-        return name.choices[0].message.content;
-      } else{
-        console.error('Error: Unexpected response structurefrom openAI API.');
-        return "";
+      try {
+        const name = await openAI.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content: `- create a succinct title, limited to five words and 20 characters, for the following chat """ ${chatMessage}""" conversation with a generative AI assistant:
+              - this title should effectively summarise the main topic or theme of the chat.
+              - it will be used in the app's navigation interface, so it should be easily understandable and reflective of the chat's content 
+              to help users quickly grasp what the conversation was about.`
+            },
+          ],
+          model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
+        });
+    
+        if (name.choices && name.choices[0] && name.choices[0].message && name.choices[0].message.content) {
+          return name.choices[0].message.content.replace(/^"+|"+$/g, ''); // Remove proceeding and trailing quotes from the returned message
+        } else {
+          console.error('Error: Unexpected response structure from OpenAI API.');
+          return "";
+        }
+    
+      } catch (e) {
+        console.error(`An error occurred: ${e}`);
+        const words: string[] = chatMessage.split(' ');
+        const name: string = 'New Chat by Error';
+        return name;
       }
+    }
   
-    } catch (e) {
-      console.error(`An error occurred: ${e}`);
-      const words: string[] = chatMessage.split(' ');
-      const name: string = 'New Chat by Error';
-      return name;
-    }
-    }
 
     async function StoreOriginalChatName(currentChatName: string) {
       let previousChatName: string = "";
