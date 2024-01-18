@@ -160,6 +160,11 @@ export const options: NextAuthOptions = {
         return token
       }
 
+      // Return token for dev session only
+      if (process.env.NODE_ENV === "development"){
+        return token
+      }
+
       // Access token has expired, try to update it
       return refreshAccessToken(token)
     },
