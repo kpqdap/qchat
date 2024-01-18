@@ -89,7 +89,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     >
       <div
         className={cn(
-          "flex flex-col overflow-hidden p-1 gap-4"
+          "container flex flex-col overflow-hidden p-1 gap-4"
         )}
       >
         <div className="flex justify-between items-center w-full">

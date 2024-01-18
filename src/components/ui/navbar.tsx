@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
     ];
 
     return (
-        <nav className="bg-secondary p-2">
+        <nav className="bg-secondary p-2 hidden md:block">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     <ul className="flex space-x-10">

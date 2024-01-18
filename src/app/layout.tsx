@@ -38,6 +38,7 @@ export default function RootLayout({
                 <Header />
                 <NavBar />
               </header>
+              <div className="bg-lime-500 h-1"></div>
                 <main className="main flex flex-col w-full h-75vh">
                   <div
                     className={cn(
