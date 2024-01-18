@@ -21,7 +21,7 @@ export const ChatMessageContainer = () => {
   useChatScrollAnchor(messages, scrollRef);
 
   return (
-    <div className="h-full rounded-md overflow-y-auto " ref={scrollRef}>
+    <div className="h-full overflow-y-auto " ref={scrollRef}>
       <div className="flex justify-center p-4">
         <ChatHeader />
       </div>

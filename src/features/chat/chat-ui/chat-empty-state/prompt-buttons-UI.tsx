@@ -1,45 +1,50 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PromptSuggestion } from '../../chat-services/chat-thread-service';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface Prop {
   onPromptSelected: (prompt: string) => void;
+  disable?: boolean;
 }
 
-
-export const PromptButton: React.FC<Prop> = ({ onPromptSelected }) => {
-  const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
+export const PromptButton: React.FC<Prop> = ({ onPromptSelected, disable }) => {
   const [prompts, setPrompts] = useState<string[]>([]);
-  
+  const [selectedPrompt, setSelectedPrompt] = useState<string>('');
 
-    useEffect(() => {
-      const fetchPrompts = async () => {
-        try {
-          const data = await PromptSuggestion();
-          setPrompts(data);
-        } catch (error) {
-          console.error('Error fetching prompts from backend:', error);
-        }
-      };
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      try {
+        const data = await PromptSuggestion();
+        setPrompts(data);
+      } catch (error) {
+        console.error('Error fetching prompts from backend:', error);
+      }
+    };
 
-      fetchPrompts();
-    }, []);
+    fetchPrompts();
+  }, []);
 
-  const handlePromptClick = (prompt: string) => {
+  const handlePromptSelection = (prompt: string) => {
     setSelectedPrompt(prompt);
     onPromptSelected(prompt);
   };
 
-  return (  
-    <div className="grid grid-cols-2 grid-rows-2 gap-4">
-      {prompts.map((prompt, index) => (
-        <button
-          key={index}
-          onClick={() => handlePromptClick(prompt)}
-          className={`bg-gray-300 rounded cursor-pointer ${selectedPrompt === prompt ? 'bg-blue-500' : ''}`}
-        >
-          {prompt}
-        </button>
-      ))}
+  return (
+    <div className="space-container">
+      <Tabs defaultValue={selectedPrompt} onValueChange={handlePromptSelection}>
+        {prompts.map((prompt, index) => (
+          <TabsList key={index} className="w-full mb-2">
+            <TabsTrigger
+              value={prompt}
+              className={`w-full text-center ${selectedPrompt === prompt ? 'bg-blue-500' : ''}`}
+              disabled={disable}
+            >
+              {prompt}
+            </TabsTrigger>
+          </TabsList>
+        ))}
+      </Tabs>
+      <div className="additional-spacing" />
     </div>
   );
 };

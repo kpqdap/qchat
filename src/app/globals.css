@@ -89,9 +89,6 @@
   body {
     @apply bg-background text-foreground;
   }
-  header {
-    @apply h-28vh; /* Custom class for 10% viewport height */
-  }
 
   main {
     @apply h-75vh; /* Custom class for 80% viewport height */

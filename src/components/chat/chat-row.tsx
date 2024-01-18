@@ -84,21 +84,18 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
   return (
     <div
       className={cn(
-        "container mx-auto py-1 flex flex-col items-start"
+        "container mx-auto py-1 flex flex-col"
       )}
     >
       <div
         className={cn(
-          "container flex flex-col overflow-hidden p-1 gap-4"
+          " flex-col overflow-hidden p-1 gap-4"
         )}
       >
         <div className="flex justify-between items-center w-full">
           <Typography variant="h4" className="capitalize flex-1 text-primary">
             {props.name}
           </Typography>
-
-
-          
           <Modal chatThreadId={props.chatMessageId}
             open={isModalOpen}
             onClose={closeModal}
@@ -109,13 +106,13 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
         </div>
         <div
           className={cn(
-            "prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none bg-card"
+            " prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none bg-card "
           )}
         >
           <Markdown content={props.message} />
         </div>
       {props.type === "assistant" && (
-        <div className="flex items-left w-full">
+        <div className="container flex items-left w-full">
           <Button
             variant={"ghost"}
             size={"sm"}
