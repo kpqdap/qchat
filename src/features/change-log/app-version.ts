@@ -3,7 +3,7 @@ import { APP_VERSION } from "@/app-global";
 
 export const appVersionDetails = async () => {
   const appVersion = await fetch(
-    "https://raw.githubusercontent.com/microsoft/azurechat/main/src/package.json",
+    "https://raw.githubusercontent.com/kpqdap/azurechat/main/src/package.json",
     {
       cache: "no-cache",
     }

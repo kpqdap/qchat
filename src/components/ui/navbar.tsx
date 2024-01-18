@@ -12,14 +12,14 @@ interface LinkItem {
 const NavBar: React.FC = () => {
     const links: LinkItem[] = [
         { name: 'Home', href: '/', icon: HomeIcon },
-        { name: 'Prompt Guides', href: '#page1', icon: BookMarked },
-        { name: "What's New", href: '/change-log', icon: BellPlus },
-        { name: 'My Settings', href: '#page3', icon: UserCog }
+        { name: 'Prompt Guides', href: '/prompt-guide', icon: BookMarked },
+        { name: "What's New", href: '/whats-new', icon: BellPlus },
+        { name: 'My Settings', href: '/my-settings', icon: UserCog }
     ];
 
     return (
-        <nav className="bg-secondary p-2">
-            <div className="container mx-auto">
+        <nav className="bg-secondary p-4 hidden md:block">
+            <div className="container mx-auto pb-4">
                 <div className="flex justify-between items-center">
                     <ul className="flex space-x-10">
                         {links.map((link, index) => (

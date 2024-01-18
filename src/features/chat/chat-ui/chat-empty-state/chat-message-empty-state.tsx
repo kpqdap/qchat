@@ -1,5 +1,3 @@
-import Typography from "@/components/typography";
-import { Card } from "@/components/ui/card";
 import { trackEventClientSide } from "@/features/common/app-insights";
 import { FC, FormEvent, useRef, useState } from "react";
 import { useChatContext } from "../chat-context";
@@ -8,6 +6,8 @@ import { ChatStyleSelector } from "./chat-style-selector";
 import { ChatSensitivitySelector } from "./chat-sensitivity-selector";
 import { ChatTypeSelector } from "./chat-type-selector";
 import { PromptButton } from "./prompt-buttons-UI";
+import { Card } from "@/components/ui/card";
+import Typography from "@/components/typography";
 
 interface Prop {}
 
@@ -23,9 +23,6 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
     try {
       setInput(prompt);
       trackEventClientSide('Prompt_Button_Click', { input: "Prompt button suggestion" });
-      setTimeout(() => {
-        handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
-      }, 0);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -35,15 +32,8 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
   const { showFileUpload } = fileState;
 
   return (
-    <div className="grid grid-cols-5 w-full items-center container mx-auto max-w-3xl justify-center h-full gap-9">
+    <div className="grid grid-cols-5 w-full items-center container overflow-auto mx-auto max-w-3xl justify-center h-full p-4 gap-9 pb-[80px]">
       <Card className="col-span-5 flex flex-col gap-5 p-5 ">
-        <p className="text-sm text-muted-foreground">
-          Start by just typing your message in the box below. You can also personalise the chat by making changes to the settings below.
-        </p>
-        <Typography variant="h4" className="text-primary">
-          Personalise
-        </Typography>
-
         <div className="flex flex-col gap-2">
           <p className="text-sm text-muted-foreground">
             Set the Sensitivity of your chat
@@ -62,12 +52,12 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
           </p>
           <ChatTypeSelector disable={false} />
         </div>
-        {showFileUpload === "data" && <ChatFileUI />}
+        {showFileUpload === "data" ? <ChatFileUI /> : (
+          <div className="flex flex-col gap-2">
+            <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
+          </div>
+        )}
       </Card>
-      
-      <Card className="col-span-5">
-        <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
-      </Card>
-    </div>  
+    </div>
   );
 };
