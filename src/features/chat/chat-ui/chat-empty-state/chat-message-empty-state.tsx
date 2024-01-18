@@ -1,4 +1,8 @@
 import { FC } from "react";
+import Typography from "@/components/typography";
+import { Card } from "@/components/ui/card";
+import { trackEventClientSide } from "@/features/common/app-insights";
+import { FC, FormEvent, useRef, useState } from "react";
 import { useChatContext } from "../chat-context";
 import { ChatFileUI } from "../chat-file/chat-file-ui";
 import { ChatStyleSelector } from "./chat-style-selector";
@@ -10,13 +14,26 @@ import { Card } from "@/components/ui/card";
 interface Prop {}
 
 export const ChatMessageEmptyState: FC<Prop> = (props) => {
+  
+  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
+  const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
 
   const handlePromptSelected = (prompt: string) => {
-    console.log('Selected prompt:', prompt);
+    setSelectedPrompt(prompt);
+    setInput(prompt);
+
+    try {
+      setInput(prompt);
+      trackEventClientSide('Prompt_Button_Click', { input: "Prompt button suggestion" });
+      setTimeout(() => {
+        handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
+      }, 0);
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   };
 
   const { fileState } = useChatContext();
-
   const { showFileUpload } = fileState;
 
   return (
@@ -42,7 +59,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
         </div>
         {showFileUpload === "data" && <ChatFileUI />}
         <div className="flex flex-col gap-2">
-          <PromptButton onPromptSelected={handlePromptSelected} disable={false} />
+          <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} disable={false} />
         </div>
       </Card>
     </div>

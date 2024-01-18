@@ -147,14 +147,6 @@ export const updateChatThreadTitle = async (
     return updatedChatThread.resource!;
   }
 
-  async function StoreOriginalChatName(currentChatName: string) {
-    let previousChatName: string = "";
-    if (currentChatName !== previousChatName) {
-        previousChatName = currentChatName; // store the original chat name
-      }
-      return previousChatName;
-    }
-
   async function generateChatName(chatMessage: string): Promise <string> 
   
   {
@@ -188,8 +180,15 @@ export const updateChatThreadTitle = async (
       return name;
     }
     }
-    
-  
+
+    async function StoreOriginalChatName(currentChatName: string) {
+      let previousChatName: string = "";
+      if (currentChatName !== previousChatName) {
+          previousChatName = currentChatName; // store the original chat name
+        }
+        return previousChatName;
+      }  
+      
   async function generateChatCategory(chatMessage: string): Promise <string> {
     const openAI = OpenAIInstance();
   
@@ -239,12 +238,6 @@ export const updateChatThreadTitle = async (
     }
 
   return chatThread;
-};
-
-export const PromptSuggestion = async (): Promise<string[]> => {
-
-  await new Promise(resolve => setTimeout(resolve, 1));
-  return ['Write a brief that covers', 'Respond to this enquiry from a member of the public'];
 };
 
 export const CreateChatThread = async () => {
