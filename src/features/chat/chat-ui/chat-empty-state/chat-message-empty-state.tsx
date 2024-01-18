@@ -1,6 +1,3 @@
-import { FC } from "react";
-import Typography from "@/components/typography";
-import { Card } from "@/components/ui/card";
 import { trackEventClientSide } from "@/features/common/app-insights";
 import { FC, FormEvent, useRef, useState } from "react";
 import { useChatContext } from "../chat-context";
@@ -10,6 +7,7 @@ import { ChatSensitivitySelector } from "./chat-sensitivity-selector";
 import { ChatTypeSelector } from "./chat-type-selector";
 import { PromptButton } from "./prompt-buttons-UI";
 import { Card } from "@/components/ui/card";
+import Typography from "@/components/typography";
 
 interface Prop {}
 
@@ -25,9 +23,6 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
     try {
       setInput(prompt);
       trackEventClientSide('Prompt_Button_Click', { input: "Prompt button suggestion" });
-      setTimeout(() => {
-        handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
-      }, 0);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -57,10 +52,11 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
           </p>
           <ChatTypeSelector disable={false} />
         </div>
-        {showFileUpload === "data" && <ChatFileUI />}
-        <div className="flex flex-col gap-2">
-          <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} disable={false} />
-        </div>
+        {showFileUpload === "data" ? <ChatFileUI /> : (
+          <div className="flex flex-col gap-2">
+            <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
+          </div>
+        )}
       </Card>
     </div>
   );

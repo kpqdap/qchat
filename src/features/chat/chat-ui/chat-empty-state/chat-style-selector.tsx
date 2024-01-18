@@ -20,11 +20,11 @@ export const ChatStyleSelector: FC<Prop> = (props) => {
     >
       <TabsList className="grid w-full grid-cols-3 h-12 items-stretch">
         <TabsTrigger
-          value="creative"
+          value="precise"
           className="flex gap-2"
           disabled={props.disable}
         >
-          <Brush size={20} /> Creative
+          <CircleDot size={20} /> Precise
         </TabsTrigger>
         <TabsTrigger
           value="balanced"
@@ -34,11 +34,11 @@ export const ChatStyleSelector: FC<Prop> = (props) => {
           <Scale size={20} /> Balanced
         </TabsTrigger>
         <TabsTrigger
-          value="precise"
+          value="creative"
           className="flex gap-2"
           disabled={props.disable}
         >
-          <CircleDot size={20} /> Precise
+          <Brush size={20} /> Creative
         </TabsTrigger>
       </TabsList>
     </Tabs>

@@ -10,7 +10,7 @@ export const PromptButtons = async (): Promise<string[]> => {
           messages: [
             {
               role: "system",
-              content: ` - create 4 different succinct prompt button suggestion, limited to ten words, for queensland government employees:
+              content: ` - create 2 different succinct prompt button suggestion, limited to ten words, for queensland government employees:
               - this prompt will have some suggestions similar to the below examples:
                 " Write a Ministerial Briefing Note "
                 " Write a response to a ... "
@@ -42,6 +42,6 @@ export const PromptButtons = async (): Promise<string[]> => {
   
     } catch (e) {
       console.error(`An error occurred: ${e}`);
-      return ['Write a Ministerial Briefing Note', 'Write a response to a ...', 'Rewrite this in layman terms', 'Provide a summary of the below text'];
+      return ['Write a Ministerial Briefing Note', 'Provide a summary of the below text'];
     }
   };
