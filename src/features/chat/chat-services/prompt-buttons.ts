@@ -6,27 +6,24 @@ export const PromptButtons = async (): Promise<string[]> => {
     const openAI = OpenAIInstance();
   
     try {
-      const prompts = [];
-  
-      for (let i = 0; i < 4; i++) {
         const promptButtons = await openAI.chat.completions.create({
           messages: [
             {
               role: "system",
-              content: ` - create a succinct prompt button suggestion, limited to ten words, for queensland government employees:
+              content: ` - create 4 different succinct prompt button suggestion, limited to ten words, for queensland government employees:
               - this prompt will have some suggestions similar to the below examples:
                 " Write a Ministerial Briefing Note "
                 " Write a response to a ... "
                 " Rewrite this in layman terms "
-                " Provide a summary of the below text " `
+                " Provide a summary of the below text " 
+              - provide response as an array only, must be in format: ["Prompt1", "Prompt2"]`
             },
           ],
           model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
         });
   
         const prompt = promptButtons.choices[0].message.content;
-        prompts.push(prompt);
-      }
+        const prompts = JSON.parse(prompt as string) as string[];
   
       if (prompts.some(prompt => prompt === null)) {
         console.error('Error: Unexpected prompt button structure from OpenAI API.');

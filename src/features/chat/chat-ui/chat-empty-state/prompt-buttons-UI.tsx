@@ -1,5 +1,4 @@
 import React, { useState, useEffect  } from 'react';
-// import { PromptButtons } from '../../chat-services/chat-thread-service';
 import { PromptButtons } from '../../chat-services/prompt-buttons';
 
 
