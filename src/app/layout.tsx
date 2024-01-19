@@ -34,7 +34,7 @@ export default function RootLayout({
         >
           <Providers>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <header className="header flex flex-col w-full overflow-hidden">
+              <header className="header flex flex-col w-full">
                 <Header />
                 <NavBar />
               </header>

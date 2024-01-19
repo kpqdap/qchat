@@ -38,32 +38,41 @@ const MiniMenu: React.FC = () => {
             </Button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 shadow-md rounded-lg flex flex-col items-stretch w-48">
-                    {menuItems.map(item => (
-                        <Link href={item.href} key={item.name}>
-                            <div className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
-                                <item.icon className="w-4 h-4 mr-2" />
-                                {item.name}
-                            </div>
-                        </Link>
-                    ))}
-                    <div onClick={toggleTheme} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
-                        {theme === 'dark' ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
-                        {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                <div className="fixed top-0 right-0 bottom-0 left-0 z-[99999] bg-background">
+                    <div className="absolute top-0 right-0 m-4">
+                        <Button
+                            onClick={toggleMenu}
+                            className="w-[40px] h-[40px] p-1 text-accent-foreground hover:text-secondary"
+                            variant="destructive"
+                        >
+                            <X />
+                        </Button>
                     </div>
-
-                    {/* Conditional menu items based on logged-in state */}
-                    {session ? (
-                        <div onClick={() => signOut({ callbackUrl: '/' })} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
-                            <LogOut className="w-4 h-4 mr-2" />
-                            Logout
+                    <div className="p-4 mt-16"> {/* Adjust the top margin here */}
+                        {menuItems.map((item, index) => (
+                            <Link href={item.href} key={item.href}> {/* Use the href as the key */}
+                                <div className={`cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap ${index === 0 ? 'mt-2' : ''}`}>
+                                    <item.icon className="w-4 h-4 mr-2" />
+                                    {item.name}
+                                </div>
+                            </Link>
+                        ))}
+                        <div onClick={toggleTheme} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
+                            {theme === 'dark' ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+                            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                         </div>
-                    ) : (
-                        <div onClick={() => signIn()} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
-                            <LogIn className="w-4 h-4 mr-2" />
-                            Login
-                        </div>
-                    )}
+                        {session ? (
+                            <div onClick={() => signOut({ callbackUrl: '/' })} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
+                                <LogOut className="w-4 h-4 mr-2" />
+                                Logout
+                            </div>
+                        ) : (
+                            <div onClick={() => signIn()} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
+                                <LogIn className="w-4 h-4 mr-2" />
+                                Login
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
