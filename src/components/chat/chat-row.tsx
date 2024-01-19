@@ -1,15 +1,14 @@
 "use client";
 
 import React, { FC, useState } from "react";
-import { useChatContext } from "@/features/chat/chat-ui/chat-context"; // Import useChatContext
+import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { ChatRole } from "@/features/chat/chat-services/models";
 import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
 import { cn } from "@/lib/utils";
-import { CheckIcon, ClipboardIcon, ThumbsUp, ThumbsDown } from "lucide-react";
 import Typography from "../typography";
-import { Button } from "../ui/button";
 import Modal from "../ui/modal";
 import { Markdown } from "../markdown/markdown";
+import AssistantButtons from "../ui/assistant-buttons";
 
 interface ChatRowProps {
   chatMessageId: string;
@@ -54,10 +53,6 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     navigator.clipboard.writeText(messageWithAttribution);
   };
 
-  async function handleModalSubmit(feedback: string, sentiment: string, reason: string): Promise<void> {
-    // Implement modal submission logic here
-  };
-
   const handleThumbsUpClick = () => {
     toggleButton('ThumbsUp');
   };
@@ -67,6 +62,10 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     if (openModal) {
       openModal();
     }
+  };
+
+  async function handleModalSubmit(feedback: string, sentiment: string, reason: string): Promise<void> {
+    // Implement modal submission logic here
   };
 
   const handleModalClose = () => {
@@ -79,7 +78,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     <div className={cn("container mx-auto py-1 flex flex-col")}>
       <div className={cn("flex-col overflow-hidden p-1 gap-4")}>
         <div className="flex justify-between items-center w-full">
-          <Typography variant="h4" className="capitalize flex-1 text-primary">
+          <Typography variant="h3" className="capitalize flex-1 text-primary">
             {props.name}
           </Typography>
           <Modal
@@ -89,51 +88,18 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
             onSubmit={handleModalSubmit}
           />
         </div>
-        <div className={cn("prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none bg-card")}>
+        <div className={cn("prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none bg-card text-sm md:text-md md:text-base")}>
           <Markdown content={props.message} />
         </div>
         {props.type === "assistant" && (
-          <div className="container flex items-left w-full">
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              title="Copy text"
-              onClick={handleCopyButton}
-            >
-              {isIconChecked ? (
-                <CheckIcon size={14} />
-              ) : (
-                <ClipboardIcon size={14} />
-              )}
-            </Button>
-
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              title="Thumbs up"
-              className="justify-right flex"
-              onClick={handleThumbsUpClick}
-            >
-              {thumbsUpClicked ? (
-                <CheckIcon size={14} />
-              ) : (
-                <ThumbsUp size={14} />
-              )}
-            </Button>
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              title="Thumbs down"
-              className="justify-right flex"
-              onClick={handleThumbsDownClick}
-            >
-              {thumbsDownClicked ? (
-                <CheckIcon size={14} />
-              ) : (
-                <ThumbsDown size={14} />
-              )}
-            </Button>
-          </div>
+          <AssistantButtons
+            isIconChecked={isIconChecked}
+            thumbsUpClicked={thumbsUpClicked}
+            thumbsDownClicked={thumbsDownClicked}
+            handleCopyButton={handleCopyButton}
+            handleThumbsUpClick={handleThumbsUpClick}
+            handleThumbsDownClick={handleThumbsDownClick}
+          />
         )}
       </div>
     </div>

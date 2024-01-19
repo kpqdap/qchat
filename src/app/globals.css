@@ -126,6 +126,6 @@
   }
 
   .loader-more {
-      animation-delay: 0.5s; /* Half the duration of the animation */
+      animation-delay: 0.5s;
   }
 }

@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
                             <li key={index} className="prose prose-slate dark:prose-invert">
                                 <a href={link.href} className="flex items-center">
                                     {link.icon && (
-                                        <link.icon className="h-5 w-5 mr-2" aria-hidden="true" />
+                                        <link.icon className="h-8 w-5 mr-2" aria-hidden="true" />
                                     )}
                                     <Typography variant="h5" className="flex items-center">{link.name}</Typography>
                                 </a>
