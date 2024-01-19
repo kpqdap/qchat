@@ -12,7 +12,7 @@ import { trackEventClientSide } from "@/features/common/app-insights";
 interface Props {}
 
 const ChatInput: FC<Props> = (props) => {
-  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
+  const { setInput, handleSubmit, isLoading, input, chatBody, isModalOpen } = useChatContext();
 
   const handleFAIRAClick = () => {
     setInput("Help me complete a Queensland Government Fast AI Risk Assessment (FAIRA)");
@@ -44,6 +44,10 @@ const ChatInput: FC<Props> = (props) => {
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
   };
+
+  if (isModalOpen) {
+    return null;
+  }
 
   return (
     <form

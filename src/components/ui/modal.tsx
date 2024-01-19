@@ -2,6 +2,7 @@ import React, { FC, useState, useRef, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { XCircle, Ban, FileQuestion } from "lucide-react";
 import Typography from "@/components/typography";
+import { FeedbackTextarea } from "./feedback-textarea";
 
 
 interface ModalProps {
@@ -53,9 +54,8 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
                 Submit your feedback
                 </Typography>
                 </div>
-
                   <div className="col-span-2 gap-5 flex flex-col flex-1">
-                    <textarea
+                    <FeedbackTextarea
                         placeholder="Please provide any additional details about the message or youre feedback, our team will not reply directly but it will assist us in improving our service."
                         ref={textAreaRef}
                         rows={6}
