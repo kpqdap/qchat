@@ -19,7 +19,7 @@ const NavBar: React.FC = () => {
 
     return (
         <nav className="bg-secondary p-4 hidden md:block">
-            <div className="container mx-auto pb-4">
+            <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     <ul className="flex space-x-10">
                         {links.map((link, index) => (
