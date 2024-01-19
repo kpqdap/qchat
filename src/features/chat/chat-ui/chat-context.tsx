@@ -32,6 +32,9 @@ interface ChatContextProps extends UseChatHelpers {
   onConversationStyleChange: (value: ConversationStyle) => void;
   onConversationSensitivityChange: (value: ConversationSensitivity) => void;
   speech: TextToSpeechProps & SpeechToTextProps;
+  isModalOpen?: boolean;
+  openModal?: () => void;
+  closeModal?: () => void;
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null);
@@ -70,7 +73,6 @@ export const ChatProvider: FC<Prop> = (props) => {
     onError,
     id: props.id,
     body: chatBody,
-
     initialMessages: transformCosmosToAIModel(props.chats),
     onFinish: async (lastMessage: Message) => {
       if (isMicrophoneUsed) {
@@ -79,6 +81,10 @@ export const ChatProvider: FC<Prop> = (props) => {
       }
     },
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const setChatBody = (body: PromptGPTBody) => {
     setBody(body);
@@ -117,6 +123,9 @@ export const ChatProvider: FC<Prop> = (props) => {
           ...speechSynthesizer,
           ...speechRecognizer,
         },
+        isModalOpen,
+        openModal,
+        closeModal,
       }}
     >
       {props.children}

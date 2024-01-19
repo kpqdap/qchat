@@ -31,7 +31,7 @@ export const ChatMessageContainer = () => {
             chatMessageId={message.id}
             name={message.role === "user" ? session?.user?.name! : AI_NAME}
             profilePicture={
-              message.role === "user" ? session?.user?.image! : "/ai-icon.png"
+              message.role === "user" ? session?.user?.image! : ""
             }
             message={message.content}
             type={message.role}

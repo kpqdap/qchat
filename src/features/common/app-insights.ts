@@ -12,7 +12,7 @@ class CustomError extends Error {
 const reactPlugin = new ReactPlugin();
 let appInsights: ApplicationInsights | undefined;
 
-if (typeof window !== 'undefined') {
+if (process.env.NODE_ENV !== "development" && typeof window !== 'undefined') {
   const connectionString = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
   if (connectionString) {
     appInsights = new ApplicationInsights({

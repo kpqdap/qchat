@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { useGlobalConfigContext } from "@/features/global-config/global-client-config-context";
-import { Loader, Send, Bird } from "lucide-react";
-import { FC, FormEvent, useRef, useState } from "react";
+import { Loader, Send, Bird, File } from "lucide-react";
+import { FC, FormEvent, useRef } from "react";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { Microphone } from "../chat-speech/microphone";
 import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
@@ -12,7 +12,17 @@ import { trackEventClientSide } from "@/features/common/app-insights";
 interface Props {}
 
 const ChatInput: FC<Props> = (props) => {
-  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
+  const { setInput, handleSubmit, isLoading, input, chatBody, isModalOpen } = useChatContext();
+
+  const generateConversationFile = () => {
+    setInput("But I thought this was going to work?");
+
+    trackEventClientSide('Conversation_Export', { input: "Conversation Export" });
+
+    setTimeout(() => {
+      handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
+    }, 0);
+  };
 
   const handleFAIRAClick = () => {
     setInput("Help me complete a Queensland Government Fast AI Risk Assessment (FAIRA)");
@@ -44,6 +54,10 @@ const ChatInput: FC<Props> = (props) => {
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
   };
+
+  if (isModalOpen) {
+    return null;
+  }
 
   return (
     <form
@@ -84,6 +98,16 @@ const ChatInput: FC<Props> = (props) => {
                   <Bird size={16} />
                 </Button>
               )}
+              {!isLoading && (
+                <Button
+                  onClick={generateConversationFile}
+                  size="icon"
+                  variant="ghost"
+                  disabled={isLoading}
+                >
+                  <File size={16} />
+                </Button>
+              )}
             </>
           ) : null}
         </div>
@@ -93,3 +117,4 @@ const ChatInput: FC<Props> = (props) => {
 };
 
 export default ChatInput;
+

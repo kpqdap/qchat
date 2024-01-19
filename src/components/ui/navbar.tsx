@@ -19,14 +19,14 @@ const NavBar: React.FC = () => {
 
     return (
         <nav className="bg-secondary p-4 hidden md:block">
-            <div className="container mx-auto pb-4">
+            <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     <ul className="flex space-x-10">
                         {links.map((link, index) => (
                             <li key={index} className="prose prose-slate dark:prose-invert">
                                 <a href={link.href} className="flex items-center">
                                     {link.icon && (
-                                        <link.icon className="h-5 w-5 mr-2" aria-hidden="true" />
+                                        <link.icon className="h-8 w-5 mr-2" aria-hidden="true" />
                                     )}
                                     <Typography variant="h5" className="flex items-center">{link.name}</Typography>
                                 </a>

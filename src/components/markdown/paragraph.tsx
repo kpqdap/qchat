@@ -1,5 +1,5 @@
 export const Paragraph = ({ children, className }: any) => {
-  return <div className={...className}>{children}</div>;
+  return <div className={String(className)}>{children}</div>;
 };
 
 export const paragraph = {

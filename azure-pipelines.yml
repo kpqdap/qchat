@@ -1,8 +1,3 @@
-# Azure Chat Pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
   branches:
       include:
@@ -54,7 +49,10 @@ variables:
                 -OPENAI_API_KEY "$(OPENAI_API_KEY)"
                 -PUBLIC_SPEECH_ENABLED "$(PUBLIC_SPEECH_ENABLED)"
                 -NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING "$(NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING)"
-                -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"'
+                -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"
+                -QGAIP_APIM_HEALTHCHECK_URI "$(QGAIP_APIM_HEALTHCHECK_URI)"
+                -QGAIP_QCHAT_FQDN_URI "$(QGAIP_QCHAT_FQDN_URI)"
+                -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"'
 
  
 stages:

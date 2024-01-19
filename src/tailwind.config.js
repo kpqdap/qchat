@@ -72,6 +72,15 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontSize: {
+        'xs': '.6rem',
+        'sm': '.8rem',
+        'base': '1rem',
+        'lg': '1.125rem',
+        'xl': '1.25rem',
+        '2xl': '1.3rem',
+        '3xl': '1.5rem',
+      },
       fontweight: {
         "light": "300",
         "normal": "400",
