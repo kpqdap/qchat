@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { useGlobalConfigContext } from "@/features/global-config/global-client-config-context";
 import { Loader, Send, Bird } from "lucide-react";
-import { FC, FormEvent, useRef, useState } from "react";
+import { FC, FormEvent, useRef } from "react";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { Microphone } from "../chat-speech/microphone";
 import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
