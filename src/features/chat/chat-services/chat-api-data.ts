@@ -7,6 +7,11 @@ import { initAndGuardChatSession } from "./chat-thread-service";
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb";
 import { PromptGPTProps } from "./models";
 
+interface Message {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
 const SYSTEM_PROMPT = `You are ${AI_NAME} who is a helpful AI Assistant.`;
 
 const CONTEXT_PROMPT = ({
@@ -45,6 +50,15 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
   const history = await chatHistory.getMessages();
   const topHistory = history.slice(history.length - 30, history.length);
 
+  const formattedTopHistory: Message[] = topHistory
+    .filter((message) => message.role === "user" || message.role === "assistant")
+    .map((message): Message => {
+      return {
+        role: message.role,
+        content: message.content ?? ""
+      };
+    });
+
   const relevantDocuments = await findRelevantDocuments(
     lastHumanMessage.content,
     id
@@ -65,7 +79,7 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
           role: "system",
           content: SYSTEM_PROMPT,
         },
-        ...topHistory,
+        ...formattedTopHistory,
         {
           role: "user",
           content: CONTEXT_PROMPT({

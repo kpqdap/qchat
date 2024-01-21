@@ -51,11 +51,17 @@ export class CosmosDBChatMessageHistory {
 
 function mapOpenAIChatMessages(
   messages: ChatMessageModel[]
-): ChatCompletionMessage[] {
-  return messages.map((message) => {
-    return {
-      role: message.role,
-      content: message.content,
-    };
-  });
-}
+    ): ChatCompletionMessage[] {
+      return messages.map((message) => {
+        let role: "system" | "user" | "assistant" | "data";
+        if (message.role === "function") {
+          role = "assistant";
+        } else {
+          role = message.role as "user" | "assistant" | "system" | "data";
+        }
+        return {
+          role: role as "system" | "user" | "assistant",
+          content: message.content,
+        };
+      });
+    }

@@ -3,7 +3,7 @@
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 import { Message } from "ai";
 import { UseChatHelpers, useChat } from "ai/react";
-import React, { FC, createContext, useContext, useState } from "react";
+import React, { FC, createContext, useContext, useState, ReactNode } from "react";
 import {
   ChatMessageModel,
   ChatThreadModel,
@@ -22,6 +22,12 @@ import {
   TextToSpeechProps,
   useTextToSpeech,
 } from "./chat-speech/use-text-to-speech";
+
+type MessageRole = "function" | "user" | "assistant" | "system" | "tool";
+
+interface MessageWithRole extends Message {
+  role: MessageRole;
+}
 
 interface ChatContextProps extends UseChatHelpers {
   id: string;
@@ -73,6 +79,7 @@ export const ChatProvider: FC<Prop> = (props) => {
     onError,
     id: props.id,
     body: chatBody,
+
     initialMessages: transformCosmosToAIModel(props.chats),
     onFinish: async (lastMessage: Message) => {
       if (isMicrophoneUsed) {
