@@ -37,6 +37,10 @@ const LoadFile = async (formData: FormData) => {
   try {
     const file: File | null = formData.get("file") as unknown as File;
     if (file) {
+      if (file.type !== "application/pdf") {
+        throw new Error("Invalid file format. Only PDF files are supported.");
+      }
+
       if (file.size < MAX_DOCUMENT_SIZE) {
         const client = initDocumentIntelligence();
 
@@ -54,15 +58,18 @@ const LoadFile = async (formData: FormData) => {
         }
 
         return { docs };
+      } else {
+        throw new Error("File size exceeds the maximum limit.");
       }
+    } else {
+      throw new Error("No file provided.");
     }
   } catch (e) {
     const error = e as any;
     throw new Error(error);
   }
-
-  throw new Error("Invalid file format or size. Only PDF files are supported.");
 };
+
 
 export const IndexDocuments = async (fileName: string, docs: string[], chatThreadId: string): Promise<ServerActionResponse<AzureCogDocumentIndex[]>> => {
   try {

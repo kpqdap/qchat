@@ -1,4 +1,5 @@
 "use server";
+
 import "server-only";
 import { OpenAIInstance } from "@/features/common/openai";
 import { userHashedId, userSession } from "@/features/auth/helpers";
@@ -6,17 +7,7 @@ import { FindAllChats } from "@/features/chat/chat-services/chat-service";
 import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { CosmosDBContainer } from "../../common/cosmos";
-import { deleteDocuments } from "./azure-cog-search/azure-cog-vector-store";
-import { FindAllChatDocuments } from "./chat-document-service";
-import {
-  CHAT_THREAD_ATTRIBUTE,
-  ChatMessageModel,
-  ChatThreadModel,
-  ChatType,
-  ConversationSensitivity,
-  ConversationStyle,
-  PromptGPTProps,
-} from "./models";
+import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, ConversationSensitivity, ConversationStyle, PromptGPTProps } from "./models";
 
 export const FindAllChatThreadForCurrentUser = async () => {
   const container = await CosmosDBContainer.getInstance().getContainer();
@@ -226,8 +217,6 @@ export const updateChatThreadTitle = async (
         return "Uncategorised!";
       }
   
-      
-  
     } catch (e) {
       console.error(`An error occurred: ${e}`);
       const words: string[] = chatMessage.split(' ');
@@ -286,4 +275,44 @@ export const initAndGuardChatSession = async (props: PromptGPTProps) => {
     chats,
     chatThread,
   };
+};
+
+export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<ChatThreadModel | undefined> => {
+  const container = await CosmosDBContainer.getInstance().getContainer();
+
+  const querySpec = {
+    query:
+      "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.name=@name AND r.isDeleted=@isDeleted",
+    parameters: [
+      {
+        name: "@type",
+        value: CHAT_THREAD_ATTRIBUTE,
+      },
+      {
+        name: "@name",
+        value: title,
+      },
+      {
+        name: "@isDeleted",
+        value: false,
+      },
+      {
+        name: "@userId",
+        value: await userHashedId(),
+      },
+    ],
+  };
+
+  const { resources } = await container.items.query<ChatThreadModel>(querySpec).fetchAll();
+
+  for (const chatThread of resources) {
+    // Check if the chat thread has associated messages
+    const messages = await FindAllChats(chatThread.id); // You can use your FindAllChats function here
+
+    if (messages.length === 0) {
+      return chatThread; // Return the chat thread if it has no associated messages
+    }
+  }
+
+  return undefined; // No eligible chat thread found
 };

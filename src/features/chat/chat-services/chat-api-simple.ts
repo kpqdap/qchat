@@ -4,11 +4,8 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 import { initAndGuardChatSession } from "./chat-thread-service";
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb";
 import { PromptGPTProps } from "./models";
-// import { appInsights, trackEventClientSide, trackExceptionClientSide } from "@/features/common/app-insights";
 
 export const ChatAPISimple = async (props: PromptGPTProps) => {
-
-  const startTime = Date.now(); 
 
   const { lastHumanMessage, chatThread } = await initAndGuardChatSession(props);
 
@@ -35,10 +32,6 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
    - You will respond to questions in accordance with rules of Queensland government.`;
 
   try {
-    // Track the start of the streaming
-    // if (appInsights) {
-    //   trackEventClientSide('Streaming_Start', { sessionId: chatThread.id, userId: userId });
-    // }
 
     const response = await openAI.chat.completions.create({
       messages: [
@@ -59,31 +52,16 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
             content: completion,
             role: "assistant",
           });
-          //     if (appInsights) {
-          //   trackEventClientSide('Streaming_Message_Received', { sessionId: chatThread.id, userId: userId });
-          // }
         } catch (e) {
           console.log(e)
-          // if (appInsights && e instanceof Error) {
-          //   trackExceptionClientSide(e, "StreamingError");
-          // }
         }
       }
     });
-
-    const endTime = Date.now();
-    const duration = endTime - startTime; 
-    // if (appInsights) {
-    //   trackEventClientSide('Chat_Completion_Time', { duration });
-    // }
 
     return new StreamingTextResponse(stream);
   } catch (e: unknown) {
     const customErrorName = "ChatAPIError";
     console.log(e)
-    // if (appInsights && e instanceof Error) {
-    //   trackExceptionClientSide(e, customErrorName);
-    // }
 
     const errorResponse = e instanceof Error ? e.message : "An unknown error occurred.";
     const errorStatusText = e instanceof Error ? e.toString() : "Unknown Error";

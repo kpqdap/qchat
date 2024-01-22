@@ -40,13 +40,14 @@ const configureIdentityProvider = () => {
         },
         userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT!,
         profileUrl: process.env.AZURE_AD_USERINFO_ENDPOINT!,
-        profile: (profile) => {
+        profile: (profile, tokens) => {
           return {
             ...profile,
             id: profile.sub,
             name: profile.name,
             email: profile.email,
-            // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase()),
+            groups: (tokens.idTokenClaims as any)?.groups || [],
           }
         }
       }),

@@ -79,34 +79,34 @@ const ChatInput: FC<Props> = (props) => {
           {speechEnabled && <Microphone disabled={isLoading} />}
           {!isDataChat || (isDataChat && fileChatVisible) ? (
             <>
-              <Button
-                size="icon"
-                type="submit"
-                variant="ghost"
-                ref={buttonRef}
-                disabled={isLoading}
-              >
-                {isLoading ? <Loader className="animate-spin" size={16} /> : <Send size={16} />}
-              </Button>
-              {!isLoading && (
                 <Button
-                  onClick={handleFAIRAClick}
                   size="icon"
+                  type="submit"
                   variant="ghost"
+                  ref={buttonRef}
                   disabled={isLoading}
                 >
-                  <Bird size={16} />
+                  {isLoading ? <Loader className="animate-spin" size={16} /> : <Send size={16} />}
                 </Button>
-              )}
               {!isLoading && (
-                <Button
-                  onClick={generateConversationFile}
-                  size="icon"
-                  variant="ghost"
-                  disabled={isLoading}
-                >
-                  <File size={16} />
-                </Button>
+                <div className="hidden sm:flex">
+                  <Button
+                    onClick={handleFAIRAClick}
+                    size="icon"
+                    variant="ghost"
+                    disabled={isLoading}
+                  >
+                    <Bird size={16} />
+                  </Button>
+                  <Button
+                    onClick={generateConversationFile}
+                    size="icon"
+                    variant="ghost"
+                    disabled={isLoading}
+                  >
+                    <File size={16} />
+                  </Button>
+                </div>
               )}
             </>
           ) : null}
@@ -117,4 +117,3 @@ const ChatInput: FC<Props> = (props) => {
 };
 
 export default ChatInput;
-

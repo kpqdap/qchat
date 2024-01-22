@@ -10,7 +10,7 @@ import { ChatHeader } from "./chat-header";
 interface Props {
   chatId: string;
   sentiment: string;
-};
+}
 
 export const ChatMessageContainer = () => {
   const { data: session } = useSession();
@@ -25,7 +25,7 @@ export const ChatMessageContainer = () => {
       <div className="flex justify-center p-4">
         <ChatHeader />
       </div>
-      <div className=" pb-[80px] flex flex-col justify-end flex-1">
+      <div className="pb-[80px] flex flex-col justify-end flex-1">
         {messages.map((message, index) => (
           <ChatRow
             chatMessageId={message.id}
