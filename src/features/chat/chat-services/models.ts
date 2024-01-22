@@ -24,7 +24,7 @@ export type ConversationStyle = "creative" | "balanced" | "precise";
 export type ConversationSensitivity = "official" | "sensitive" | "protected";
 export type ChatType = "simple" | "data" | "mssql";
 export type FeedbackType = "harmful / unsafe" | "untrue" | "unhelpful";
-export type ChatRole = "system" | "user" | "assistant" | "function";
+export type ChatRole = "system" | "user" | "assistant" | "function" | "data" | "tool";
 export type ChatSentiment = "neutral" | "positive" | "negative";
 
 export interface ChatThreadModel {
