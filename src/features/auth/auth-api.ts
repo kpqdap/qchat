@@ -50,14 +50,10 @@ const configureIdentityProvider = () => {
             groups: (tokens.idTokenClaims as any)?.groups || [],
           }
         }
-      }),
+      })
     );
   }
 
-  // If we're in local dev, add a basic credential provider option as well
-  // (Useful when a dev doesn't have access to create app registration in their tenant)
-  // This currently takes any username and makes a user with it, ignores password
-  // Refer to: https://next-auth.js.org/configuration/providers/credentials
   if (process.env.NODE_ENV === "development") {
     providers.push(
       CredentialsProvider({
@@ -67,9 +63,6 @@ const configureIdentityProvider = () => {
           password: { label: "Password", type: "password" },
         },    
         async authorize(credentials, req): Promise<any> {
-          // You can put logic here to validate the credentials and return a user.
-          // We're going to take any username and make a new user with it
-          // Create the id as the hash of the email as per userHashedId (helpers.ts)
           const username = credentials?.username || "dev";
           const email = username + "@localhost";
           const user = {
@@ -89,96 +82,91 @@ const configureIdentityProvider = () => {
   return providers;
 };
 
-/**
- * Takes a token, and returns a new token with updated
- * `accessToken` and `expiresIn`. If an error occurs,
- * returns the old token and an error property
- */
 async function refreshAccessToken(token: JWT) {
-  try{
-    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
-
+  try {
+    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!;
     const formData = new URLSearchParams({
         client_id: process.env.AZURE_AD_CLIENT_ID!,
         client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
         grant_type: "refresh_token",
         refresh_token: token.refreshToken as string
-      })
-      
+    });
+    
     const response = await fetch(tokenUrl, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: formData,
       method: "POST",
-    })
+    });
 
-    const refreshedTokens = await response.json()
+    const refreshedTokens = await response.json();
 
     if (!response.ok) {
-      throw refreshedTokens
+      throw refreshedTokens;
     }
-
-    token.accessToken = refreshedTokens.access_token,
-    token.refreshToken = refreshedTokens.refresh_token,
-    token.expiresIn = Date.now() + (refreshedTokens as any).expires_in as number * 1000,
-    token.refreshExpiresIn = Date.now() + (refreshedTokens as any).refresh_expires_in as number * 1000
 
     return {
       ...token,
-    }
-
-  }
-  catch(e){
-    console.log(e)
+      accessToken: refreshedTokens.access_token,
+      refreshToken: refreshedTokens.refresh_token,
+      expiresIn: Date.now() + (refreshedTokens as any).expires_in * 1000,
+      refreshExpiresIn: Date.now() + (refreshedTokens as any).refresh_expires_in * 1000
+    };
+  } catch (e) {
+    console.log(e);
     return {
       ...token,
-      e: "RefreshAccessTokenError",
-    }
+      error: "RefreshAccessTokenError",
+    };
   }
 }
 
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  providers: [...configureIdentityProvider()],
+  providers: configureIdentityProvider(),
   callbacks: {
-    async signIn({user, account, profile}) {
+    async jwt({ token, user, account, profile }) {
+      if (user?.groups) {
+        token.groups = user.groups;
+      }
+      if (user?.isAdmin) {
+        token.isAdmin = user.isAdmin;
+      }
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.expiresIn = Date.now() + (account as any).expires_in * 1000;
+        token.refreshExpiresIn = Date.now() + (account as any).refresh_expires_in * 1000;
+      }
+      if (Date.now() < (token.expiresIn as number)) {
+        return token;
+      }
+      if (process.env.NODE_ENV === "development") {
+        return token;
+      }
+      return refreshAccessToken(token);
+    },
+    async signIn({ user, account, profile, token }) {
+      if (process.env.ACCESS_GROUPS_REQUIRED === "true") {
+        const allowedGroupGUIDs = process.env.ACCESS_GROUPS?.split(",").map(group => group.trim());
+        const userGroupGUIDs = token.groups || [];
+        const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
+        if (!isMemberOfAllowedGroup) {
+          return false;
+        }
+      }
       return true;
     },
-    async jwt({token, user, account, profile, session}) {
-      if (user?.isAdmin) {
-       token.isAdmin = user.isAdmin
-      }
-      if(account){
-        token.accessToken = account.access_token
-        token.refreshToken = account.refresh_token
-        token.expiresIn = Date.now() + (account as any).expires_in as number * 1000
-        token.refreshExpiresIn = Date.now() + (account as any).refresh_expires_in as number * 1000
-      }
-
-      // Return previous token if the access token has not expired yet
-      if (Date.now() < (token.expiresIn as number)) {
-        return token
-      }
-
-      // Return token for dev session only
-      if (process.env.NODE_ENV === "development"){
-        return token
-      }
-
-      // Access token has expired, try to update it
-      return refreshAccessToken(token)
-    },
-    async session({session, token, user }) {
-      session.user.isAdmin = token.isAdmin as string
-      return session
+    async session({ session, token, user }) {
+      session.user.isAdmin = token.isAdmin as boolean;
+      return session;
     }
   },
   session: {
     strategy: "jwt",
-    maxAge: 5*60*60, //set session expiry to 5 hours
+    maxAge: 5 * 60 * 60, // set session expiry to 5 hours
   },
 };
 
 export const handlers = NextAuth(options);
-
