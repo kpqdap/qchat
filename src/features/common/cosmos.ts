@@ -1,6 +1,5 @@
 import { Container, CosmosClient } from "@azure/cosmos";
 
-// Read Cosmos DB_NAME and CONTAINER_NAME from .env
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "chat";
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_CONTAINER_NAME || "history";
 

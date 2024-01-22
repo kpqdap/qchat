@@ -1,8 +1,8 @@
 import React from 'react';
-import QgovSvg from '@/components/ui/qldgovlogo';
+import { QgovSvg } from '@/components/ui/qldgovlogo';
 import Typography from "@/components/typography";
-import UserComponent from '@/components/ui/user-login-logout';
-import MiniMenu from '@/features/main-menu/mini-menu';
+import { UserComponent } from '@/components/ui/user-login-logout';
+import { MiniMenu } from '@/features/main-menu/mini-menu';
 
 const Sidebar: React.FC = () => {
     return (
@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
     );
 };
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
     return (
         <div className="background" role="banner">
             <div className="bg-[#09549F] text-white p-4">
@@ -47,5 +47,3 @@ const Header: React.FC = () => {
         </div>
     );
 };
-
-export default Header;

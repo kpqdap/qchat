@@ -4,7 +4,7 @@ interface QgovSvgProps {
   className?: string;
 }
 
-const QgovSvg: React.FC<QgovSvgProps> = ({ className }) => (
+export const QgovSvg: React.FC<QgovSvgProps> = ({ className }) => (
     <svg width="170" height="56" viewBox="0 0 170 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>Queensland Government</title>
         <g clipPath="url(#clip0)">
@@ -70,5 +70,3 @@ const QgovSvg: React.FC<QgovSvgProps> = ({ className }) => (
         </defs>
     </svg>
 );
-
-export default QgovSvg;
