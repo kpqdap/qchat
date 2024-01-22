@@ -127,8 +127,8 @@ export const options: NextAuthOptions = {
   providers: configureIdentityProvider(),
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      if (user?.groups) {
-        token.groups = user.groups;
+      if (account?.idTokenClaims?.groups) {
+        token.groups = account.idTokenClaims.groups;
       }
       if (user?.isAdmin) {
         token.isAdmin = user.isAdmin;
