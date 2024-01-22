@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useMenuContext } from "./menu-context";
-import { Menu, X, LogIn, LogOut, Moon, Sun, Home as HomeIcon, Bookmark as BookMarked, Bell as BellPlus, UserCog } from 'lucide-react';
+import { Menu, X, LogIn, LogOut, Moon, Sun, Home, Bookmark, Bell, UserCog } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 export const MiniMenu: React.FC = () => {
@@ -14,9 +14,9 @@ export const MiniMenu: React.FC = () => {
     const { theme, setTheme } = useTheme();
 
     const menuItems = [
-        { name: 'Home', href: '/', icon: HomeIcon },
-        { name: 'Prompt Guides', href: '/prompt-guide', icon: BookMarked },
-        { name: "What's New", href: '/whats-new', icon: BellPlus },
+        { name: 'Home', href: '/', icon: Home },
+        { name: 'Prompt Guides', href: '/prompt-guide', icon: Bookmark },
+        { name: "What's New", href: '/whats-new', icon: Bell },
         { name: 'My Settings', href: '/my-settings', icon: UserCog }
     ];
 
@@ -33,7 +33,6 @@ export const MiniMenu: React.FC = () => {
             >
                 {isMenuOpen ? <X /> : <Menu />}
             </Button>
-
             {isMenuOpen && (
                 <div className="fixed top-0 right-0 bottom-0 left-0 z-[99999] bg-background">
                     <div className="absolute top-0 right-0 m-4">
