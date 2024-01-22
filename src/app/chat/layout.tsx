@@ -1,6 +1,5 @@
 import { ChatMenu } from "@/features/chat/chat-menu/chat-menu";
 import { ChatMenuContainer } from "@/features/chat/chat-menu/chat-menu-container";
-import { MainMenu } from "@/features/main-menu/menu";
 import { AI_NAME } from "@/features/theme/customise";
 
 export const dynamic = "force-dynamic";

@@ -9,7 +9,7 @@ interface LinkItem {
     icon?: React.ElementType;
 }
 
-const NavBar: React.FC = () => {
+export const NavBar: React.FC = () => {
     const links: LinkItem[] = [
         { name: 'Home', href: '/', icon: HomeIcon },
         { name: 'Prompt Guides', href: '/prompt-guide', icon: BookMarked },
@@ -39,5 +39,3 @@ const NavBar: React.FC = () => {
         </nav>
     );
 };
-
-export default NavBar;

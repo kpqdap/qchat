@@ -1,10 +1,11 @@
 "use client";
+
 import React from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { LogIn, LogOut } from 'lucide-react';
 import Typography from "@/components/typography";
 
-const UserComponent: React.FC = () => {
+export const UserComponent: React.FC = () => {
     const { data: session } = useSession({ required: false });
 
     return (
@@ -23,5 +24,3 @@ const UserComponent: React.FC = () => {
         </div>
     );
 };
-
-export default UserComponent;
