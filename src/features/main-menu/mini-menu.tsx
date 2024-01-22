@@ -4,12 +4,12 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { useMenuContext } from "./menu-context";
+import { useMiniMenuContext } from "./mini-menu-context";
 import { Menu, X, LogIn, LogOut, Moon, Sun, Home, Bookmark, Bell, UserCog } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 export const MiniMenu: React.FC = () => {
-    const { isMenuOpen, toggleMenu } = useMenuContext();
+    const { isMenuOpen, toggleMenu } = useMiniMenuContext();
     const { data: session } = useSession({ required: false });
     const { theme, setTheme } = useTheme();
 
@@ -74,3 +74,4 @@ export const MiniMenu: React.FC = () => {
         </div>
     );
 };
+

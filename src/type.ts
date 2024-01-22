@@ -34,6 +34,9 @@ const azureEnvVars = [
   "QGAIP_APIM_HEALTHCHECK_URI",
   "QGAIP_QCHAT_FQDN_URI",
   "QGAIP_QCHAT_APP_URI",
+  "ADMIN_EMAIL_ADDRESS",
+  "ACCESS_GROUPS",
+  "ACCESS_GROUPS_REQUIRED",
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
