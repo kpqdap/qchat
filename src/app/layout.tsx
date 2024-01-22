@@ -6,15 +6,15 @@ import { AI_NAME } from "@/features/theme/customise";
 import { cn } from "@/lib/utils";
 import { Noto_Sans } from "next/font/google";
 import "./globals.css";
-import Header from "./header";
-import Footer from "./footer";
-import NavBar from '@/components/ui/navbar';
+import { Header } from "./header";
+import { Footer } from "./footer";
+import { NavBar } from '@/components/ui/navbar';
 
 
 
 export const dynamic = "force-dynamic";
 
-const notoSans = Noto_Sans({ weight: '400', subsets: ["latin"] });
+const notoSans = Noto_Sans({ weight: '300', subsets: ["latin"] });
 
 export const metadata = {
   title: AI_NAME,

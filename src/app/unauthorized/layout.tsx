@@ -1,4 +1,3 @@
-import { MainMenu } from "@/features/main-menu/menu";
 import { AI_NAME } from "@/features/theme/customise";
 
 export const metadata = {

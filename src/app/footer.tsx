@@ -1,9 +1,9 @@
 import React from 'react';
 import { Mail } from 'lucide-react';
-import QgovSvg from '@/components/ui/qldgovlogo';
+import { QgovSvg } from '@/components/ui/qldgovlogo';
 import Typography from "@/components/typography";
 
-const footer: React.FC = () => {
+export const Footer: React.FC = () => {
     return (
         <div className="background " role="banner">
             <div className="bg-[#09549F] text-white p-4">
@@ -23,5 +23,3 @@ const footer: React.FC = () => {
         </div>
     );
 };
-
-export default footer;
