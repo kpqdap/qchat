@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { useGlobalConfigContext } from "@/features/global-config/global-client-config-context";
 import { Loader, Send, Bird, File } from "lucide-react";
-import { FC, FormEvent, useRef } from "react";
+import { FC, FormEvent, useRef, useMemo } from "react";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { Microphone } from "../chat-speech/microphone";
 import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
@@ -35,8 +35,8 @@ const ChatInput: FC<Props> = (props) => {
     buttonRef,
   });
 
-  const isDataChat = chatBody.chatType === "data";
-  const fileChatVisible = chatBody.chatType === "data" && chatBody.chatOverFileName;
+  const isDataChat = useMemo(() => chatBody.chatType === "data", [chatBody.chatType]);
+  const fileChatVisible = useMemo(() => chatBody.chatType === "data" && chatBody.chatOverFileName, [chatBody.chatType, chatBody.chatOverFileName]);
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
