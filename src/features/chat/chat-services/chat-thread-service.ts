@@ -306,13 +306,12 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
   const { resources } = await container.items.query<ChatThreadModel>(querySpec).fetchAll();
 
   for (const chatThread of resources) {
-    // Check if the chat thread has associated messages
-    const messages = await FindAllChats(chatThread.id); // You can use your FindAllChats function here
+    const messages = await FindAllChats(chatThread.id);
 
     if (messages.length === 0) {
-      return chatThread; // Return the chat thread if it has no associated messages
+      return chatThread;
     }
   }
 
-  return undefined; // No eligible chat thread found
+  return undefined;
 };

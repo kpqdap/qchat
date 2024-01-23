@@ -3,12 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { FindChatThreadByTitleAndEmpty } from "../chat-services/chat-thread-service";
 
 export const MiniNewChat = () => {
   const router = useRouter();
 
-  const startNewChat = () => {
-    router.push("/chat/");
+  const startNewChat = async () => {
+    const title = "New Chat";
+
+    try {
+      const existingThread = await FindChatThreadByTitleAndEmpty(title);
+      
+      if (existingThread) {
+        router.push(`/chat/${existingThread.id}`);
+      } else {
+        router.push("/chat/");
+      }
+    } catch (error) {
+      console.error("Error starting new chat:", error);
+    }
   };
 
   return (
