@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { useChatContext } from "./chat-context";
 import { ChatSelectedOptions } from "./chat-header-display/chat-selected-options";
-import { NewChat } from "@/features/chat/chat-menu/new-chat";
 
 interface Prop {}
 
