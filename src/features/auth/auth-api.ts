@@ -46,6 +46,7 @@ const configureIdentityProvider = () => {
             id: profile.sub,
             name: profile.name,
             email: profile.email,
+            groups: profile.employee_groups
             // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
           }
         }
@@ -76,7 +77,7 @@ const configureIdentityProvider = () => {
               name: username,
               email: email,
               isAdmin: false,
-              image: "",
+              image: ""
             };
           console.log("=== DEV USER LOGGED IN:\n", JSON.stringify(user, null, 2));
           return user;
@@ -142,6 +143,19 @@ export const options: NextAuthOptions = {
   providers: [...configureIdentityProvider()],
   callbacks: {
     async signIn({user, account, profile}) {
+      if(profile){
+
+        console.log((profile as any).groups)
+
+        if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
+          const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
+          const userGroupGUIDs = ((profile as any).groups as []) || [];
+          const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
+          if (!isMemberOfAllowedGroup){
+            return false
+          }
+        }
+      }
       return true;
     },
     async jwt({token, user, account, profile, session}) {
