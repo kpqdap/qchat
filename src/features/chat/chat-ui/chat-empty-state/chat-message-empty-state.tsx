@@ -1,4 +1,3 @@
-import { trackEventClientSide } from "@/features/common/app-insights";
 import { FC, FormEvent, useRef, useState } from "react";
 import { useChatContext } from "../chat-context";
 import { ChatFileUI } from "../chat-file/chat-file-ui";
@@ -22,7 +21,6 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
 
     try {
       setInput(prompt);
-      trackEventClientSide('Prompt_Button_Click', { input: "Prompt button suggestion" });
     } catch (error) {
       console.error('An error occurred:', error);
     }

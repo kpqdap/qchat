@@ -3,11 +3,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { useGlobalConfigContext } from "@/features/global-config/global-client-config-context";
 import { Loader, Send, Bird, File } from "lucide-react";
-import { FC, FormEvent, useRef } from "react";
+import { FC, FormEvent, useRef, useMemo } from "react";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { Microphone } from "../chat-speech/microphone";
 import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
-import { trackEventClientSide } from "@/features/common/app-insights";
 
 interface Props {}
 
@@ -17,8 +16,6 @@ const ChatInput: FC<Props> = (props) => {
   const generateConversationFile = () => {
     setInput("But I thought this was going to work?");
 
-    trackEventClientSide('Conversation_Export', { input: "Conversation Export" });
-
     setTimeout(() => {
       handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
     }, 0);
@@ -26,8 +23,6 @@ const ChatInput: FC<Props> = (props) => {
 
   const handleFAIRAClick = () => {
     setInput("Help me complete a Queensland Government Fast AI Risk Assessment (FAIRA)");
-
-    trackEventClientSide('FAIRA_Button_Click', { input: "FAIRA Request" });
 
     setTimeout(() => {
       handleSubmit({ preventDefault: () => {} } as FormEvent<HTMLFormElement>);
@@ -40,15 +35,14 @@ const ChatInput: FC<Props> = (props) => {
     buttonRef,
   });
 
-  const isDataChat = chatBody.chatType === "data";
-  const fileChatVisible = chatBody.chatType === "data" && chatBody.chatOverFileName;
+  const isDataChat = useMemo(() => chatBody.chatType === "data", [chatBody.chatType]);
+  const fileChatVisible = useMemo(() => chatBody.chatType === "data" && chatBody.chatOverFileName, [chatBody.chatType, chatBody.chatOverFileName]);
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleSubmit(e);
     resetRows();
     setInput("");
-    trackEventClientSide('Input_Submit', { input: "Message Submitted" });
   };
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -79,34 +73,34 @@ const ChatInput: FC<Props> = (props) => {
           {speechEnabled && <Microphone disabled={isLoading} />}
           {!isDataChat || (isDataChat && fileChatVisible) ? (
             <>
-              <Button
-                size="icon"
-                type="submit"
-                variant="ghost"
-                ref={buttonRef}
-                disabled={isLoading}
-              >
-                {isLoading ? <Loader className="animate-spin" size={16} /> : <Send size={16} />}
-              </Button>
-              {!isLoading && (
                 <Button
-                  onClick={handleFAIRAClick}
                   size="icon"
+                  type="submit"
                   variant="ghost"
+                  ref={buttonRef}
                   disabled={isLoading}
                 >
-                  <Bird size={16} />
+                  {isLoading ? <Loader className="animate-spin" size={16} /> : <Send size={16} />}
                 </Button>
-              )}
               {!isLoading && (
-                <Button
-                  onClick={generateConversationFile}
-                  size="icon"
-                  variant="ghost"
-                  disabled={isLoading}
-                >
-                  <File size={16} />
-                </Button>
+                <div className="hidden sm:flex">
+                  <Button
+                    onClick={handleFAIRAClick}
+                    size="icon"
+                    variant="ghost"
+                    disabled={isLoading}
+                  >
+                    <Bird size={16} />
+                  </Button>
+                  <Button
+                    onClick={generateConversationFile}
+                    size="icon"
+                    variant="ghost"
+                    disabled={isLoading}
+                  >
+                    <File size={16} />
+                  </Button>
+                </div>
               )}
             </>
           ) : null}
@@ -117,4 +111,3 @@ const ChatInput: FC<Props> = (props) => {
 };
 
 export default ChatInput;
-

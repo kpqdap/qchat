@@ -190,4 +190,3 @@ export const options: NextAuthOptions = {
 };
 
 export const handlers = NextAuth(options);
-
