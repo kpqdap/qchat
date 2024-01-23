@@ -14,9 +14,6 @@ export const ChatHeader: FC<Prop> = (props) => {
       <div className="flex gap-2 h-2">
         <p className="text-xs">{chatBody.chatOverFileName}</p>
       </div>
-      <div className="lg:hidden absolute top-4 right-4">
-        <NewChat />
-      </div>
     </div>
   );
 };
