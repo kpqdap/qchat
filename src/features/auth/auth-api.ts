@@ -142,6 +142,16 @@ export const options: NextAuthOptions = {
   providers: [...configureIdentityProvider()],
   callbacks: {
     async signIn({user, account, profile}) {
+      if(profile){
+        if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
+          const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
+          const userGroupGUIDs = ((profile as any).employee_groups as []) || [];
+          const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
+          if (!isMemberOfAllowedGroup){
+            return false
+          }
+        }
+      }
       return true;
     },
     async jwt({token, user, account, profile, session}) {
