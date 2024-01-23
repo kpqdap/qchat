@@ -145,7 +145,8 @@ export const options: NextAuthOptions = {
     async signIn({user, account, profile}) {
       if(profile){
 
-        console.log((profile as any).groups)
+        console.log("Profile Groups:" + (profile as any).groups)
+        console.log("Employee Groups:" + (profile as any).employee_groups)
 
         if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
           const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
