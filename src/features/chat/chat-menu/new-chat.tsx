@@ -23,14 +23,14 @@ export const NewChat = async (): Promise<JSX.Element> => {
         }
       }
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   };
 
   return (
     <Button
       className="gap-2 rounded-full w-[40px] h-[40px] p-1 text-primary"
-      variant="outline"
+      variant={"outline"}
       onClick={() => startNewChat()}
     >
       <PlusCircle size={40} strokeWidth={1.2} />
