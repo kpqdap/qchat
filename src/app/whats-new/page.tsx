@@ -23,8 +23,18 @@ export default async function Home() {
 }
 
 const loadContent = async () => {
-  return await fs.readFile(
-    process.cwd() + "/app/whats-new/update.md",
-    "utf8"
-  );
+  if (process.env.NODE_ENV === "production") {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/kpqdap/azurechat/main/src/app/change-log/update.md",
+      {
+        cache: "no-cache",
+      }
+    );
+    return await response.text();
+  } else {
+    return await fs.readFile(
+      process.cwd() + "/app/whats-new/update.md",
+      "utf8"
+    );
+  }
 };
