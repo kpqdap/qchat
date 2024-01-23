@@ -3,20 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CreateChatThread } from "../chat-services/chat-thread-service";
 
 export const MiniNewChat = () => {
   const router = useRouter();
 
-  const startNewChat = async () => {
-    try {
-      const newChatThread = await CreateChatThread();
-      if (newChatThread) {
-        router.push("/chat/" + newChatThread.id);
-      }
-    } catch (e) {
-      console.log(e);
-    }
+  const startNewChat = () => {
+    router.push("/chat/");
   };
 
   return (
