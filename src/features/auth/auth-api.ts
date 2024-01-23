@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { Account, NextAuthOptions } from "next-auth";
 import { Provider } from "next-auth/providers";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -126,10 +126,22 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: configureIdentityProvider(),
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      if (account?.idTokenClaims?.groups) {
-        token.groups = account.idTokenClaims.groups;
+    async signIn({user, account, profile}) {
+      if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
+        console.log((account as Account).group)
+        const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
+        const userGroupGUIDs = ((account as Account).group as []) || [];
+        const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
+        if (!isMemberOfAllowedGroup){
+          return false
+        }
       }
+      return true;
+    },
+    async jwt({ token, user, account, profile }) {
+      // if (account?.idTokenClaims?.groups) {
+      //   token.groups = account.idTokenClaims.groups;
+      // }
       if (user?.isAdmin) {
         token.isAdmin = user.isAdmin;
       }
@@ -147,19 +159,19 @@ export const options: NextAuthOptions = {
       }
       return refreshAccessToken(token);
     },
-    async signIn({ user, account, profile, token }) {
-      if (process.env.ACCESS_GROUPS_REQUIRED === "true") {
-        const allowedGroupGUIDs = process.env.ACCESS_GROUPS?.split(",").map(group => group.trim());
-        const userGroupGUIDs = token.groups || [];
-        const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
-        if (!isMemberOfAllowedGroup) {
-          return false;
-        }
-      }
-      return true;
-    },
+    // async signIn({ user, account, profile, token }) {
+    //   if (process.env.ACCESS_GROUPS_REQUIRED === "true") {
+    //     const allowedGroupGUIDs = process.env.ACCESS_GROUPS?.split(",").map(group => group.trim());
+    //     const userGroupGUIDs = token.groups || [];
+    //     const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
+    //     if (!isMemberOfAllowedGroup) {
+    //       return false;
+    //     }
+    //   }
+    //   return true;
+    // },
     async session({ session, token, user }) {
-      session.user.isAdmin = token.isAdmin as boolean;
+      // session.user.isAdmin = token.isAdmin as boolean;
       return session;
     }
   },
