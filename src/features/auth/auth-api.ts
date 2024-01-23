@@ -46,7 +46,6 @@ const configureIdentityProvider = () => {
             id: profile.sub,
             name: profile.name,
             email: profile.email,
-            groups: profile.employee_groups
             // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
           }
         }
@@ -144,13 +143,9 @@ export const options: NextAuthOptions = {
   callbacks: {
     async signIn({user, account, profile}) {
       if(profile){
-
-        console.log("Profile Groups:" + (profile as any).groups)
-        console.log("Employee Groups:" + (profile as any).employee_groups)
-
         if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
           const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
-          const userGroupGUIDs = ((profile as any).groups as []) || [];
+          const userGroupGUIDs = ((profile as any).employee_groups as []) || [];
           const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
           if (!isMemberOfAllowedGroup){
             return false
