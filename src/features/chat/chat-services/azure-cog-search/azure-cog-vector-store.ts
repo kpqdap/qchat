@@ -172,11 +172,11 @@ export const embedDocuments = async (
 };
 
 const baseUrl = (): string => {
-  return `https://${process.env.AZURE_SEARCH_NAME}.search.windows.net/indexes`;
+  return `${process.env.QGAIP_APIM_BASE}/indexes`;
 };
 
 const baseIndexUrl = (): string => {
-  return `https://${process.env.AZURE_SEARCH_NAME}.search.windows.net/indexes/${process.env.AZURE_SEARCH_INDEX_NAME}`;
+  return `${process.env.QGAIP_APIM_BASE}/indexes/${process.env.AZURE_SEARCH_INDEX_NAME}`;
 };
 
 const fetcher = async (url: string, init?: RequestInit) => {

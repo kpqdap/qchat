@@ -39,6 +39,7 @@ const azureEnvVars = [
   "ACCESS_GROUPS_REQUIRED",
   "FEATURE_FILEEXPORT",
   "FEATURE_QUASYMODO",
+  "QGAIP_APIM_BASE",
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
