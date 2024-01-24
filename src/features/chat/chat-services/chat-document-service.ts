@@ -191,5 +191,5 @@ export const ensureSearchIsConfigured = async () => {
     throw new Error("Azure openai embedding variables are not configured.");
   }
 
-  await ensureIndexIsCreated();
+//  await ensureIndexIsCreated();
 };
