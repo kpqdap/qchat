@@ -4,12 +4,11 @@ import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { useGlobalConfigContext } from "@/features/global-config/global-client-config-context";
 import { Loader, Send, Bird, File } from "lucide-react";
 import { FC, FormEvent, useRef, useMemo } from "react";
-import { saveAs } from 'file-saver';
 import { AI_NAME } from "@/features/theme/customise";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { Microphone } from "../chat-speech/microphone";
 import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
-import { Document, Packer, Paragraph, TextRun } from 'docx';
+import { convertMarkdownToWordDocument } from "@/features/common/file-export";
 
 interface Props {}
 
@@ -31,30 +30,8 @@ const ChatInput: FC<Props> = (props) => {
   };
 
   const exportChatMessages = () => {
-    const messageParagraphs = messages.flatMap(message => {
-      const author = message.role === 'system' || message.role === 'assistant' ? AI_NAME : "You";
-      const authorParagraph = new Paragraph({
-        children: [
-          new TextRun({
-            text: `${author}:`,
-            bold: true,
-          }),
-        ],
-      });
-      const messageParagraph = new Paragraph(message.content);
-  
-      return [authorParagraph, messageParagraph, new Paragraph('')];
-    });
-  
-    const doc = new Document({
-      sections: [{
-        children: messageParagraphs,
-      }],
-    });
-  
-    Packer.toBlob(doc).then(blob => {
-      saveAs(blob, `QChatExport_${getFormattedDateTime()}.docx`);
-    });
+    const fileName = `QChatExport_${getFormattedDateTime()}.docx`;
+    convertMarkdownToWordDocument(messages, fileName, AI_NAME);
   };
 
   const handleFAIRAClick = () => {
