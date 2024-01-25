@@ -84,22 +84,16 @@ stages:
           displayName: 'Trim Local Docker Images'
           inputs:
             script: |
-              echo "Trimming local Docker images to keep only the last 10..."
+              @echo off
+              echo Trimming local Docker images to keep only the last 10...
 
-              # Get image IDs sorted by creation date (most recent first)
-              image_ids=$(docker images --format "{{.ID}} {{.CreatedAt}}" | sort -r | awk '{print $1}')
-
-              # Count images
-              count=0
-
-              # Loop through each image ID
-              for id in $image_ids; do
-                count=$((count + 1))
-                if [ $count -gt 10 ]; then
-                  echo "Removing image $id"
-                  docker rmi $id -f
-                fi
-              done
+              FOR /F "tokens=*" %%i IN ('docker images -q') DO (
+                SET /A count+=1
+                IF !count! GTR 10 (
+                  echo Removing image %%i
+                  docker rmi %%i -f
+                )
+              )
 
 
 - stage: Development
