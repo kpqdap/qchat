@@ -55,7 +55,8 @@ variables:
                 -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"
                 -ACCESS_GROUPS "$(ACCESS_GROUPS)"
                 -ACCESS_GROUPS_REQUIRED "$(ACCESS_GROUPS_REQUIRED)"
-                -QGAIP_APIM_BASE "$(QGAIP_APIM_BASE)"'
+                -QGAIP_APIM_BASE "$(QGAIP_APIM_BASE)"
+                -AZURE_SPEECH_URL "$(AZURE_SPEECH_URL)"'
 
  
 stages:
