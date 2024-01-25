@@ -3,12 +3,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { useGlobalConfigContext } from "@/features/global-config/global-client-config-context";
 import { Loader, Send, Bird, File } from "lucide-react";
-import { FC, FormEvent, useRef, useMemo } from "react";
+import { FC, FormEvent, useRef, useMemo, useState } from "react";
 import { AI_NAME } from "@/features/theme/customise";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { Microphone } from "../chat-speech/microphone";
 import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
 import { convertMarkdownToWordDocument } from "@/features/common/file-export";
+import { Card } from "@/components/ui/card";
+import { PromptSuggestion } from "./prompt-suggestion-UI";
+import { getPromptSuggestions } from "../../chat-services/prompt-suggestions";
 
 interface Props {}
 
@@ -17,6 +20,7 @@ const ChatInput: FC<Props> = (props) => {
   const { speechEnabled } = useGlobalConfigContext();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { rows, resetRows, onKeyDown, onKeyUp } = useChatInputDynamicHeight({ buttonRef });
+  const [keysPressed, setKeysPressed] = useState(new Set());
 
   const isDataChat = useMemo(() => chatBody.chatType === "data", [chatBody.chatType]);
   const fileChatVisible = useMemo(() => chatBody.chatType === "data" && chatBody.chatOverFileName, [chatBody.chatType, chatBody.chatOverFileName]);
@@ -42,15 +46,35 @@ const ChatInput: FC<Props> = (props) => {
     }, 0);
   };
 
+  
+  const [showPromptSuggestion, setShowPromptSuggestion] = useState(false);
+
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleSubmit(e);
     resetRows();
     setInput("");
+    setShowPromptSuggestion(false);
   };
 
+  let newInputValue = '';
+  
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(event.target.value);
+    newInputValue = event.target.value;
+
+    if ((keysPressed.has("Control") || keysPressed.has("Meta")) && (keysPressed.has("v") || keysPressed.has("c"))) {
+      setShowPromptSuggestion(false);
+    } else if (newInputValue.length > 20 && newInputValue.length <= 200) {
+      // setTimeout(async () => {
+        // const suggestions = await getPromptSuggestions(newInputValue);
+        // const suggestions = getPromptSuggestions(newInputValue);
+        setShowPromptSuggestion(true);
+      // }, 0);
+    } else {
+      setShowPromptSuggestion(false);
+    }
+
+    setInput(newInputValue);
   };
 
   if (isModalOpen) {
@@ -61,6 +85,15 @@ const ChatInput: FC<Props> = (props) => {
     <form onSubmit={submit} className="absolute bottom-0 w-full flex items-center">
       <div className="container mx-auto max-w-4xl relative py-2 flex gap-2 items-center">
         {fileChatVisible && <ChatFileSlider />}
+
+        <div className="mb-4">
+          <Card>
+          {showPromptSuggestion && <PromptSuggestion 
+          newInputValue={newInputValue}
+          onSelect={(selectedValue) => setInput(`${newInputValue} ${selectedValue}`)} onHide={() => setShowPromptSuggestion(false)} />}
+          </Card>
+        </div>
+
         <Textarea
           rows={rows}
           value={input}
