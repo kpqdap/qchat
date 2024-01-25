@@ -80,6 +80,21 @@ stages:
             command: 'buildAndPush'
             Dockerfile: 'src/dockerfile'
 
+        - task: CmdLine@2
+          displayName: 'Trim Local Docker Images'
+          inputs:
+            script: |
+              @echo off
+              echo Trimming local Docker images to keep only the last 10...
+
+              FOR /F "tokens=*" %%i IN ('docker images -q') DO (
+                SET /A count+=1
+                IF !count! GTR 10 (
+                  echo Removing image %%i
+                  docker rmi %%i -f
+                )
+              )
+
 
 - stage: Development
   displayName: Development Stage
