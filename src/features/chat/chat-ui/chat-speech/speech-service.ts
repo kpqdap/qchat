@@ -14,7 +14,7 @@ export const GetSpeechToken = async () => {
   }
 
   const response = await fetch(
-    `https://${process.env.AZURE_SPEECH_REGION}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
+    `${process.env.AZURE_SPEECH_URL}/sts/v1.0/issueToken`,
     {
       method: "POST",
       headers: {

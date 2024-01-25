@@ -40,6 +40,7 @@ const azureEnvVars = [
   "FEATURE_FILEEXPORT",
   "FEATURE_QUASYMODO",
   "QGAIP_APIM_BASE",
+  "AZURE_SPEECH_URL",
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
