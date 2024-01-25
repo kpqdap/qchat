@@ -43,7 +43,7 @@ const AccordionTrigger = forwardRef<HTMLDivElement, AccordionTriggerProps>(
       >
         <Typography variant="h5">{children}</Typography>
         <ChevronDownIcon
-          className="text-[var(--accent)] ease-[cubic-bezier(0.87,_0,_0.13,_1)] transition-transform duration-300 group-data-[state=open]:rotate-180"
+          className="text-[var(--accent)] ease-custom-ease transition-transform duration-300 group-data-[state=open]:rotate-180"
           aria-hidden
         />
       </Accordion.Trigger>
