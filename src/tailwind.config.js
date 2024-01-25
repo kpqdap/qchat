@@ -87,6 +87,9 @@ module.exports = {
         "semibold": "600",
         "bold": "700",
       },
+      transitionTimingFunction: {
+        'custom-ease': 'cubic-bezier(0.87, 0, 0.13, 1)',
+      },
       }
     },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
