@@ -1,7 +1,8 @@
 FROM node:18-alpine AS base
 
 # Create the directory for Azure to copy certificates into it
-RUN mkdir -p /etc/pki/ca-trust/source/anchors \
+RUN apk --no-cache add ca-certificates \
+    && mkdir -p /etc/pki/ca-trust/source/anchors \
     && update-ca-certificates
 
 # Install dependencies only when needed
