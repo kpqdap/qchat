@@ -11,12 +11,13 @@ export async function POST(req: Request) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       const response = await chatAPIEntry(body);
-      return new Response(JSON.stringify(response), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      return response;
+      // return new Response(JSON.stringify(response), {
+      //   status: 200,
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // });
     } catch (error: any) { 
       if (attempt === maxRetries || !error.status || error.status !== 504) {
         return new Response('Internal Server Error', { status: 500 });
