@@ -11,7 +11,6 @@ import { useChatInputDynamicHeight } from "./use-chat-input-dynamic-height";
 import { convertMarkdownToWordDocument } from "@/features/common/file-export";
 import { Card } from "@/components/ui/card";
 import { PromptSuggestion } from "./prompt-suggestion-UI";
-import { getPromptSuggestions } from "../../chat-services/prompt-suggestions";
 
 interface Props {}
 
@@ -48,6 +47,7 @@ const ChatInput: FC<Props> = (props) => {
 
   
   const [showPromptSuggestion, setShowPromptSuggestion] = useState(false);
+  const previousInputRef = useRef('');
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,21 +60,23 @@ const ChatInput: FC<Props> = (props) => {
   let newInputValue = '';
   
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    newInputValue = event.target.value;
+    const inputValue = event.target.value;
 
     if ((keysPressed.has("Control") || keysPressed.has("Meta")) && (keysPressed.has("v") || keysPressed.has("c"))) {
       setShowPromptSuggestion(false);
-    } else if (newInputValue.length > 20 && newInputValue.length <= 200) {
-      // setTimeout(async () => {
-        // const suggestions = await getPromptSuggestions(newInputValue);
-        // const suggestions = getPromptSuggestions(newInputValue);
-        setShowPromptSuggestion(true);
-      // }, 0);
+    } else if (inputValue.length > 20 && inputValue.length <= 200) {
+      setShowPromptSuggestion(true);
     } else {
       setShowPromptSuggestion(false);
     }
 
-    setInput(newInputValue);
+    previousInputRef.current = input;
+    setInput(inputValue);
+  };
+
+  const onSelectSuggestion = (selectedValue: string) => {
+    setInput(`${previousInputRef.current} ${selectedValue}`);
+    setShowPromptSuggestion(false);
   };
 
   if (isModalOpen) {
@@ -88,9 +90,13 @@ const ChatInput: FC<Props> = (props) => {
 
         <div className="mb-4">
           <Card>
-          {showPromptSuggestion && <PromptSuggestion 
-          newInputValue={newInputValue}
-          onSelect={(selectedValue) => setInput(`${newInputValue} ${selectedValue}`)} onHide={() => setShowPromptSuggestion(false)} />}
+            {showPromptSuggestion && (
+              <PromptSuggestion 
+                newInputValue={previousInputRef.current}
+                onSelect={onSelectSuggestion}
+                onHide={() => setShowPromptSuggestion(false)}
+              />
+            )}
           </Card>
         </div>
 
