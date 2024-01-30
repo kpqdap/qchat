@@ -3,13 +3,16 @@
 export const GetSpeechToken = async () => {
   if (
     process.env.AZURE_SPEECH_REGION === undefined ||
-    process.env.AZURE_SPEECH_KEY === undefined
+    process.env.AZURE_SPEECH_KEY === undefined ||
+    process.env.AZURE_SPEECH_STT_URL === undefined
   ) {
     return {
       error: true,
       errorMessage: "Missing Azure Speech credentials",
       token: "",
       region: "",
+      sttUrl: "",
+      apimKey: ""
     };
   }
 
@@ -18,7 +21,7 @@ export const GetSpeechToken = async () => {
     {
       method: "POST",
       headers: {
-        "Ocp-Apim-Subscription-Key": process.env.AZURE_SPEECH_KEY!,
+        "api-key": process.env.AZURE_SPEECH_KEY!,
       },
       cache: "no-store",
     }
@@ -29,5 +32,7 @@ export const GetSpeechToken = async () => {
     errorMessage: response.statusText,
     token: await response.text(),
     region: process.env.AZURE_SPEECH_REGION,
+    sttUrl: process.env.AZURE_SPEECH_STT_URL,
+    apimKey: process.env.AZURE_SPEECH_KEY
   };
 };

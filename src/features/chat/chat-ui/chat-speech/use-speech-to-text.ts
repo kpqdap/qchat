@@ -30,6 +30,7 @@ export const useSpeechToText = (props: Props): SpeechToTextProps => {
 
   const startRecognition = async () => {
     const token = await GetSpeechToken();
+    const apimUrl = new URL(token.sttUrl);
 
     if (token.error) {
       showError(token.errorMessage);
@@ -38,19 +39,16 @@ export const useSpeechToText = (props: Props): SpeechToTextProps => {
 
     setIsMicrophoneUsed(true);
     setIsMicrophonePressed(true);
-    const speechConfig = SpeechConfig.fromAuthorizationToken(
-      token.token,
-      token.region
+    const speechConfig = SpeechConfig.fromEndpoint(
+      apimUrl,
+      token.apimKey
     );
 
     const audioConfig = AudioConfig.fromDefaultMicrophoneInput();
 
     const autoDetectSourceLanguageConfig =
       AutoDetectSourceLanguageConfig.fromLanguages([
-        "en-US",
-        "zh-CN",
-        "it-IT",
-        "pt-BR",
+        "en-US"
       ]);
 
     const recognizer = SpeechRecognizer.FromConfig(
