@@ -4,6 +4,7 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { hashValue } from "./helpers";
 import { JWT } from "next-auth/jwt";
+import { UserSignInHandler } from "./sign-in";
 
 const configureIdentityProvider = () => {
   const providers: Array<Provider> = [];
@@ -25,7 +26,7 @@ const configureIdentityProvider = () => {
           url: process.env.AZURE_AD_AUTHORIZATION_ENDPOINT!,
           params: {
             client_id: process.env.AZURE_AD_CLIENT_ID!,
-            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!, 
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!,
             response_type: "code"
           }
         },
@@ -46,39 +47,39 @@ const configureIdentityProvider = () => {
             id: profile.sub,
             name: profile.name,
             email: profile.email,
-            // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase())
+            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase()),
+            upn: profile.upn,
+            tenantId: profile.employee_idp,
           }
-        }
+        }            
       }),
     );
   }
 
-  // If we're in local dev, add a basic credential provider option as well
-  // (Useful when a dev doesn't have access to create app registration in their tenant)
-  // This currently takes any username and makes a user with it, ignores password
-  // Refer to: https://next-auth.js.org/configuration/providers/credentials
   if (process.env.NODE_ENV === "development") {
     providers.push(
       CredentialsProvider({
         name: "localdev",
         credentials: {
-          username: { label: "Username", type: "text", placeholder: "dev" },
+          username: { label: "Username", type: "string", placeholder: "dev" },
           password: { label: "Password", type: "password" },
-        },    
+        },
         async authorize(credentials, req): Promise<any> {
-          // You can put logic here to validate the credentials and return a user.
-          // We're going to take any username and make a new user with it
-          // Create the id as the hash of the email as per userHashedId (helpers.ts)
           const username = credentials?.username || "dev";
           const email = username + "@localhost";
+          const employee_idp = "localdev";
+          const upn = credentials?.username || "dev";
           const user = {
-              id: hashValue(email),
-              name: username,
-              email: email,
-              isAdmin: false,
-              image: "",
-            };
+            id: hashValue(upn),
+            name: username,
+            email: email,
+            isAdmin: false,
+            image: "",
+            employee_idp,
+            upn,
+          };
           console.log("=== DEV USER LOGGED IN:\n", JSON.stringify(user, null, 2));
+          
           return user;
         }
       })
@@ -88,22 +89,17 @@ const configureIdentityProvider = () => {
   return providers;
 };
 
-/**
- * Takes a token, and returns a new token with updated
- * `accessToken` and `expiresIn`. If an error occurs,
- * returns the old token and an error property
- */
 async function refreshAccessToken(token: JWT) {
   try{
     const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
 
     const formData = new URLSearchParams({
-        client_id: process.env.AZURE_AD_CLIENT_ID!,
-        client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-        grant_type: "refresh_token",
-        refresh_token: token.refreshToken as string
-      })
-      
+      client_id: process.env.AZURE_AD_CLIENT_ID!,
+      client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
+      grant_type: "refresh_token",
+      refresh_token: token.refreshToken as string
+    })
+
     const response = await fetch(tokenUrl, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -125,9 +121,9 @@ async function refreshAccessToken(token: JWT) {
 
     return {
       ...token,
-    }
+    }  
 
-  }
+  } 
   catch(e){
     console.log(e)
     return {
@@ -143,6 +139,8 @@ export const options: NextAuthOptions = {
   callbacks: {
     async signIn({user, account, profile}) {
       if(profile){
+        (user as any).upn = (profile as any).upn as string
+        (user as any).tenantId = (profile as any).employee_idp as string
         if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
           const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
           const userGroupGUIDs = ((profile as any).employee_groups as []) || [];
@@ -151,12 +149,32 @@ export const options: NextAuthOptions = {
             return false
           }
         }
+      const userRecord = {
+        id: hashValue(user.id),
+        email: user.email,
+        name: user.name,
+        upn: (profile as any).upn as string,
+        tenantId: (profile as any).employee_idp as string,
+        last_login: new Date().toISOString(),
+      };
+        try {
+          await UserSignInHandler.handleSignIn(userRecord);
+          return true; // Sign-in successful
+        } catch (error) {
+          console.error("Error in signIn callback:", error);
+          return false; // Sign-in failed
+        }
       }
       return true;
     },
     async jwt({token, user, account, profile, session}) {
+      if (user) {
+        token.isAdmin = user.isAdmin;
+        token.tenantId = user.tenantId;
+        token.upn = user.upn;
+      }
       if (user?.isAdmin) {
-       token.isAdmin = user.isAdmin
+        token.isAdmin = user.isAdmin;
       }
       if(account){
         token.accessToken = account.access_token
@@ -180,12 +198,14 @@ export const options: NextAuthOptions = {
     },
     async session({session, token, user }) {
       session.user.isAdmin = token.isAdmin as string
+      session.user.tenantId = token.tenantId as string
+      session.user.upn = token.upn as string
       return session
     }
   },
   session: {
     strategy: "jwt",
-    maxAge: 5*60*60, //set session expiry to 5 hours
+    maxAge: 8*60*60, //set session expiry to 5 hours
   },
 };
 

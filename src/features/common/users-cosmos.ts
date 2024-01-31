@@ -1,7 +1,7 @@
-import { CosmosClient } from "@azure/cosmos";
+import { CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
 
-const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "chat";
-const USER_PREFS_CONTAINER_NAME = process.env.AZURE_COSMOSDB_USER_PREFS_CONTAINER_NAME || "userPreferences";
+const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev";
+const USER_PREFS_CONTAINER_NAME = process.env.AZURE_COSMOSDB_USER_CONTAINER_NAME || "userprefs";
 
 export const initUserPrefsContainer = async () => {
   const endpoint = process.env.AZURE_COSMOSDB_URI;
@@ -17,7 +17,9 @@ export const initUserPrefsContainer = async () => {
     await databaseResponse.database.containers.createIfNotExists({
       id: USER_PREFS_CONTAINER_NAME,
       partitionKey: {
-        paths: ["/userId"],
+        paths: ["/tenantId", "/userId"],
+        kind: PartitionKeyKind.MultiHash,
+        version: PartitionKeyDefinitionVersion.V2,
       },
     });
 

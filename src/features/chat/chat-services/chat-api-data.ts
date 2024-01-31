@@ -1,4 +1,4 @@
-import { userHashedId } from "@/features/auth/helpers";
+import { getTenantId, userHashedId } from "@/features/auth/helpers";
 import { OpenAIInstance } from "@/features/common/openai";
 import { AI_NAME } from "@/features/theme/customise";
 import { OpenAIStream, StreamingTextResponse } from "ai";
@@ -36,10 +36,12 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
   const openAI = OpenAIInstance();
 
   const userId = await userHashedId();
+  const tenantId = await getTenantId();
 
   const chatHistory = new CosmosDBChatMessageHistory({
     sessionId: chatThread.id,
     userId: userId,
+    tenantId: tenantId,
   });
 
   const history = await chatHistory.getMessages();

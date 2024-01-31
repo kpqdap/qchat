@@ -9,7 +9,8 @@ export interface ChatMessageModel {
   createdAt: Date;
   isDeleted: boolean;
   threadId: string;
-  userId: string;
+  userId: string | undefined | void;
+  tenantId: string | undefined | void;
   content: string;
   role: ChatRole;
   context: string;
@@ -34,6 +35,7 @@ export interface ChatThreadModel {
   chatCategory: string;
   createdAt: Date;
   userId: string;
+  tenantId: string;
   useName: string;
   isDeleted: boolean;
   chatType: ChatType;
@@ -44,16 +46,21 @@ export interface ChatThreadModel {
 }
 
 export interface PromptGPTBody {
-  id: string; // thread id
+  id: string;
   chatType: ChatType;
   conversationStyle: ConversationStyle;
   conversationSensitivity: ConversationSensitivity;
   chatOverFileName: string;
+  tenantId: string;
+  userId: string;
 }
 
 export interface PromptGPTProps extends PromptGPTBody {
   messages: Message[];
   promptButton : string;
+  userId: string;
+  tenantId: string;
+
 }
 
 export interface ChatDocumentModel {
@@ -61,6 +68,7 @@ export interface ChatDocumentModel {
   name: string;
   chatThreadId: string;
   userId: string;
+  tenantId: string;
   isDeleted: boolean;
   createdAt: Date;
   type: "CHAT_DOCUMENT";

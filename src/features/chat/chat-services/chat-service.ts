@@ -5,27 +5,16 @@ import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { CosmosDBContainer } from "../../common/cosmos";
 import { ChatMessageModel, MESSAGE_ATTRIBUTE, ChatSentiment } from "./models";
-import { userHashedId } from "@/features/auth/helpers";
 
 export const FindAllChats = async (chatThreadID: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
 
   const querySpec: SqlQuerySpec = {
-    query:
-      "SELECT * FROM root r WHERE r.type=@type AND r.threadId = @threadId AND r.isDeleted=@isDeleted",
+    query: "SELECT * FROM root r WHERE r.type=@type AND r.threadId = @threadId AND r.isDeleted=@isDeleted",
     parameters: [
-      {
-        name: "@type",
-        value: MESSAGE_ATTRIBUTE,
-      },
-      {
-        name: "@threadId",
-        value: chatThreadID,
-      },
-      {
-        name: "@isDeleted",
-        value: false,
-      },
+      { name: "@type", value: MESSAGE_ATTRIBUTE },
+      { name: "@threadId", value: chatThreadID },
+      { name: "@isDeleted", value: false },
     ],
   };
 
@@ -40,24 +29,13 @@ export const FindChatMessageByID = async (id: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
 
   const querySpec: SqlQuerySpec = {
-    query:
-      "SELECT * FROM root r WHERE r.type=@type AND r.id=@id AND r.isDeleted=@isDeleted",
+    query: "SELECT * FROM root r WHERE r.type=@type AND r.id=@id AND r.isDeleted=@isDeleted",
     parameters: [
-      {
-        name: "@type",
-        value: MESSAGE_ATTRIBUTE,
-      },
-      {
-        name: "@id",
-        value: id,
-      },
-      {
-        name: "@isDeleted",
-        value: false,
-      },
+      { name: "@type", value: MESSAGE_ATTRIBUTE },
+      { name: "@id", value: id },
+      { name: "@isDeleted", value: false },
     ],
   };
-
 
   const { resources } = await container.items
     .query<ChatMessageModel>(querySpec)
@@ -70,24 +48,19 @@ export const CreateUserFeedbackChatId = async (
   chatMessageId: string,
   feedback: string,
   sentiment: 'unspecified' | 'positive' | 'negative',
-  reason: string,
-  ) => {
-
+  reason: string
+) => {
   try {
     const container = await CosmosDBContainer.getInstance().getContainer();
     const chatMessageModel = await FindChatMessageByID(chatMessageId);
 
     if (chatMessageModel.length !== 0) {
-    const message = chatMessageModel[0];
-    message.feedback = feedback;
-    message.sentiment = sentiment as ChatSentiment;
-    message.reason = reason;
+      const message = chatMessageModel[0];
+      message.feedback = feedback;
+      message.sentiment = sentiment as ChatSentiment;
+      message.reason = reason;
 
-    const itemToUpdate = {
-      ...message,
-
-    };
-
+      const itemToUpdate = { ...message };
       await container.items.upsert(itemToUpdate);
       return itemToUpdate;
     }
@@ -96,45 +69,51 @@ export const CreateUserFeedbackChatId = async (
   }
 };
 
-
-export const UpsertChat = async (chatModel: ChatMessageModel) => {
+export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, tenantId: string) => {
   const modelToSave: ChatMessageModel = {
     ...chatModel,
     id: uniqueId(),
     createdAt: new Date(),
     type: MESSAGE_ATTRIBUTE,
     isDeleted: false,
+    userId: userId,
+    tenantId: tenantId,
   };
-
+  
   const container = await CosmosDBContainer.getInstance().getContainer();
-  await container.items.upsert(modelToSave);
+  if (container) {
+    await container.items.upsert(modelToSave);
+  }
 };
 
 export const insertPromptAndResponse = async (
   threadID: string,
   userQuestion: string,
-  assistantResponse: string
+  assistantResponse: string,
+  userId: string, // Added parameter
+  tenantId: string // Added parameter
 ) => {
   await UpsertChat({
-    ...newChatModel(),
+    ...newChatModel(userId, tenantId),
     content: userQuestion,
     threadId: threadID,
     role: "user",
-  });
+  }, userId, tenantId);
   await UpsertChat({
-    ...newChatModel(),
+    ...newChatModel(userId, tenantId),
     content: assistantResponse,
     threadId: threadID,
     role: "assistant",
-  });
+  }, userId, tenantId);
 };
 
-export const newChatModel = (): ChatMessageModel => {
+export const newChatModel = (userId: string, tenantId: string): ChatMessageModel => { // Added parameters
   return {
     content: "",
     threadId: "",
     role: "user",
-    userId: "",
+    tenantId: tenantId,
+    userId: userId,
     id: uniqueId(),
     createdAt: new Date(),
     type: MESSAGE_ATTRIBUTE,
@@ -149,3 +128,7 @@ export const newChatModel = (): ChatMessageModel => {
     reason: "",
   };
 };
+
+function gethashedId(userId: string): string | void | PromiseLike<string | void | undefined> | undefined {
+  throw new Error("Function not implemented.");
+}
