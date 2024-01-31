@@ -35,6 +35,7 @@ export interface ChatThreadModel {
   createdAt: Date;
   userId: string;
   useName: string;
+  chatThreadId: string;
   isDeleted: boolean;
   chatType: ChatType;
   conversationSensitivity: ConversationSensitivity;
