@@ -2,7 +2,7 @@
 
 import "server-only";
 import { OpenAIInstance } from "@/features/common/openai";
-import { userHashedId, userSession } from "@/features/auth/helpers";
+import { getTenantId, userHashedId, userSession } from "@/features/auth/helpers";
 import { FindAllChats } from "@/features/chat/chat-services/chat-service";
 import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
@@ -11,18 +11,17 @@ import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, Con
 
 export const FindAllChatThreadForCurrentUser = async () => {
   const container = await CosmosDBContainer.getInstance().getContainer();
+  const tenantId = await getTenantId();
+  const userId = await userHashedId();
+  const partitionKey = [tenantId, userId];
 
   const querySpec: SqlQuerySpec = {
     query:
-      "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.isDeleted=@isDeleted ORDER BY r.createdAt DESC",
+      "SELECT * FROM root r WHERE r.type=@type AND r.isDeleted=@isDeleted ORDER BY r.createdAt DESC",
     parameters: [
       {
         name: "@type",
         value: CHAT_THREAD_ATTRIBUTE,
-      },
-      {
-        name: "@userId",
-        value: await userHashedId(),
       },
       {
         name: "@isDeleted",
@@ -33,30 +32,30 @@ export const FindAllChatThreadForCurrentUser = async () => {
 
   const { resources } = await container.items
     .query<ChatThreadModel>(querySpec, {
-      partitionKey: await userHashedId(),
+      partitionKey,
     })
     .fetchAll();
+
   return resources;
 };
 
 export const FindChatThreadByID = async (id: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
+  const tenantId = await getTenantId();
+  const userId = await userHashedId();
+  const partitionKey = [tenantId, userId];
 
   const querySpec: SqlQuerySpec = {
     query:
-      "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.id=@id AND r.isDeleted=@isDeleted",
+      "SELECT * FROM root r WHERE r.id=@id AND r.type=@type AND r.isDeleted=@isDeleted",
     parameters: [
-      {
-        name: "@type",
-        value: CHAT_THREAD_ATTRIBUTE,
-      },
-      {
-        name: "@userId",
-        value: await userHashedId(),
-      },
       {
         name: "@id",
         value: id,
+      },
+      {
+        name: "@type",
+        value: CHAT_THREAD_ATTRIBUTE,
       },
       {
         name: "@isDeleted",
@@ -66,7 +65,9 @@ export const FindChatThreadByID = async (id: string) => {
   };
 
   const { resources } = await container.items
-    .query<ChatThreadModel>(querySpec)
+    .query<ChatThreadModel>(querySpec, {
+      partitionKey,
+    })
     .fetchAll();
 
   return resources;
@@ -238,6 +239,7 @@ export const CreateChatThread = async () => {
     userId: await userHashedId(),
     id: id,
     chatThreadId: id,
+    tenantId: await getTenantId(),
     createdAt: new Date(),
     isDeleted: false,
     chatType: "simple",
