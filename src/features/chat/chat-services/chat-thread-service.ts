@@ -229,13 +229,15 @@ export const updateChatThreadTitle = async (
 };
 
 export const CreateChatThread = async () => {
+  const id = uniqueId();
   const modelToSave: ChatThreadModel = {
     name: "New Chat",
     previousChatName : "",
     chatCategory: "Uncategorised",
     useName: (await userSession())!.name,
     userId: await userHashedId(),
-    id: uniqueId(),
+    id: id,
+    chatThreadId: id,
     createdAt: new Date(),
     isDeleted: false,
     chatType: "simple",
