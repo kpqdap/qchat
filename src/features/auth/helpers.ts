@@ -14,16 +14,29 @@ export const userSession = async (): Promise<UserModel | null> => {
 export const userHashedId = async (): Promise<string> => {
   const user = await userSession();
   if (user) {
-    return hashValue(user.email);
+    return hashValue(user.upn);
   }
 
   throw new Error("User not found");
+};
+
+export const getTenantId = async (): Promise<string> => {
+  const user = await userSession();
+  if (user) {
+    console.log("Tenant ID:", user);
+    return user.tenantId;
+  }
+
+  throw new Error("Tenant not found");
 };
 
 export type UserModel = {
   name: string;
   image: string;
   email: string;
+  upn: string;
+  tenantId: string;
+  isAdmin: string;
 };
 
 export const hashValue = (value: string): string => {

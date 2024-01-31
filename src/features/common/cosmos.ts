@@ -1,6 +1,6 @@
-import { Container, CosmosClient } from "@azure/cosmos";
+import { Container, CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
 
-const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "chat";
+const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev";
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_CONTAINER_NAME || "history";
 
 export const initDBContainer = async () => {
@@ -17,7 +17,9 @@ export const initDBContainer = async () => {
     await databaseResponse.database.containers.createIfNotExists({
       id: CONTAINER_NAME,
       partitionKey: {
-        paths: ["/userId"],
+        paths: ["/tenantId", "/userId"],
+        kind: PartitionKeyKind.MultiHash,
+        version: PartitionKeyDefinitionVersion.V2,
       },
     });
 
@@ -44,7 +46,9 @@ export class CosmosDBContainer {
             .createIfNotExists({
               id: CONTAINER_NAME,
               partitionKey: {
-                paths: ["/userId"],
+                paths: ["/tenantId", "/userId"],
+                kind: PartitionKeyKind.MultiHash,
+                version: PartitionKeyDefinitionVersion.V2,
               },
             })
             .then((containerResponse) => {
