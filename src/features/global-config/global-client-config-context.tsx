@@ -1,32 +1,21 @@
 "use client";
 import { createContext, useContext } from "react";
 
-interface GlobalConfigProps {
-  speechEnabled: boolean;
-}
-
-const GlobalConfigContext = createContext<GlobalConfigProps | null>(null);
-
 interface IConfig {
-  speechEnabled?: string;
 }
+
+const GlobalConfigContext = createContext<IConfig | null>(null);
+
 
 export const GlobalConfigProvider = ({
-  config,
   children,
 }: {
-  config: IConfig;
   children: React.ReactNode;
 }) => {
-  const speechEnabled = config.speechEnabled
-    ? config.speechEnabled === "true"
-    : false;
 
   return (
     <GlobalConfigContext.Provider
-      value={{
-        speechEnabled,
-      }}
+      value={{}}
     >
       {children}
     </GlobalConfigContext.Provider>

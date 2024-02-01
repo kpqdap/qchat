@@ -1,6 +1,7 @@
 import { Document, Paragraph, Packer, TextRun, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
 import { marked } from 'marked';
+import { toast } from '@/components/ui/use-toast';
 
 interface MessageType {
   role: string;
@@ -131,16 +132,15 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
   
 
 
-export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string) => {
-
-        const renderer = new CustomRenderer();
+  export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string) => {
+    const renderer = new CustomRenderer();
     marked.use({ renderer });
 
     const messageParagraphPromises = messages.map(async message => {
         const author = message.role === 'system' || message.role === 'assistant' ? aiName : "You";
         const authorParagraph = new Paragraph({
-        text: `${author}:`,
-        heading: HeadingLevel.HEADING_2,
+            text: `${author}:`,
+            heading: HeadingLevel.HEADING_2,
         });
 
         const content = await marked.parse(message.content);
@@ -157,6 +157,18 @@ export const convertMarkdownToWordDocument = async (messages: MessageType[], fil
 
     Packer.toBlob(doc).then(blob => {
         saveAs(blob, fileName);
+        // Display a toast notification for successful export
+        toast({
+            title: "Success",
+            description: "Chat exported to Word document",
+            // You can customize other properties as needed
+        });
+    }).catch(err => {
+        // Display a toast notification for any error during export
+        toast({
+            title: "Error",
+            description: "Failed to export chat to Word document",
+            // You can customize other properties as needed
+        });
     });
 };
-

@@ -29,9 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full overflow-auto">
       <body className={cn(notoSans.className, "flex flex-col w-full h-full")}>
-        <GlobalConfigProvider
-          config={{ speechEnabled: process.env.PUBLIC_SPEECH_ENABLED }}
-        >
+        <GlobalConfigProvider>
           <Providers>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <header className="header flex flex-col w-full">
