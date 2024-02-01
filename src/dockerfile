@@ -59,6 +59,7 @@ USER nextjs
 
 # ENV PORT 3000
 # ENV HOSTNAME localhost
+ENV HOSTNAME 0.0.0.0
 
 # set environment variables here to run locally
 # ENV OPENAI_API_KEY 
