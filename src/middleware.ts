@@ -35,4 +35,4 @@ export async function middleware(request: NextRequest) {
 }
 
 // note that middleware is not applied to api/auth as this is required to logon (i.e. requires anon access)
-export const config = { matcher: ["/chat/:path*", "/reporting/:path*", "/api/chat:path*"] };
+export const config = { matcher: ["/chat/:path*", "/reporting/:path*", "/api/chat/:path*"] };
