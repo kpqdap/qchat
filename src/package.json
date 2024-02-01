@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "private": true,
   "scripts": {
-    "dev": "node --trace-deprecation node_modules/next/dist/bin/next",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
