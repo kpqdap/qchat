@@ -13,6 +13,7 @@
     "@azure/cosmos": "^4.0.0",
     "@azure/identity": "^3.4.1",
     "@azure/msal-node": "^2.6.1",
+    "@azure/openai": "^1.0.0-beta.11",
     "@eslint/eslintrc": "^3.0.0",
     "@markdoc/markdoc": "^0.4.0",
     "@microsoft/applicationinsights-react-js": "^17.0.3",
