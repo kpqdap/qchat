@@ -95,8 +95,10 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
       },
     });
 
-    return new StreamingTextResponse(stream);
-  } catch (e: unknown) {
+    return new StreamingTextResponse(stream, {
+      headers: {"Content-Type": "text/event-stream"},
+    });
+    } catch (e: unknown) {
     if (e instanceof Error) {
       return new Response(e.message, {
         status: 500,

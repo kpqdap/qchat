@@ -125,7 +125,7 @@ export const indexDocuments = async (
 };
 
 export const deleteDocuments = async (chatThreadId: string): Promise<void> => {
-  // find all documents for chat thread
+// find all documents for chat thread
   const documentsInChat = await simpleSearch({
     filter: `chatThreadId eq '${chatThreadId}'`,
   });
@@ -133,9 +133,9 @@ export const deleteDocuments = async (chatThreadId: string): Promise<void> => {
   const documentsToDelete: DocumentDeleteModel[] = [];
   documentsInChat.forEach(async (document: { id: string }) => {
     const doc: DocumentDeleteModel = {
-      "@search.action": "delete",
-      id: document.id,
-    };
+    "@search.action": "delete",
+    id: document.id,
+  };
     documentsToDelete.push(doc);
   });
 
@@ -143,9 +143,9 @@ export const deleteDocuments = async (chatThreadId: string): Promise<void> => {
   await fetcher(
     `${baseIndexUrl()}/docs/index?api-version=${process.env.AZURE_SEARCH_API_VERSION}`,
     {
-      method: "POST",
-      body: JSON.stringify({ value: documentsToDelete }),
-    }
+    method: "POST",
+    body: JSON.stringify({ value: documentsToDelete }),
+  }
   );
 };
 
@@ -154,17 +154,17 @@ export const embedDocuments = async (
 ) => {
   const openai = OpenAIEmbeddingInstance();
 
-  try {
-    const contentsToEmbed = documents.map((d) => d.pageContent);
-    const embeddings = await openai.embeddings.create({
-      input: contentsToEmbed,
-      model: process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME,
-    });
+try {
+  const contentsToEmbed = documents.map((d) => d.pageContent);
+  const embeddings = await openai.embeddings.create({
+    input: contentsToEmbed,
+    model: process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME,
+  });
 
-    embeddings.data.forEach((embedding, index) => {
-      documents[index].embedding = embedding.embedding;
-    });
-  } catch (e) {
+  embeddings.data.forEach((embedding, index) => {
+    documents[index].embedding = embedding.embedding;
+  });
+} catch (e) {
     console.log(e);
     const error = e as any;
     throw new Error(`${e} with code ${error.status}`);
@@ -190,84 +190,13 @@ const fetcher = async (url: string, init?: RequestInit) => {
   });
 
   if (!response.ok) {
-    if (response.status === 400) {
+if (response.status === 400) {
       const err = await response.json();
       throw new Error(err.error.message);
     } else {
-      throw new Error(`Azure Cog Search Error: ${response.statusText}`);
-    }
+    throw new Error(`Azure Cog Search Error: ${response.statusText}`);
+}
   }
 
   return await response.json();
-};
-
-export const ensureIndexIsCreated = async (): Promise<void> => {
-  const url = `${baseIndexUrl()}?api-version=${process.env.AZURE_SEARCH_API_VERSION}`;
-
-  try {
-    await fetcher(url);
-  } catch (e) {
-    await createCogSearchIndex();
-  }
-};
-
-const createCogSearchIndex = async (): Promise<void> => {
-  const url = `${baseUrl()}?api-version=${process.env.AZURE_SEARCH_API_VERSION}`;
-
-  await fetcher(url, {
-    method: "POST",
-    body: JSON.stringify(AZURE_SEARCH_INDEX),
-  });
-};
-
-const AZURE_SEARCH_INDEX = {
-  name: process.env.AZURE_SEARCH_INDEX_NAME,
-  fields: [
-    {
-      name: "id",
-      type: "Edm.String",
-      key: true,
-      filterable: true,
-    },
-    {
-      name: "user",
-      type: "Edm.String",
-      searchable: true,
-      filterable: true,
-    },
-    {
-      name: "chatThreadId",
-      type: "Edm.String",
-      searchable: true,
-      filterable: true,
-    },
-    {
-      name: "pageContent",
-      searchable: true,
-      type: "Edm.String",
-    },
-    {
-      name: "metadata",
-      type: "Edm.String",
-    },
-    {
-      name: "embedding",
-      type: "Collection(Edm.Single)",
-      searchable: true,
-      filterable: false,
-      sortable: false,
-      facetable: false,
-      retrievable: true,
-      dimensions: 1536,
-      vectorSearchConfiguration: "vectorConfig",
-    },
-  ],
-  vectorSearch: {
-    algorithmConfigurations: [
-      {
-        name: "vectorConfig",
-        kind: "hnsw",
-      },
-    ],
-  },
 };

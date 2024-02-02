@@ -5,7 +5,7 @@ import { CosmosDBContainer } from "@/features/common/cosmos";
 import { uniqueId } from "@/features/common/util";
 import { AzureKeyCredential, DocumentAnalysisClient } from "@azure/ai-form-recognizer";
 import { SqlQuerySpec } from "@azure/cosmos";
-import { AzureCogDocumentIndex, ensureIndexIsCreated, indexDocuments } from "./azure-cog-search/azure-cog-vector-store";
+import { AzureCogDocumentIndex, indexDocuments } from "./azure-cog-search/azure-cog-vector-store";
 import { CHAT_DOCUMENT_ATTRIBUTE, ChatDocumentModel, ServerActionResponse } from "./models";
 import { chunkDocumentWithOverlap } from "./text-chunk";
 import { isNotNullOrEmpty } from "./utils";

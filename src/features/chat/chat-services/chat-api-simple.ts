@@ -58,8 +58,10 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
       }
     });
 
-    return new StreamingTextResponse(stream);
-  } catch (e: unknown) {
+    return new StreamingTextResponse(stream, {
+      headers: {"Content-Type": "text/event-stream"},
+    });
+    } catch (e: unknown) {
     const customErrorName = "ChatAPIError";
     console.log(e)
 
