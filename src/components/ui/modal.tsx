@@ -3,6 +3,7 @@ import Typography from "@/components/typography";
 import { FeedbackTextarea } from "./feedback-textarea";
 import FeedbackButtons from './feedback-reasons';
 import { Button } from "./button";
+import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
 
 interface ModalProps {
     chatThreadId: string;
@@ -32,6 +33,7 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
     async function handleSubmit(): Promise<void> {
       props.onSubmit(props.chatThreadId, feedback, reason); 
       setFeedback('');
+      CreateUserFeedbackChatId(props.chatThreadId, feedback, "negative", reason);
       props.onClose(); 
     };
 
