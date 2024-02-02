@@ -39,7 +39,7 @@ export class CosmosDBChatMessageHistory {
       threadId: this.sessionId,
       userId: this.userId,
       context: citations,
-      systemPrompt: process.env.System_Prompt! ,
+      systemPrompt: process.env.SYSTEM_PROMPT ?? "" ,
       feedback: "",
       sentiment: "neutral",
       reason: "",
