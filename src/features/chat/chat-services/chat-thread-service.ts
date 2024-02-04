@@ -240,6 +240,8 @@ export const CreateChatThread = async () => {
     id: id,
     chatThreadId: id,
     tenantId: await getTenantId(),
+    id: uniqueId(),
+    tenantId: await getTenantId(),
     createdAt: new Date(),
     isDeleted: false,
     chatType: "simple",

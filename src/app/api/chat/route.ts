@@ -38,3 +38,6 @@ export async function POST(req: Request) {
    return new Response('Gateway Timeout Error after retries', { status: 504 });
  }
  
+   return new Response('Gateway Timeout Error after retries', { status: 504 });
+ }
+ 
