@@ -1,3 +1,6 @@
+"use server";
+import "server-only";
+
 // Converts Blob Array Buffer to Base64 type
 export async function arrayBufferToBase64(buffer: ArrayBuffer) {
     const binary = new Uint8Array(buffer);
