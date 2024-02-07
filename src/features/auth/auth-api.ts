@@ -77,6 +77,7 @@ const configureIdentityProvider = () => {
             image: "",
             employee_idp,
             upn,
+            tenantId: "localdev"
           };
           console.log("=== DEV USER LOGGED IN:\n", JSON.stringify(user, null, 2));
           
