@@ -3,12 +3,13 @@
 import { getTenantId, userHashedId } from "@/features/auth/helpers";
 import { CosmosDBContainer } from "@/features/common/cosmos";
 import { uniqueId } from "@/features/common/util";
-import { AzureKeyCredential, DocumentAnalysisClient } from "@azure/ai-form-recognizer";
+import { AnalyzeResult, AnalyzedDocument } from "@azure/ai-form-recognizer";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { AzureCogDocumentIndex, indexDocuments } from "./azure-cog-search/azure-cog-vector-store";
 import { CHAT_DOCUMENT_ATTRIBUTE, ChatDocumentModel, ServerActionResponse } from "./models";
 import { chunkDocumentWithOverlap } from "./text-chunk";
 import { isNotNullOrEmpty } from "./utils";
+import { arrayBufferToBase64, customBeginAnalyzeDocument } from "./chat-document-helper";
 
 const MAX_DOCUMENT_SIZE = 20000000;
 
@@ -42,12 +43,18 @@ const LoadFile = async (formData: FormData) => {
       }
 
       if (file.size < MAX_DOCUMENT_SIZE) {
-        const client = initDocumentIntelligence();
+        // const client = initDocumentIntelligence();
 
         const blob = new Blob([file], { type: file.type });
 
-        const poller = await client.beginAnalyzeDocument("prebuilt-read", await blob.arrayBuffer());
-        const { paragraphs } = await poller.pollUntilDone();
+        const base64String = await arrayBufferToBase64(await blob.arrayBuffer());
+
+        const analyzeDocument = await customBeginAnalyzeDocument("prebuilt-read", base64String);
+        
+        // const poller = await client.beginAnalyzeDocument("prebuilt-read", await blob.arrayBuffer());
+        // const { paragraphs } = await poller.pollUntilDone();
+
+        const { paragraphs } = analyzeDocument as AnalyzeResult<AnalyzedDocument>;
 
         const docs: Array<string> = [];
 
@@ -106,14 +113,13 @@ export const IndexDocuments = async (fileName: string, docs: string[], chatThrea
   }
 };
 
-export const initDocumentIntelligence = () => {
-  const client = new DocumentAnalysisClient(
-    process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT,
-    new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY)
-  );
-
-  return client;
-};
+// export const initDocumentIntelligence = () => {
+//   const client = new DocumentAnalysisClient(
+//     process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT,
+//     new AzureKeyCredential(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY)
+//   );
+//   return client;
+// };
 
 export const FindAllChatDocuments = async (chatThreadID: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
