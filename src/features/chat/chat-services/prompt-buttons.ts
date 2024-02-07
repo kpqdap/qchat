@@ -1,9 +1,9 @@
 "use server";
 import "server-only";
-import { GenericChatAPI } from "./Generic-chat-api"; 
+import { GenericChatAPI } from "./generic-chat-api";  
 
 export const PromptButtons = async (): Promise<string[]> => {
-  
+  if (process.env.PROMPT_BUTTON_ENABLED === "enabled") {
     try {
         const promptButtons = await GenericChatAPI({
           messages: [
@@ -42,4 +42,7 @@ export const PromptButtons = async (): Promise<string[]> => {
       console.error(`An error occurred: ${e}`);
       return ['Write a Ministerial Briefing Note', 'Provide a summary of the below text'];
     }
+  } else {
+    return ['Write a Ministerial Briefing Note', 'Provide a summary of the below text'];
+  }
   };

@@ -1,6 +1,6 @@
 "use server";
 import "server-only";
-import { GenericChatAPI } from "./Generic-chat-api"; 
+import { GenericChatAPI } from "./generic-chat-api"; 
 
 
 export const getPromptSuggestions = async (input: string): Promise<string[]> => {

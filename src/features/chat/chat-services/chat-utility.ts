@@ -2,7 +2,7 @@
 import "server-only";
 import { ChatThreadModel } from "./models";
 import { UpsertChatThread } from "./chat-thread-service";
-import { GenericChatAPI } from "./Generic-chat-api";
+import { GenericChatAPI } from "./generic-chat-api"; 
 
 async function generateChatName(chatMessage: string): Promise<string> {
 
