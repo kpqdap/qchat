@@ -4,6 +4,7 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 import { initAndGuardChatSession } from "./chat-thread-service";
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb";
 import { PromptGPTProps } from "./models";
+import { chatCatName } from "./chat-utility";
 
 export const ChatAPISimple = async (props: PromptGPTProps) => {
 
@@ -55,6 +56,7 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
             content: completion,
             role: "assistant",
           });
+          await chatCatName(chatThread, lastHumanMessage.content);
         } catch (e) {
           console.log(e)
         }

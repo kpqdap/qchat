@@ -47,7 +47,7 @@ const configureIdentityProvider = () => {
             id: profile.sub,
             name: profile.name,
             email: profile.email,
-            isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase()),
+            // isAdmin: adminEmails?.includes(profile.email.toLowerCase()) || adminEmails?.includes(profile.preferred_username.toLowerCase()),
             upn: profile.upn,
             tenantId: profile.employee_idp,
           }
