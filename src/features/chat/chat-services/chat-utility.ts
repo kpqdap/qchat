@@ -1,28 +1,26 @@
 'use server'
 import "server-only";
-import { OpenAIInstance } from "@/features/common/openai";
 import { ChatThreadModel } from "./models";
 import { UpsertChatThread } from "./chat-thread-service";
+import { GenericChatAPI } from "./generic-chat-api";
 
 async function generateChatName(chatMessage: string): Promise<string> {
-    const openAI = OpenAIInstance();
 
     try {
-        const name = await openAI.chat.completions.create({
+        const name = await GenericChatAPI({
             messages: [
                 {
                     role: "system",
                     content: `- create a succinct title, limited to five words and 20 characters, for the following chat """ ${chatMessage}""" conversation with a generative AI assistant:
-            - this title should effectively summarise the main topic or theme of the chat.
-            - it will be used in the app's navigation interface, so it should be easily understandable and reflective of the chat's content 
-            to help users quickly grasp what the conversation was about.`
+                    - this title should effectively summarise the main topic or theme of the chat.
+                    - it will be used in the app's navigation interface, so it should be easily understandable and reflective of the chat's content 
+                    to help users quickly grasp what the conversation was about.`
                 },
             ],
-            model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
         });
 
-        if (name.choices && name.choices[0] && name.choices[0].message && name.choices[0].message.content) {
-            return name.choices[0].message.content.replace(/^"+|"+$/g, ''); // Remove proceeding and trailing quotes from the returned message
+        if (name) {
+            return name.replace(/^"+|"+$/g, ''); // Remove proceeding and trailing quotes from the returned message
         } else {
             console.error('Error: Unexpected response structure from OpenAI API.');
             return "";
@@ -37,7 +35,6 @@ async function generateChatName(chatMessage: string): Promise<string> {
 }
 
 async function generateChatCategory(chatMessage: string): Promise<string> {
-    const openAI = OpenAIInstance();
 
     let categories = [
         'Information Processing and Management',
@@ -54,20 +51,19 @@ async function generateChatCategory(chatMessage: string): Promise<string> {
     ];
 
     try {
-        const category = await openAI.chat.completions.create({
+        const category = await await GenericChatAPI({
             messages: [
                 {
                     role: "user",
-                    content: `Categorise this chat session inside double quotes "" ${chatMessage} "" into one of the following 
-            categories: ${categories.join(', ')} inside square brackets based on my query`
+                    content: `Categorise this chat session inside double quotes "" ${chatMessage} "" into only one of the following 
+                    categories: ${categories.join(', ')} inside square brackets based on my query`
                 },
             ],
-            model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
         });
 
 
-        if (category.choices[0].message.content != null) {
-            return category.choices[0].message.content;
+        if (category != null) {
+            return category;
         }
         else {
             console.log(`Uncategorised chat.`);
@@ -99,6 +95,7 @@ export async function chatCatName(chatThread: ChatThreadModel, content: string) 
         if (chatThread.chatCategory === "Uncategorised") {
             chatThread.chatCategory = await generateChatCategory(content);
             chatThread.name = await generateChatName(content);
+            chatThread.previousChatName = await StoreOriginalChatName(chatThread.name)
 
             UpsertChatThread(chatThread);
         }

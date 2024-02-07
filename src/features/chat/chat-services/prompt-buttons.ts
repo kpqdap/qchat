@@ -1,12 +1,11 @@
 "use server";
 import "server-only";
-import { OpenAIInstance } from "@/features/common/openai";
+import { GenericChatAPI } from "./generic-chat-api"; 
 
 export const PromptButtons = async (): Promise<string[]> => {
-    const openAI = OpenAIInstance();
   
     try {
-        const promptButtons = await openAI.chat.completions.create({
+        const promptButtons = await GenericChatAPI({
           messages: [
             {
               role: "system",
@@ -19,10 +18,9 @@ export const PromptButtons = async (): Promise<string[]> => {
               - provide response as an array only, must be in format: ["Prompt1", "Prompt2"]`
             },
           ],
-          model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
         });
   
-        const prompt = promptButtons.choices[0].message.content;
+        const prompt = promptButtons;
         const prompts = JSON.parse(prompt as string) as string[];
   
       if (prompts.some(prompt => prompt === null)) {

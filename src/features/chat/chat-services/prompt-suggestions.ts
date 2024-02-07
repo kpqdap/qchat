@@ -1,13 +1,11 @@
 "use server";
 import "server-only";
-import { OpenAIInstance } from "@/features/common/openai";
+import { GenericChatAPI } from "./generic-chat-api"; 
 
-
-const openAI = OpenAIInstance();
 
 export const getPromptSuggestions = async (input: string): Promise<string[]> => {
     try {
-      const promptSuggestion = await openAI.chat.completions.create({
+      const promptSuggestion = await GenericChatAPI({
         messages: [
           {
             role: 'system',
@@ -15,15 +13,14 @@ export const getPromptSuggestions = async (input: string): Promise<string[]> => 
                 - this prompt will complete the user input with the most relevant words.`,
           },
         ],
-        model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
       });
   
-      if (!promptSuggestion || promptSuggestion.choices.length === 0) {
+      if (!promptSuggestion || promptSuggestion.length === 0) {
         console.error('Error: Unexpected prompt suggestion structure from OpenAI API.');
         return [];
       }
   
-      const prompt = promptSuggestion.choices[0].message?.content;
+      const prompt = promptSuggestion;
   
       if (prompt == null) {
         console.error('Error: Prompt is null or undefined.');
