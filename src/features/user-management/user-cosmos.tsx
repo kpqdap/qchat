@@ -4,6 +4,7 @@ import { getTenantId } from "../auth/helpers";
 
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev";
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_USERS_CONTAINER_NAME || "users";
+const defaultHeaders = {'api-key': process.env.AZURE_SEARCH_API_KEY};
 
 export class CosmosDBUserContainer {
   private client: CosmosClient;
@@ -14,6 +15,7 @@ export class CosmosDBUserContainer {
     this.client = new CosmosClient({
       endpoint: process.env.AZURE_COSMOSDB_URI,
       key: process.env.AZURE_COSMOSDB_KEY,
+      defaultHeaders: defaultHeaders
     });
     this.initDatabaseId();
     this.container = this.initDBContainer();

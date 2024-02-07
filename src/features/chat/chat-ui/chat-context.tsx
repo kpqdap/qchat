@@ -64,6 +64,8 @@ export const ChatProvider: FC<Prop> = (props) => {
     conversationStyle: props.chatThread.conversationStyle,
     conversationSensitivity: props.chatThread.conversationSensitivity,
     chatOverFileName: props.chatThread.chatOverFileName,
+    tenantId: props.chatThread.tenantId,
+    userId: props.chatThread.userId
   });
 
   const { textToSpeech } = speechSynthesizer;
