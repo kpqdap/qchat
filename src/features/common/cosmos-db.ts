@@ -3,6 +3,7 @@ import { CosmosClient, Database, Container, PartitionKeyKind } from "@azure/cosm
 
 const endpoint = process.env.AZURE_COSMOSDB_URI;
 const key = process.env.AZURE_COSMOSDB_KEY;
+const defaultHeaders = {'api-key': process.env.AZURE_SEARCH_API_KEY};
 
 interface ExportedContainers {
   database: Database | null;
@@ -14,7 +15,7 @@ export const createDatabaseAndContainersIfNotExists = async (
   tenantId: string
 ): Promise<ExportedContainers> => {
   try {
-    const client = new CosmosClient({ endpoint, key });
+    const client = new CosmosClient({ endpoint, key, defaultHeaders });
     console.log(`Creating or retrieving database for tenant '${tenantId}'...`);
 
     // Create or get the database based on the tenant ID

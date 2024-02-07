@@ -1,6 +1,6 @@
 "use server";
 
-import { userHashedId } from "@/features/auth/helpers";
+import { getTenantId, userHashedId } from "@/features/auth/helpers";
 import { CosmosDBContainer } from "@/features/common/cosmos";
 import { uniqueId } from "@/features/common/util";
 import { AzureKeyCredential, DocumentAnalysisClient } from "@azure/ai-form-recognizer";
@@ -155,6 +155,7 @@ export const UpsertChatDocument = async (
     createdAt: new Date(),
     type: CHAT_DOCUMENT_ATTRIBUTE,
     isDeleted: false,
+    tenantId: await getTenantId(),
     name: fileName,
   };
 

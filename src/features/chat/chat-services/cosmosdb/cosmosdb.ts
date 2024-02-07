@@ -55,7 +55,7 @@ export class CosmosDBChatMessageHistory {
       sentiment: "neutral",
       reason: "",
     };
-    console.log("Upserting item to Cosmos DB:", modelToSave);
+    // console.log("Upserting item to Cosmos DB:", modelToSave);
 
     await UpsertChat(modelToSave);
   }
