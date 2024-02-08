@@ -42,6 +42,7 @@ const azureEnvVars = [
   "QGAIP_APIM_BASE",
   "AZURE_SPEECH_URL",
   "AZURE_SPEECH_STT_URL",
+  "PROMPT_BUTTON_ENABLED",
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
