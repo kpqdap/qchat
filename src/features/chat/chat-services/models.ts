@@ -80,6 +80,10 @@ export interface ServerActionResponse<T> {
 }
 
 export interface ChatUtilities {
+  id: string;
+  chatThreadId: string;
+  userId: string;
+  tenantId: string;
   promptButton : string;
   // promptSuggestion : string;
 }

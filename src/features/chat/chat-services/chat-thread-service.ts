@@ -117,6 +117,10 @@ export const UpsertChatThread = async (chatThread: ChatThreadModel) => {
 export const UpsertPromptButton = async (prompt: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const updatedChatPrompts = await container.items.upsert<ChatUtilities>({
+    id: uniqueId(),
+    chatThreadId:  uniqueId(),
+    userId: await userHashedId(),
+    tenantId: await getTenantId(),
     promptButton: prompt,
     // promptSuggestion : "",
   });
