@@ -57,7 +57,8 @@ variables:
                 -ACCESS_GROUPS_REQUIRED "$(ACCESS_GROUPS_REQUIRED)"
                 -QGAIP_APIM_BASE "$(QGAIP_APIM_BASE)"
                 -AZURE_SPEECH_URL "$(AZURE_SPEECH_URL)"
-                -AZURE_SPEECH_STT_URL "$(AZURE_SPEECH_STT_URL)"'
+                -AZURE_SPEECH_STT_URL "$(AZURE_SPEECH_STT_URL)"
+                -PROMPT_BUTTON_ENABLED "$(PROMPT_BUTTON_ENABLED)"'
 
  
 stages:
