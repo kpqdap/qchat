@@ -7,6 +7,7 @@ import { ChatTypeSelector } from "./chat-type-selector";
 import { PromptButton } from "./prompt-buttons-UI";
 import { Card } from "@/components/ui/card";
 import Typography from "@/components/typography";
+import { UpsertPromptButton } from "../../chat-services/chat-thread-service";
 
 interface Prop {}
 
@@ -17,10 +18,10 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
 
   const handlePromptSelected = (prompt: string) => {
     setSelectedPrompt(prompt);
-    setInput(prompt);
 
     try {
       setInput(prompt);
+      UpsertPromptButton(prompt);
     } catch (error) {
       console.error('An error occurred:', error);
     }
