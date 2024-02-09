@@ -1,4 +1,4 @@
-import { Shield, ShieldAlert, ShieldX, Brush, Scale, CircleDot, MessageCircle, FileText } from 'lucide-react';
+import { Shield, ShieldAlert, ShieldX, Brush, Scale, CircleDot, MessageCircle, FileText, AudioLines } from 'lucide-react';
 
 export const getSensitivityIcon = (value: string) => {
   switch (value) {
@@ -32,6 +32,8 @@ export const getTypeIcon = (value: string) => {
       return <MessageCircle size={20} />;
     case "data":
       return <FileText size={20} />;
+    case "audio":
+      return <AudioLines size={20} />
     default:
       return null;
   }

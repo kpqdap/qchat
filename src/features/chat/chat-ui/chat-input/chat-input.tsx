@@ -14,8 +14,8 @@ const ChatInput: FC<Props> = (props) => {
   const { setInput, handleSubmit, isLoading, input, chatBody, isModalOpen, messages } = useChatContext();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const isDataChat = useMemo(() => chatBody.chatType === "data", [chatBody.chatType]);
-  const fileChatVisible = useMemo(() => chatBody.chatType === "data" && chatBody.chatOverFileName, [chatBody.chatType, chatBody.chatOverFileName]);
+  const isDataChat = useMemo(() => (chatBody.chatType === "data" || chatBody.chatType === "audio"), [chatBody.chatType]);
+  const fileChatVisible = useMemo(() => (chatBody.chatType === "data" || chatBody.chatType === "audio") && chatBody.chatOverFileName, [chatBody.chatType, chatBody.chatOverFileName]);
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Brisbane";
   

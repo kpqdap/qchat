@@ -50,7 +50,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
           </p>
           <ChatTypeSelector disable={false} />
         </div>
-        {showFileUpload === "data" ? <ChatFileUI /> : (
+        {showFileUpload === "data" || showFileUpload === "audio" ? <ChatFileUI /> : (
           <div className="flex flex-col gap-2">
             <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
           </div>

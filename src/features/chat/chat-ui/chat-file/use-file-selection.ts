@@ -25,8 +25,10 @@ export const useFileSelection = (props: Props) => {
     try {
       setIsUploadingFile(true);
       setUploadButtonLabel("Uploading document...");
+      const chatType = fileState.showFileUpload;
+      formData.append("chatType", chatType);
       formData.append("id", props.id);
-      const file: File | null = formData.get("file") as unknown as File;
+      const file: File | null = formData.get(chatType) as unknown as File;
       const uploadResponse = await UploadDocument(formData);
 
       if (uploadResponse.success) {
@@ -62,6 +64,7 @@ export const useFileSelection = (props: Props) => {
             description: `${file.name} uploaded successfully.`,
           });
           setUploadButtonLabel("");
+          console.log(chatBody, file.name);
           setChatBody({ ...chatBody, chatOverFileName: file.name });
         } else {
           showError(
