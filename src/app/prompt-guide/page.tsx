@@ -19,7 +19,7 @@ export default async function Home() {
 
 const loadContent = async () => {
   return await fs.readFile(
-    process.cwd() + "/guide.md",
+    process.cwd() + "/public/guide.md",
     "utf8"
   );
 };
