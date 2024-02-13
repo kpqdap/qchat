@@ -19,7 +19,7 @@ export default async function Home() {
 
 const loadContent = async () => {
   return await fs.readFile(
-    process.cwd() + "/app/prompt-guide/guide.md",
+    process.cwd() + "/prompt-guide/guide.md",
     "utf8"
   );
 };
