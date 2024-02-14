@@ -73,9 +73,9 @@ export const FindChatThreadByID = async (id: string) => {
 };
 
 export const RenameChatThreadByID = async (
-  chatThreadID: string, 
-  newTitle: string| Promise<string> | null
-  ) => {
+  chatThreadID: string,
+  newTitle: string | Promise<string> | null
+) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const threads = await FindChatThreadByID(chatThreadID);
 
@@ -114,15 +114,14 @@ export const UpsertChatThread = async (chatThread: ChatThreadModel) => {
   return updatedChatThread;
 };
 
-export const UpsertPromptButton = async (prompt: string) => {
+export const UpsertPromptButton = async (prompt: string, chatThreadId: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const updatedChatPrompts = await container.items.upsert<ChatUtilities>({
-    id: uniqueId(),
-    chatThreadId:  uniqueId(),
+    id: chatThreadId,
+    chatThreadId: chatThreadId,
     userId: await userHashedId(),
     tenantId: await getTenantId(),
     promptButton: prompt,
-    // promptSuggestion : "",
   });
   if (updatedChatPrompts === undefined) {
     throw new Error("Prompt Button not selected");
@@ -147,13 +146,13 @@ export const updateChatThreadTitle = async (
       chatOverFileName: chatOverFileName,
       conversationStyle: conversationStyle,
       conversationSensitivity: conversationSensitivity,
-      name : "New Chat",
-      previousChatName : ""
+      name: "New Chat",
+      previousChatName: ""
     });
 
     return updatedChatThread.resource!;
   }
-  
+
   return chatThread;
 };
 
@@ -161,7 +160,7 @@ export const CreateChatThread = async () => {
   const id = uniqueId();
   const modelToSave: ChatThreadModel = {
     name: "New Chat",
-    previousChatName : "",
+    previousChatName: "",
     chatCategory: "Uncategorised",
     useName: (await userSession())!.name,
     userId: await userHashedId(),

@@ -85,5 +85,4 @@ export interface ChatUtilities {
   userId: string;
   tenantId: string;
   promptButton : string;
-  // promptSuggestion : string;
 }
