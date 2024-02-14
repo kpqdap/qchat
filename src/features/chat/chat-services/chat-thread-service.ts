@@ -1,13 +1,12 @@
 "use server";
 
 import "server-only";
-import { OpenAIInstance } from "@/features/common/openai";
 import { getTenantId, userHashedId, userSession } from "@/features/auth/helpers";
 import { FindAllChats } from "@/features/chat/chat-services/chat-service";
 import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { CosmosDBContainer } from "../../common/cosmos";
-import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, ConversationSensitivity, ConversationStyle, PromptGPTProps } from "./models";
+import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, ChatUtilities, ConversationSensitivity, ConversationStyle, PromptGPTProps } from "./models";
 
 export const FindAllChatThreadForCurrentUser = async () => {
   const container = await CosmosDBContainer.getInstance().getContainer();
@@ -74,9 +73,9 @@ export const FindChatThreadByID = async (id: string) => {
 };
 
 export const RenameChatThreadByID = async (
-  chatThreadID: string, 
-  newTitle: string| Promise<string> | null
-  ) => {
+  chatThreadID: string,
+  newTitle: string | Promise<string> | null
+) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const threads = await FindChatThreadByID(chatThreadID);
 
@@ -115,6 +114,21 @@ export const UpsertChatThread = async (chatThread: ChatThreadModel) => {
   return updatedChatThread;
 };
 
+export const UpsertPromptButton = async (prompt: string, chatThreadId: string) => {
+  const container = await CosmosDBContainer.getInstance().getContainer();
+  const updatedChatPrompts = await container.items.upsert<ChatUtilities>({
+    id: chatThreadId,
+    chatThreadId: chatThreadId,
+    userId: await userHashedId(),
+    tenantId: await getTenantId(),
+    promptButton: prompt,
+  });
+  if (updatedChatPrompts === undefined) {
+    throw new Error("Prompt Button not selected");
+  }
+};
+
+
 export const updateChatThreadTitle = async (
   chatThread: ChatThreadModel,
   messages: ChatMessageModel[],
@@ -132,13 +146,13 @@ export const updateChatThreadTitle = async (
       chatOverFileName: chatOverFileName,
       conversationStyle: conversationStyle,
       conversationSensitivity: conversationSensitivity,
-      name : "New Chat",
-      previousChatName : ""
+      name: "New Chat",
+      previousChatName: ""
     });
 
     return updatedChatThread.resource!;
   }
-  
+
   return chatThread;
 };
 
@@ -146,7 +160,7 @@ export const CreateChatThread = async () => {
   const id = uniqueId();
   const modelToSave: ChatThreadModel = {
     name: "New Chat",
-    previousChatName : "",
+    previousChatName: "",
     chatCategory: "Uncategorised",
     useName: (await userSession())!.name,
     userId: await userHashedId(),

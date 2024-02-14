@@ -7,20 +7,31 @@ import { ChatTypeSelector } from "./chat-type-selector";
 import { PromptButton } from "./prompt-buttons-UI";
 import { Card } from "@/components/ui/card";
 import Typography from "@/components/typography";
+import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service";
 
-interface Prop {}
+interface Prop { }
 
 export const ChatMessageEmptyState: FC<Prop> = (props) => {
-  
+
   const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
 
+  async function callUpsertPromptButton(prompt: string) {
+    const chatThreadModel = await CreateChatThread();
+    if (chatThreadModel) {
+      const id = chatThreadModel.chatThreadId;
+      UpsertPromptButton(prompt, id);
+    } else {
+      console.error('Failed to create chat thread');
+    }
+  }
+
   const handlePromptSelected = (prompt: string) => {
     setSelectedPrompt(prompt);
-    setInput(prompt);
 
     try {
       setInput(prompt);
+      callUpsertPromptButton(prompt);
     } catch (error) {
       console.error('An error occurred:', error);
     }
