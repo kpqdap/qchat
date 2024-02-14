@@ -64,7 +64,6 @@ export const useFileSelection = (props: Props) => {
             description: `${file.name} uploaded successfully.`,
           });
           setUploadButtonLabel("");
-          console.log(chatBody, file.name);
           setChatBody({ ...chatBody, chatOverFileName: file.name });
         } else {
           showError(
