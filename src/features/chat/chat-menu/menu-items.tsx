@@ -3,7 +3,7 @@
 import { MenuItem } from "@/components/menu";
 import { Button } from "@/components/ui/button";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
-import { FileText, MessageCircle, Trash, Pencil} from "lucide-react";
+import { FileText, MessageCircle, Trash, Pencil, AudioLines} from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { FC } from "react";
 import { ChatThreadModel } from "../chat-services/models";
@@ -112,6 +112,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
         >
           {thread.chatType === "data" ? (
             <FileText
+              size={16}
+              className={id === thread.id ? " text-brand" : ""}
+            />
+          ) : thread.chatType === "audio" ?  (
+            <AudioLines
               size={16}
               className={id === thread.id ? " text-brand" : ""}
             />

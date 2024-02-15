@@ -24,7 +24,7 @@ export const useFileSelection = (props: Props) => {
   const onFileChange = async (formData: FormData) => {
     try {
       setIsUploadingFile(true);
-      setUploadButtonLabel("Uploading document...");
+      setUploadButtonLabel("Uploading file...");
       const chatType = fileState.showFileUpload;
       formData.append("chatType", chatType);
       formData.append("id", props.id);
@@ -36,7 +36,7 @@ export const useFileSelection = (props: Props) => {
 
         for (const doc of uploadResponse.response) {
           setUploadButtonLabel(
-            `Indexing document [${index + 1}]/[${
+            `Indexing file [${index + 1}]/[${
               uploadResponse.response.length
             }]`
           );
