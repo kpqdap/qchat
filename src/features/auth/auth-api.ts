@@ -155,6 +155,7 @@ export const options: NextAuthOptions = {
         email: user.email,
         name: user.name,
         upn: (profile as any).upn as string,
+        userId: hashValue(user.upn),
         tenantId: (profile as any).employee_idp as string,
         last_login: new Date().toISOString(),
       };
@@ -164,6 +165,23 @@ export const options: NextAuthOptions = {
         } catch (error) {
           console.error("Error in signIn callback:", error);
           return false; // Sign-in failed
+        }
+      }
+      if(process.env.NODE_ENV === "development"){
+        try {
+          const userRecord = {
+            id: hashValue(user.upn),
+            email: user.email,
+            name: user.name,
+            upn: user.upn,
+            userId: hashValue(user.upn),
+            tenantId: user.tenantId,
+            last_login: new Date().toISOString(),
+          };
+          await UserSignInHandler.handleSignIn(userRecord);
+          return true; // Sign-in successful
+        } catch (e) {
+          console.log('User sign in failed.', e);
         }
       }
       return true;
