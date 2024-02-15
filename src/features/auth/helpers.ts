@@ -23,7 +23,6 @@ export const userHashedId = async (): Promise<string> => {
 export const getTenantId = async (): Promise<string> => {
   const user = await userSession();
   if (user) {
-    // console.log("Tenant ID:", user);
     return user.tenantId;
   }
 

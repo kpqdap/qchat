@@ -11,7 +11,7 @@ export class UserSignInHandler {
             ...user,
             first_login: new Date().toISOString(),
             accepted_terms: false,
-            accepted_terms_date: "today",
+            accepted_terms_date: "",
         });
     } else {
         const currentTime = new Date();

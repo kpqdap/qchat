@@ -35,9 +35,6 @@ export class CosmosDBChatMessageHistory {
   async addMessage(message: ChatCompletionMessage, citations: string = "") {
     const fetchedUserId = await userHashedId();
     const fetchedTenantId = await getTenantId();
-  
-    console.log("Fetched userId:", fetchedUserId);
-    console.log("Fetched tenantId:", fetchedTenantId);
 
     const modelToSave: ChatMessageModel = {
       id: uniqueId(),

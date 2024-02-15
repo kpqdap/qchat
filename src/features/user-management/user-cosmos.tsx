@@ -1,6 +1,6 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
 import { randomBytes, createHash } from 'crypto';
-import { getTenantId } from "../auth/helpers";
+import { userHashedId } from "../auth/helpers";
 
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev";
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_USERS_CONTAINER_NAME || "users";
@@ -53,7 +53,7 @@ export class CosmosDBUserContainer {
   public async createUser(user: UserRecord): Promise<void> {
     const container = await this.getContainer();
     const salt = this.generateSalt();
-    const hashedUserId = this.hashValueWithSalt(user.upn ?? '', salt);
+    const hashedUserId = user.id
     
     await container.items.create({
       ...user,
@@ -97,11 +97,11 @@ export class CosmosDBUserContainer {
   public async updateUser(user: UserRecord): Promise<void> {
     try {
       const container = await this.getContainer();
-      if (!user.userId) {
-        throw new Error("User must have a userId to be updated.");
+      if (!user.id) {
+        throw new Error("User must have an id to be updated.");
       }
 
-      const { resource: existingUser } = await container.item(user.userId, user.userId).read<UserRecord>();
+      const { resource: existingUser } = await container.item(user.id).read<UserRecord>();
       const updatedUser = {
         ...existingUser,
         ...user,
@@ -127,24 +127,3 @@ export type UserRecord = {
   accepted_terms?: boolean | null | undefined;
   accepted_terms_date?: string | null | undefined;
 };
-
-async function userSetup() {
-  const container = new CosmosDBUserContainer();
-
-  const userRecord: UserRecord = {
-    id: "user-123",
-    email: "user@qld.gov.au",
-    upn: "user@qld.gov.au",
-    name: "First Last",
-    userId: "user-123",
-    tenantId: "localdev",
-    last_login: new Date().toISOString(),
-    first_login: new Date().toISOString(),
-    accepted_terms: false,
-    accepted_terms_date: "",
-
-  };
-  await container.createUser(userRecord);
-}
-
-userSetup();
