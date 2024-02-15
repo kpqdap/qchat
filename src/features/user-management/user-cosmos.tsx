@@ -1,6 +1,7 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
 import { randomBytes, createHash } from 'crypto';
 import { getTenantId } from "../auth/helpers";
+import { userHashedId } from "../auth/helpers";
 
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev";
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_USERS_CONTAINER_NAME || "users";
@@ -53,7 +54,7 @@ export class CosmosDBUserContainer {
   public async createUser(user: UserRecord): Promise<void> {
     const container = await this.getContainer();
     const salt = this.generateSalt();
-    const hashedUserId = this.hashValueWithSalt(user.upn ?? '', salt);
+    const hashedUserId = await userHashedId();
     
     await container.items.create({
       ...user,

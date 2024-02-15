@@ -151,7 +151,7 @@ export const options: NextAuthOptions = {
           }
         }
       const userRecord = {
-        id: hashValue(user.id),
+        id: hashValue(user.upn),
         email: user.email,
         name: user.name,
         upn: (profile as any).upn as string,
