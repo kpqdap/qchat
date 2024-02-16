@@ -23,7 +23,7 @@ export interface ChatMessageModel {
 
 export type ConversationStyle = "creative" | "balanced" | "precise";
 export type ConversationSensitivity = "official" | "sensitive" | "protected";
-export type ChatType = "simple" | "data" | "mssql";
+export type ChatType = "simple" | "data" | "mssql" | "audio";
 export type FeedbackType = "harmful / unsafe" | "untrue" | "unhelpful";
 export type ChatRole = "system" | "user" | "assistant" | "function";
 export type ChatSentiment = "neutral" | "positive" | "negative";

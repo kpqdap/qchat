@@ -10,6 +10,7 @@ import { CHAT_DOCUMENT_ATTRIBUTE, ChatDocumentModel, ServerActionResponse } from
 import { chunkDocumentWithOverlap } from "./text-chunk";
 import { isNotNullOrEmpty } from "./utils";
 import { arrayBufferToBase64, customBeginAnalyzeDocument } from "./chat-document-helper";
+import { speechToTextRecognizeOnce } from "./chat-audio-helper";
 
 const MAX_DOCUMENT_SIZE = 20000000;
 
@@ -17,13 +18,22 @@ export const UploadDocument = async (formData: FormData): Promise<ServerActionRe
   try {
     await ensureSearchIsConfigured();
 
-    const { docs } = await LoadFile(formData);
-    const splitDocuments = chunkDocumentWithOverlap(docs.join("\n"));
-
+    const chatType = formData.get("chatType") as string;
+    let fileContent :string[];
+    if(chatType === "audio"){
+      const docs = await speechToTextRecognizeOnce(formData);
+      const splitDocuments = chunkDocumentWithOverlap(docs.join("\n"));
+      fileContent = splitDocuments;
+    }
+    else{
+      const { docs } = await LoadFile(formData, chatType);
+      const splitDocuments = chunkDocumentWithOverlap(docs.join("\n"));
+      fileContent = splitDocuments;
+    }
     return {
       success: true,
       error: "",
-      response: splitDocuments,
+      response: fileContent,
     };
   } catch (e) {
     return {
@@ -34,12 +44,12 @@ export const UploadDocument = async (formData: FormData): Promise<ServerActionRe
   }
 };
 
-const LoadFile = async (formData: FormData) => {
+const LoadFile = async (formData: FormData, chatType: string) => {
   try {
-    const file: File | null = formData.get("file") as unknown as File;
+    const file: File | null = formData.get(chatType) as unknown as File;
     if (file) {
-      if (file.type !== "application/pdf") {
-        throw new Error("Invalid file format. Only PDF files are supported.");
+      if (chatType === "data" && file.type !== "application/pdf") {
+        throw ("Invalid file format. Only PDF files are supported. File type provided: " + file.type);
       }
 
       if (file.size < MAX_DOCUMENT_SIZE) {
@@ -66,10 +76,10 @@ const LoadFile = async (formData: FormData) => {
 
         return { docs };
       } else {
-        throw new Error("File size exceeds the maximum limit.");
+        throw ("File size exceeds the maximum limit.");
       }
     } else {
-      throw new Error("No file provided.");
+      throw ("No file provided.");
     }
   } catch (e) {
     const error = e as any;

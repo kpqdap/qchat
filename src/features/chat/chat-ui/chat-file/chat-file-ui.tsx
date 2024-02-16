@@ -17,7 +17,7 @@ export const ChatFileUI: FC = () => {
     <div className="flex flex-col gap-2">
       <form onSubmit={onSubmit} className="flex gap-2">
         <Input
-          name="file"
+          name={fileState.showFileUpload}
           type="file"
           required
           disabled={isUploadingFile}
