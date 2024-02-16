@@ -95,7 +95,7 @@ async function startRecognition(recognizer: SpeechRecognizer): Promise<string[]>
         const result = await new Promise<string[]>((resolve, reject) => {
             recognizer.recognized = (s, e) => {
                 if (e.result.reason == 3) {
-                    console.log(e.result.text);
+                    // console.log(e.result.text);
                     texts.push(e.result.text)
                 }
             };
