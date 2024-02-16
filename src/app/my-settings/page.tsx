@@ -19,7 +19,7 @@ export default async function Home() {
 
 const loadContent = async () => {
   return await fs.readFile(
-    process.cwd() + "/app/my-settings/holding.md",
+    process.cwd() + "/public/holding.md",
     "utf8"
   );
 };

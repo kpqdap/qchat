@@ -58,10 +58,8 @@ export interface PromptGPTBody {
 
 export interface PromptGPTProps extends PromptGPTBody {
   messages: Message[];
-  promptButton : string;
   userId: string;
   tenantId: string;
-
 }
 
 export interface ChatDocumentModel {
@@ -79,4 +77,12 @@ export interface ServerActionResponse<T> {
   success: boolean;
   error: string;
   response: T;
+}
+
+export interface ChatUtilities {
+  id: string;
+  chatThreadId: string;
+  userId: string;
+  tenantId: string;
+  promptButton : string;
 }
