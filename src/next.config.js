@@ -7,8 +7,21 @@ const nextConfig = {
   output: "standalone",
   experimental: {
     serverActions: {
-      allowedOrigins: [localUrl,fullUrl],
+      allowedOrigins: [localUrl, fullUrl],
     },
+  },
+  async headers() {
+    return [
+      {
+        source: "/favicon.ico",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 
