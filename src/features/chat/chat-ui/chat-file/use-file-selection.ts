@@ -29,6 +29,7 @@ export const useFileSelection = (props: Props) => {
       formData.append("chatType", chatType);
       formData.append("id", props.id);
       const file: File | null = formData.get(chatType) as unknown as File;
+      chatType === "audio" ? setTimeout(() => setUploadButtonLabel("Transcribing..."), 5000) : null;
       const uploadResponse = await UploadDocument(formData);
 
       if (uploadResponse.success) {

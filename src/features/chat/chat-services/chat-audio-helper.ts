@@ -15,7 +15,7 @@ export async function speechToTextRecognizeOnce(formData: FormData) {
         );
         speechConfig.speechRecognitionLanguage = "en-GB";
         speechConfig.authorizationToken = speechToken.token;
-        
+
         /**Convert File to Buffer**/
         const file: File | null = formData.get('audio') as unknown as File;
         const base64String = await arrayBufferToBase64(await file.arrayBuffer());
@@ -27,16 +27,20 @@ export async function speechToTextRecognizeOnce(formData: FormData) {
         // Speech recognizer config
         const recognizer = new SpeechRecognizer(speechConfig, audioConfig);
 
-        const text = await recognizeFromFile(recognizer);        
+        // Final result
+        const text = await startRecognition(recognizer);
 
-        return [text];
+        return text;
     } catch (e) {
         console.log(e);
         return [];
     }
 }
 
-async function recognizeFromFile(recognizer: SpeechRecognizer): Promise<string> {
+/**
+ * Starts speech recognition, and stops after the first utterance is recognized. The task returns the recognition text as result. Note: RecognizeOnceAsync() returns when the first utterance has been recognized, so it is suitable only for single shot recognition like command or query.
+ */
+async function recognizeOnceFromFile(recognizer: SpeechRecognizer): Promise<string> {
     try {
         let recognisedText = "";
 
@@ -80,4 +84,32 @@ async function recognizeFromFile(recognizer: SpeechRecognizer): Promise<string> 
         console.log(e);
         return "";
     }
+}
+
+/**
+ * The event recognised signals that a final recognition result is received.
+ */
+async function startRecognition(recognizer: SpeechRecognizer): Promise<string[]> {
+    try {
+        let texts: string[] = [];
+        const result = await new Promise<string[]>((resolve, reject) => {
+            recognizer.recognized = (s, e) => {
+                if (e.result.reason == 3) {
+                    console.log(e.result.text);
+                    texts.push(e.result.text)
+                }
+            };
+
+            recognizer.canceled = (s, e) => {
+                resolve(texts);
+            };
+
+            recognizer.startContinuousRecognitionAsync();
+        });
+        return texts;
+    } catch (e) {
+        console.log(e);
+        return [];
+    }
+
 }

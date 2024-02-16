@@ -6,6 +6,7 @@ import { similaritySearchVectorWithScore } from "./azure-cog-search/azure-cog-ve
 import { initAndGuardChatSession } from "./chat-thread-service";
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb";
 import { PromptGPTProps } from "./models";
+import { chatCatName } from "./chat-utility";
 
 const SYSTEM_PROMPT = `You are ${AI_NAME} who is a helpful AI Assistant.`;
 
@@ -94,6 +95,8 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
           },
           context
         );
+
+        await chatCatName(chatThread, completion);
       },
     });
 
