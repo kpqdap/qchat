@@ -23,24 +23,23 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
   handleThumbsDownClick
 }) => {
   const { width } = useWindowSize();
-  let iconSize = 10; // Default size
-  let buttonClass = "h-9"; // Default button class for 'SM' size
+  let iconSize = 10;
+  let buttonClass = "h-9";
 
   if (width < 768) {
-    // Apply custom class for smaller screens (simulate 'XS' size)
-    buttonClass = "h-7"; // Example height, adjust as needed
+    buttonClass = "h-7";
   } else if (width >= 768 && width < 1024) {
-    iconSize = 12; // Set icon size for md
+    iconSize = 12;
   } else if (width >= 1024) {
-    iconSize = 16; // Set icon size for lg and above
+    iconSize = 16;
   }
 
   return (
     <div className="container flex items-left w-full">
       <Button
         variant={"ghost"}
-        size={"sm"} // Keep using 'sm' as it's a valid size
-        className={buttonClass} // Apply conditional class
+        size={"sm"}
+        className={buttonClass}
         title="Copy text"
         onClick={handleCopyButton}
       >
@@ -53,8 +52,8 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
 
       <Button
         variant={"ghost"}
-        size={"sm"} // Keep using 'sm' as it's a valid size
-        className={buttonClass} // Apply conditional class
+        size={"sm"}
+        className={buttonClass}
         title="Thumbs up"
         onClick={handleThumbsUpClick}
       >
@@ -67,8 +66,8 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
 
       <Button
         variant={"ghost"}
-        size={"sm"} // Keep using 'sm' as it's a valid size
-        className={buttonClass} // Apply conditional class
+        size={"sm"}
+        className={buttonClass}
         title="Thumbs down"
         onClick={handleThumbsDownClick}
       >

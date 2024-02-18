@@ -3,10 +3,15 @@ import { HomeIcon, UserCog, BellPlus, BookMarked } from 'lucide-react';
 import Typography from "@/components/typography";
 import { ThemeSwitch } from '@/features/theme/theme-switch';
 
+interface IconProps {
+  className: string;
+  'aria-hidden'?: boolean;
+}
+
 interface LinkItem {
-    name: string;
-    href: string;
-    icon?: React.ElementType;
+  name: string;
+  href: string;
+  icon?: React.ElementType;
 }
 
 export const NavBar: React.FC = () => {
@@ -18,21 +23,24 @@ export const NavBar: React.FC = () => {
     ];
 
     return (
-        <nav className="bg-secondary p-4 hidden md:block">
+        <nav aria-label="Main navigation" className="bg-secondary p-4 hidden md:block">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
-                    <ul className="flex space-x-10">
+                    <ol className="flex space-x-10">
                         {links.map((link, index) => (
                             <li key={index} className="prose prose-slate dark:prose-invert">
-                                <a href={link.href} className="flex items-center">
+                                <a href={link.href} className="flex items-center" aria-label={link.name}>
                                     {link.icon && (
-                                        <link.icon className="h-8 w-5 mr-2" aria-hidden="true" />
+                                        React.createElement(link.icon, {
+                                            className: "h-8 w-5 mr-2",
+                                            'aria-hidden': true
+                                        })
                                     )}
-                                    <Typography variant="h5" className="flex items-center">{link.name}</Typography>
+                                    <Typography variant="h3" className="flex items-center">{link.name}</Typography>
                                 </a>
                             </li>
                         ))}
-                    </ul>
+                    </ol>
                     <ThemeSwitch />
                 </div>
             </div>

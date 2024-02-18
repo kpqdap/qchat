@@ -1,47 +1,75 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowUpCircle, Loader2 } from "lucide-react";
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { useChatContext } from "../chat-context";
 import { useFileSelection } from "./use-file-selection";
 
 export const ChatFileUI: FC = () => {
-  const { id, fileState } = useChatContext();
-
-  const { isFileNull, setIsFileNull, uploadButtonLabel, isUploadingFile } =
-    fileState;
-
+  const { id, fileState, chatBody } = useChatContext();
+  const { isFileNull, setIsFileNull, uploadButtonLabel, isUploadingFile } = fileState;
   const { onSubmit } = useFileSelection({ id });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Function to determine accepted file types
+  const getAcceptedFileType = (chatType: string) => {
+    switch (chatType) {
+      case "data":
+        return ".pdf";
+      case "audio":
+        return ".wav";
+      default:
+        return "";
+    }
+  };
+
+  const acceptedFileType = getAcceptedFileType(chatBody.chatType);
 
   return (
     <div className="flex flex-col gap-2">
       <form onSubmit={onSubmit} className="flex gap-2">
+        <label htmlFor="file-upload" className="sr-only">
+          Upload File
+        </label>
         <Input
+          ref={fileInputRef}
+          id="file-upload"
           name={fileState.showFileUpload}
           type="file"
           required
           disabled={isUploadingFile}
-          placeholder="Describe the purpose of the document"
+          accept={acceptedFileType}
+          aria-describedby="file-upload-description"
           onChange={(e) => {
-            setIsFileNull(e.currentTarget.value === null);
+            const files = e.currentTarget.files;
+            if (files) {
+              setIsFileNull(files.length === 0);
+            }
           }}
+          className="file-input-class"
         />
-
         <Button
           type="submit"
-          value="Upload"
           disabled={!(!isFileNull && !isUploadingFile)}
           className="flex items-center gap-1"
+          aria-disabled={isUploadingFile ? true : undefined}
         >
           {isUploadingFile ? (
-            <Loader2 className="animate-spin" size={20} />
+            <>
+              <Loader2 className="animate-spin" aria-hidden="true" size={20} />
+              <span>Uploading...</span>
+            </>
           ) : (
-            <ArrowUpCircle size={20} />
+            <>
+              <ArrowUpCircle aria-hidden="true" size={20} />
+              Upload
+            </>
           )}
-          Upload
         </Button>
       </form>
-      <p className="text-xs text-primary">{uploadButtonLabel}</p>
+      <p id="file-upload-description" className="text-sm text-muted-foreground">
+        {uploadButtonLabel || "Select a file to upload."}
+      </p>
     </div>
   );
 };

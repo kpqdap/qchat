@@ -8,15 +8,22 @@ import { SqlQuerySpec } from "@azure/cosmos";
 import { CosmosDBContainer } from "../../common/cosmos";
 import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, ChatUtilities, ConversationSensitivity, ConversationStyle, PromptGPTProps } from "./models";
 
+function threeMonthsAgo(): string {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 3);
+  return date.toISOString();
+}
+
 export const FindAllChatThreadForCurrentUser = async () => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const tenantId = await getTenantId();
   const userId = await userHashedId();
+
   const partitionKey = [tenantId, userId];
 
   const querySpec: SqlQuerySpec = {
     query:
-      "SELECT * FROM root r WHERE r.type=@type AND r.isDeleted=@isDeleted ORDER BY r.createdAt DESC",
+      "SELECT * FROM root r WHERE r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
     parameters: [
       {
         name: "@type",
@@ -26,67 +33,82 @@ export const FindAllChatThreadForCurrentUser = async () => {
         name: "@isDeleted",
         value: false,
       },
+      {
+        name: "@userId",
+        value: userId,
+      },
+      {
+        name: "@tenantId",
+        value: tenantId,
+      },
+      {
+        name: "@createdAt",
+        value: threeMonthsAgo(),
+      },
     ],
   };
 
-  const { resources } = await container.items
-    .query<ChatThreadModel>(querySpec, {
-      partitionKey,
-    })
-    .fetchAll();
-
-  return resources;
+  try {
+    const { resources } = await container.items
+      .query<ChatThreadModel>(querySpec, {
+        partitionKey,
+      })
+      .fetchAll();
+    return resources;
+  } catch (error) {
+    console.error("Failed to fetch chat threads for current user:", error);
+    throw error;
+  }
 };
 
 export const FindChatThreadByID = async (id: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const tenantId = await getTenantId();
   const userId = await userHashedId();
+
   const partitionKey = [tenantId, userId];
 
   const querySpec: SqlQuerySpec = {
     query:
-      "SELECT * FROM root r WHERE r.id=@id AND r.type=@type AND r.isDeleted=@isDeleted",
+      "SELECT * FROM root r WHERE r.id=@id AND r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt",
     parameters: [
-      {
-        name: "@id",
-        value: id,
-      },
-      {
-        name: "@type",
-        value: CHAT_THREAD_ATTRIBUTE,
-      },
-      {
-        name: "@isDeleted",
-        value: false,
-      },
+      { name: "@id", value: id, },
+      { name: "@type", value: CHAT_THREAD_ATTRIBUTE, },
+      { name: "@isDeleted", value: false, },
+      { name: "@userId", value: userId, },
+      { name: "@tenantId", value: tenantId, },
+      { name: "@createdAt", value: threeMonthsAgo(),  },
     ],
   };
 
-  const { resources } = await container.items
-    .query<ChatThreadModel>(querySpec, {
-      partitionKey,
-    })
-    .fetchAll();
+  try {
+    const { resources } = await container.items
+      .query<ChatThreadModel>(querySpec, {
+        partitionKey,
+      })
+      .fetchAll();
 
-  return resources;
+    return resources;
+  } catch (error) {
+    console.error("Failed to fetch chat thread by ID:", error);
+    throw error;
+  }
 };
+
 
 export const RenameChatThreadByID = async (
   chatThreadID: string,
   newTitle: string | Promise<string> | null
 ) => {
+  const resolvedTitle = await Promise.resolve(newTitle);
   const container = await CosmosDBContainer.getInstance().getContainer();
   const threads = await FindChatThreadByID(chatThreadID);
 
   if (threads.length !== 0) {
-    threads.forEach(async (thread) => {
-      const itemToUpdate = {
-        ...thread,
-        name: newTitle, // Update the name property with the new title.
-      };
+    await Promise.all(threads.map(async (thread) => {
+      const itemToUpdate = { ...thread, name: resolvedTitle };
       await container.items.upsert(itemToUpdate);
-    });
+    }));
   }
 };
 
@@ -184,7 +206,6 @@ export const CreateChatThread = async () => {
 export const initAndGuardChatSession = async (props: PromptGPTProps) => {
   const { messages, id, chatType, conversationStyle, conversationSensitivity, chatOverFileName } = props;
 
-  //last message
   const lastHumanMessage = messages[messages.length - 1];
 
   const currentChatThread = await EnsureChatThreadIsForCurrentUser(id);
@@ -213,7 +234,7 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
 
   const querySpec = {
     query:
-      "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.name=@name AND r.isDeleted=@isDeleted",
+      "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.name=@name AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
     parameters: [
       {
         name: "@type",
@@ -231,6 +252,14 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
         name: "@userId",
         value: await userHashedId(),
       },
+      {
+        name: "@tenantId",
+        value: await getTenantId(),
+      },
+      {
+        name: "@createdAt",
+        value: threeMonthsAgo(),
+      },
     ],
   };
 
@@ -245,4 +274,20 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
   }
 
   return undefined;
+};
+
+
+export const UpdateChatThreadCreatedAt = async (threadId: string) => {
+  const container = await CosmosDBContainer.getInstance().getContainer();
+  const threads = await FindChatThreadByID(threadId);
+
+  if (threads.length !== 0) {
+    const threadToUpdate = threads[0];
+    threadToUpdate.createdAt = new Date();
+
+    await container.items.upsert(threadToUpdate);
+    return threadToUpdate; 
+  } else {
+    throw new Error("Chat thread not found");
+  }
 };

@@ -28,18 +28,11 @@ const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) =
     }
 }
 
-// Function for Document Intelligence Analyze Document
 export async function customBeginAnalyzeDocument(modelId: string, base64String: string) {
     
     const diParam = customDocumentIntelligenceObject(modelId);
-    
-    // Document Intelligence URL
     const analyzeDocumentUrl = diParam.analyzeDocumentUrl;
-
-    // Document Intelligence Headers
     const analyzeDocumentHeaders = diParam.diHeaders;
-
-    // Document Intelligence Body
     const analyzeDocumentBody = {
         'base64Source': base64String
     }
@@ -56,7 +49,7 @@ export async function customBeginAnalyzeDocument(modelId: string, base64String: 
             throw new Error('Failed to analyze document. '+ response.statusText);
         }
 
-        const resultId = response.headers.get('apim-request-id'); // Get Operation Location or APIM request Id from header
+        const resultId = response.headers.get('apim-request-id');
 
         if(resultId != null)
         {
@@ -73,11 +66,7 @@ export async function customBeginAnalyzeDocument(modelId: string, base64String: 
 async function customGetAnalyzeResult(modelId: string, resultId: string) {
 
     const diParam = customDocumentIntelligenceObject(modelId, resultId);
-
-    // Document Intelligence URL
     const analyzeResultUrl = diParam.analyzeResultUrl;
-
-    // Document Intelligence Headers
     const analyzeDocumentHeaders = diParam.diHeaders;
 
     try{

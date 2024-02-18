@@ -14,10 +14,10 @@ export const MiniMenu: React.FC = () => {
     const { theme, setTheme } = useTheme();
 
     const menuItems = [
-        { name: 'Home', href: '/', icon: Home },
-        { name: 'Prompt Guides', href: '/prompt-guide', icon: Bookmark },
-        { name: "What's New", href: '/whats-new', icon: Bell },
-        { name: 'My Settings', href: '/my-settings', icon: UserCog }
+        { name: 'Home', href: '/', icon: Home, ariaLabel: 'Navigate to home page' },
+        { name: 'Prompt Guides', href: '/prompt-guide', icon: Bookmark, ariaLabel: 'Navigate to prompt guides' },
+        { name: "What's New", href: '/whats-new', icon: Bell, ariaLabel: "Navigate to what's new page" },
+        { name: 'My Settings', href: '/my-settings', icon: UserCog, ariaLabel: 'Navigate to my settings' }
     ];
 
     const toggleTheme = () => {
@@ -30,43 +30,60 @@ export const MiniMenu: React.FC = () => {
                 onClick={toggleMenu}
                 className="w-[40px] h-[40px] p-1 text-accent-foreground hover:text-secondary"
                 variant="ghost"
+                aria-expanded={isMenuOpen}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
                 {isMenuOpen ? <X /> : <Menu />}
             </Button>
             {isMenuOpen && (
-                <div className="fixed top-0 right-0 bottom-0 left-0 z-[99999] bg-background">
+                <div className="fixed top-0 right-0 bottom-0 left-0 z-[99999] bg-background" role="dialog" aria-modal="true" aria-labelledby="menu-heading">
                     <div className="absolute top-0 right-0 m-4">
                         <Button
                             onClick={toggleMenu}
                             className="w-[40px] h-[40px] p-1 text-accent-foreground hover:text-secondary"
                             variant="destructive"
+                            aria-label="Close menu"
                         >
                             <X />
                         </Button>
                     </div>
+                    <h2 id="menu-heading" className="sr-only">Menu</h2>
                     <div className="p-4 mt-16">
-                        {menuItems.map((item, index) => (
-                            <Link href={item.href} key={item.href}>
-                                <div className={`cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap ${index === 0 ? 'mt-2' : ''}`}>
-                                    <item.icon className="w-4 h-4 mr-2" />
+                        {menuItems.map((item) => (
+                            <Link href={item.href} key={item.href} passHref>
+                                <div className={`cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap`}
+                                   aria-label={item.ariaLabel}>
+                                    <item.icon className="w-4 h-4 mr-2" aria-hidden="true" />
                                     {item.name}
                                 </div>
                             </Link>
                         ))}
-                        <div onClick={toggleTheme} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
+                        <button
+                            onClick={toggleTheme}
+                            className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap"
+                            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                        >
                             {theme === 'dark' ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
                             {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                        </div>
+                        </button>
                         {session ? (
-                            <div onClick={() => signOut({ callbackUrl: '/' })} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
+                            <button
+                                onClick={() => signOut({ callbackUrl: '/' })}
+                                className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap"
+                                aria-label="Logout"
+                            >
                                 <LogOut className="w-4 h-4 mr-2" />
                                 Logout
-                            </div>
+                            </button>
                         ) : (
-                            <div onClick={() => signIn()} className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap">
+                            <button
+                                onClick={() => signIn()}
+                                className="cursor-pointer px-6 py-2 text-sm bg-background hover:bg-accent hover:text-accent-foreground text-primary flex items-center whitespace-nowrap"
+                                aria-label="Login"
+                            >
                                 <LogIn className="w-4 h-4 mr-2" />
                                 Login
-                            </div>
+                            </button>
                         )}
                     </div>
                 </div>
@@ -74,4 +91,3 @@ export const MiniMenu: React.FC = () => {
         </div>
     );
 };
-

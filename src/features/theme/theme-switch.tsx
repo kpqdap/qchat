@@ -2,28 +2,50 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-
+import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 
 export function ThemeSwitch() {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
+  const [defaultTab, setDefaultTab] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (resolvedTheme) {
+      setDefaultTab(resolvedTheme);
+      setIsLoading(false);
+    }
+  }, [resolvedTheme]);
+
+  const handleTabChange = (value: string) => {
+    setDefaultTab(value);
+    setTheme(value);
+  };
+
+  if (isLoading) {
+    return <span>Loading theme</span>;
+  }
+
   return (
-    <Tabs
-      defaultValue={theme}
-      className="flex flex-row rounded-full overflow-hidden"
-    >
-      <TabsList className="flex flex-row items-center justify-center flex-1"> 
+    <Tabs defaultValue={defaultTab}>
+      <TabsList aria-label="Theme Switch" className="flex flex-row items-center justify-center flex-1">
         <TabsTrigger
           value="dark"
-          onClick={() => setTheme("dark")}
-          className="h-[40px] w-[40px] rounded-full"
+          onClick={() => handleTabChange("dark")}
+          className={`h-[40px] w-[40px] rounded-full focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-blue-500`}
+          role="button"
+          aria-label="Switch to dark mode"
+          tabIndex={0}
         >
           <Moon size={18} />
         </TabsTrigger>
         <TabsTrigger
           value="light"
-          onClick={() => setTheme("light")}
-          className="h-[40px] w-[40px] rounded-full"
+          onClick={() => handleTabChange("light")}
+          className={`h-[40px] w-[40px] rounded-full focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-blue-500`}
+          role="button"
+          aria-label="Switch to light mode"
+          tabIndex={0}
         >
           <Sun size={18} />
         </TabsTrigger>

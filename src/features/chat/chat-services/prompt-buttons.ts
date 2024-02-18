@@ -3,10 +3,10 @@ import "server-only";
 import { GenericChatAPI } from "./generic-chat-api";  
 
 export const PromptButtons = async (): Promise<string[]> => {
-  
+  const apiName = "generatePromptButtons";
   if (process.env.PROMPT_BUTTON_ENABLED === "enabled") {
     try {
-        const promptButtons = await GenericChatAPI({
+        const promptButtons = await GenericChatAPI(apiName, {
           messages: [
             {
               role: "system",

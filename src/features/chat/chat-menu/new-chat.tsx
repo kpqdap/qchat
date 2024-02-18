@@ -17,7 +17,6 @@ export const NewChat = () => {
         router.push("/chat/" + newChatThread.id);
       }
     } catch (e) {
-      console.error("Error starting new chat:", e);
       showError('Failed to start a new chat. Please try again later.');
     }
   };
@@ -27,6 +26,10 @@ export const NewChat = () => {
       className="gap-2 rounded-full w-[40px] h-[40px] p-1 text-primary"
       variant="outline"
       onClick={() => startNewChat()}
+      aria-label="Start a new chat"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && startNewChat()}
     >
       <PlusCircle size={40} strokeWidth={1.2} />
     </Button>

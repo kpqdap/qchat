@@ -5,9 +5,9 @@ import { UpsertChatThread } from "./chat-thread-service";
 import { GenericChatAPI } from "./generic-chat-api";
 
 async function generateChatName(chatMessage: string): Promise<string> {
-
+    const apiName = "generateChatName";
     try {
-        const name = await GenericChatAPI({
+        const name = await GenericChatAPI(apiName, {
             messages: [
                 {
                     role: "system",
@@ -35,7 +35,7 @@ async function generateChatName(chatMessage: string): Promise<string> {
 }
 
 async function generateChatCategory(chatMessage: string): Promise<string> {
-
+    const apiName = "generateChatCategory";
     let categories = [
         'Information Processing and Management',
         'Communication and Interaction',
@@ -51,7 +51,7 @@ async function generateChatCategory(chatMessage: string): Promise<string> {
     ];
 
     try {
-        const category = await await GenericChatAPI({
+        const category = await GenericChatAPI(apiName, {
             messages: [
                 {
                     role: "user",
@@ -86,9 +86,6 @@ export async function StoreOriginalChatName(currentChatName: string) {
     return previousChatName;
 }
 
-/**
- * Generates Chat Category and Chat Thread Title
- */
 export async function chatCatName(chatThread: ChatThreadModel, content: string) {
     try {
 

@@ -5,7 +5,8 @@ import { GenericChatAPI } from "./generic-chat-api";
 
 export const getPromptSuggestions = async (input: string): Promise<string[]> => {
     try {
-      const promptSuggestion = await GenericChatAPI({
+      const apiName = 'getPromptSuggestions';
+      const promptSuggestion = await GenericChatAPI(apiName, {
         messages: [
           {
             role: 'system',

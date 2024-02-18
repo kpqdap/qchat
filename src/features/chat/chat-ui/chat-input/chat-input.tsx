@@ -59,8 +59,11 @@ const ChatInput: FC<Props> = (props) => {
       <div className="container mx-auto max-w-4xl relative py-2 flex gap-2 items-center">
         {fileChatVisible && <ChatFileSlider />}
         <Textarea
+          id="chatMessage"
+          name="chatMessage"
           value={input}
           placeholder="Send a message"
+          aria-label="Send a message"
           className="md:rows-4 rows-2 min-h-fit bg-background shadow-sm resize-none py-4 pr-[80px]"
           onChange={onChange}
           onKeyDown={onKeyDown}
@@ -74,8 +77,10 @@ const ChatInput: FC<Props> = (props) => {
                 variant="ghost"
                 ref={buttonRef}
                 disabled={isLoading}
+                aria-label="Submit your message"
+                aria-busy={isLoading ? "true" : "false"}
               >
-                {isLoading ? <Loader className="animate-spin" size={16} /> : <Send size={16} />}
+                {isLoading ? <Loader className="animate-spin" aria-hidden="true" size={16} /> : <Send aria-hidden="true" size={16} />}
               </Button>
               {!isLoading && (
                 <ChatInputMenu 
