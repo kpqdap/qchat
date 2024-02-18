@@ -7,15 +7,10 @@ import { PromptGPTProps } from "./models";
 import { chatCatName } from "./chat-utility";
 
 export const ChatAPISimple = async (props: PromptGPTProps) => {
-
   const { lastHumanMessage, chatThread } = await initAndGuardChatSession(props);
-
   const openAI = OpenAIInstance();
-
   const userId = await userHashedId();
-
   const tenantId = await getTenantId();
-
   const chatHistory = new CosmosDBChatMessageHistory({
     sessionId: chatThread.id,
     userId: userId,

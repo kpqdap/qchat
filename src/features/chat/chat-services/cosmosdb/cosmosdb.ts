@@ -52,15 +52,13 @@ export class CosmosDBChatMessageHistory {
       sentiment: "neutral",
       reason: "",
     };
-    // console.log("Upserting item to Cosmos DB:", modelToSave);
-
     await UpsertChat(modelToSave);
   }
 }
 
 async function UpsertChat(chatModel: ChatMessageModel) {
   const container = await CosmosDBContainer.getInstance().getContainer();
-  await container.items.upsert(chatModel); // The model already includes userId and tenantId
+  await container.items.upsert(chatModel);
 }
 
 function mapOpenAIChatMessages(

@@ -3,11 +3,11 @@ import { Shield, ShieldAlert, ShieldX, Brush, Scale, CircleDot, MessageCircle, F
 export const getSensitivityIcon = (value: string) => {
   switch (value) {
     case "official":
-      return <Shield size={20} />;
+      return <Shield size={20} aria-label="Official" />;
     case "sensitive":
-      return <ShieldAlert size={20} />;
+      return <ShieldAlert size={20} aria-label="Sensitive" />;
     case "protected":
-      return <ShieldX size={20} />;
+      return <ShieldX size={20} aria-label="Protected" />;
     default:
       return null;
   }
@@ -16,11 +16,11 @@ export const getSensitivityIcon = (value: string) => {
 export const getStyleIcon = (value: string) => {
   switch (value) {
     case "creative":
-      return <Brush size={20} />;
+      return <Brush size={20} aria-label="Creative" />;
     case "balanced":
-      return <Scale size={20} />;
+      return <Scale size={20} aria-label="Balanced" />;
     case "precise":
-      return <CircleDot size={20} />;
+      return <CircleDot size={20} aria-label="Precise" />;
     default:
       return null;
   }
@@ -29,11 +29,11 @@ export const getStyleIcon = (value: string) => {
 export const getTypeIcon = (value: string) => {
   switch (value) {
     case "simple":
-      return <MessageCircle size={20} />;
+      return <MessageCircle size={20} aria-label="General" />;
     case "data":
-      return <FileText size={20} />;
+      return <FileText size={20} aria-label="File" />;
     case "audio":
-      return <AudioLines size={20} />
+      return <AudioLines size={20} aria-label="Audio" />;
     default:
       return null;
   }
@@ -60,7 +60,8 @@ export const formatStyleValue = (value: string) => {
 export const formatTypeValue = (value: string) => {
   const typeMap: { [key: string]: string } = {
     "simple": "General",
-    "data": "File",
+    "data": "Data",
+    "audio": "Audio",
   };
   return typeMap[value] || value;
 };

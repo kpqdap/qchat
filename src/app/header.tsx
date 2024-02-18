@@ -13,7 +13,7 @@ const Sidebar: React.FC = () => {
             <div className="hidden md:block h-12 w-0.5 bg-lime-500"></div>
             <div className="flex flex-col items-left">
                 <Typography variant="h1" className="block">QChat</Typography>
-                <Typography variant="h3" className="block">The Queensland Government AI Assistant</Typography>
+                <Typography variant="h2" className="block">The Queensland Government AI Assistant</Typography>
             </div>
         </div>
     );
@@ -21,14 +21,13 @@ const Sidebar: React.FC = () => {
 
 export const Header: React.FC = () => {
     return (
-        <div className="background" role="banner">
+        <div className="header-content">
             <div className="bg-[#09549F] text-white p-4">
                 <div className="container mx-auto flex justify-between items-center">
-                    {/* QGovSvg wrapped in div for responsive styling */}
                     <div className="block md:hidden lg:hidden scale-75 sm:scale-100">
                         <QgovSvg />
                     </div>
-                    <Typography variant="h5" className="hidden md:block lg:block">qchat.ai.qld.gov.au</Typography>
+                    <Typography variant="span" aria-label="Site domain: qchat.ai.qld.gov.au" className="hidden md:block lg:block">qchat.ai.qld.gov.au</Typography>
 
                     <div className="hidden md:block">
                         <UserComponent />

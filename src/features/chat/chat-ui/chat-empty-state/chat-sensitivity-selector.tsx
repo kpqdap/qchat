@@ -18,27 +18,36 @@ export const ChatSensitivitySelector: FC<Prop> = (props) => {
         onConversationSensitivityChange(value as ConversationSensitivity)
       }
     >
-      <TabsList className="grid w-full grid-cols-3 h-12 items-stretch">
+      <TabsList aria-label="Conversation Sensitivity" className="grid w-full grid-cols-3 h-12 items-stretch">
         <TabsTrigger
           value="official"
           className="flex gap-2"
           disabled={props.disable}
+          role="tab"
+          aria-selected={chatBody.conversationSensitivity === "official"}
+          aria-disabled={props.disable ? "true" : undefined}
         >
-          <Shield size={20} /> Official
+          <Shield size={20} aria-hidden="true"/> Official
         </TabsTrigger>
         <TabsTrigger
           value="sensitive"
           className="flex gap-2"
           disabled={props.disable}
+          role="tab"
+          aria-selected={chatBody.conversationSensitivity === "sensitive"}
+          aria-disabled={props.disable ? "true" : undefined}
         >
-          <ShieldAlert size={20} /> Sensitive
+          <ShieldAlert size={20} aria-hidden="true"/> Sensitive
         </TabsTrigger>
         <TabsTrigger
           value="protected"
           className="flex gap-2"
           disabled={true}
+          role="tab"
+          aria-selected={chatBody.conversationSensitivity === "protected"}
+          aria-disabled="true"
         >
-          <ShieldX size={20} /> Protected
+          <ShieldX size={20} aria-hidden="true"/> Protected
         </TabsTrigger>
       </TabsList>
     </Tabs>

@@ -3,6 +3,7 @@ import { Message } from "ai";
 export const CHAT_DOCUMENT_ATTRIBUTE = "CHAT_DOCUMENT";
 export const CHAT_THREAD_ATTRIBUTE = "CHAT_THREAD";
 export const MESSAGE_ATTRIBUTE = "CHAT_MESSAGE";
+export const CHAT_UTILITY_ATTRIBUTE = "CHAT_MESSAGE";
 
 export interface ChatMessageModel {
   id: string;
@@ -71,6 +72,19 @@ export interface ChatDocumentModel {
   isDeleted: boolean;
   createdAt: Date;
   type: "CHAT_DOCUMENT";
+}
+
+export interface ChatUtilityModel {
+  id: string;
+  name: string;
+  chatThreadId: string;
+  userId: string;
+  tenantId: string;
+  isDeleted: boolean;
+  createdAt: Date;
+  content: string;
+  role: ChatRole;
+  type: "CHAT_UTILITY";
 }
 
 export interface ServerActionResponse<T> {

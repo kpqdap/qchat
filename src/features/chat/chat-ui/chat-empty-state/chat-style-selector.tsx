@@ -18,27 +18,36 @@ export const ChatStyleSelector: FC<Prop> = (props) => {
         onConversationStyleChange(value as ConversationStyle)
       }
     >
-      <TabsList className="grid w-full grid-cols-3 h-12 items-stretch">
+      <TabsList aria-label="Conversation Style" className="grid w-full grid-cols-3 h-12 items-stretch">
         <TabsTrigger
           value="precise"
           className="flex gap-2"
           disabled={props.disable}
+          role="tab"
+          aria-selected={chatBody.conversationStyle === "precise"}
+          aria-disabled={props.disable ? "true" : undefined}
         >
-          <CircleDot size={20} /> Precise
+          <CircleDot size={20} aria-hidden="true"/> Precise
         </TabsTrigger>
         <TabsTrigger
           value="balanced"
           className="flex gap-2"
           disabled={props.disable}
+          role="tab"
+          aria-selected={chatBody.conversationStyle === "balanced"}
+          aria-disabled={props.disable ? "true" : undefined}
         >
-          <Scale size={20} /> Balanced
+          <Scale size={20} aria-hidden="true"/> Balanced
         </TabsTrigger>
         <TabsTrigger
           value="creative"
           className="flex gap-2"
           disabled={props.disable}
+          role="tab"
+          aria-selected={chatBody.conversationStyle === "creative"}
+          aria-disabled={props.disable ? "true" : undefined}
         >
-          <Brush size={20} /> Creative
+          <Brush size={20} aria-hidden="true"/> Creative
         </TabsTrigger>
       </TabsList>
     </Tabs>

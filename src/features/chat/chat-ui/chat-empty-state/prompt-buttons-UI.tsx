@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PromptButtons } from '../../chat-services/prompt-buttons';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 
 interface Prop {
   onPromptSelected: (prompt: string) => void;
@@ -9,7 +9,6 @@ interface Prop {
 
 export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt }) => {
   const [prompts, setPrompts] = useState<string[]>([]);
-
   useEffect(() => {
     const fetchPrompts = async () => {
       try {
@@ -29,18 +28,20 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt 
 
   return (
     <div className="space-container">
-      <Tabs defaultValue={selectedPrompt} onValueChange={handlePromptClick}>
+      <ul aria-live="polite" className="w-full mb-2 ">
         {prompts.map((prompt, index) => (
-          <TabsList key={index} className="w-full mb-2">
-            <TabsTrigger
-              value={prompt}
-              className={`w-full text-center ${selectedPrompt === prompt ? 'bg-blue-500' : ''}`}
+          <li key={index} className="mb-2 bg-background rounded text-foreground">
+            <Button
+              onClick={() => handlePromptClick(prompt)}
+              className={`w-full text-center p-2 rounded text-foreground ${selectedPrompt === prompt ? 'bg-background' : 'text-foreground'}`}
+              disabled={selectedPrompt === prompt}
+              aria-pressed={selectedPrompt === prompt}
             >
               {prompt}
-            </TabsTrigger>
-          </TabsList>
+            </Button>
+          </li>
         ))}
-      </Tabs>
+      </ul>
       <div className="additional-spacing" />
     </div>
   );

@@ -18,6 +18,9 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [areTabsEnabled, setTabsEnabled] = useState<boolean>(false);
 
+    const textareaId = `chatMessageFeedback-${props.chatThreadId}`;
+    const textareaName = `chatMessageFeedback-${props.chatThreadId}`;
+
     async function handleFeedbackChange(): Promise<void> {
       const textareaValue = textAreaRef.current?.value || "";
       if (!areTabsEnabled) {
@@ -39,7 +42,7 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
 
     return (
         <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${props.open ? "block" : "hidden"}`}>
-            <div className="bg-white w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
+            <div className="bg-background w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
                 <div className="mb-4">
                     <Typography variant="h4" className="text-primary">
                         Submit your feedback
@@ -47,10 +50,13 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
                 </div>
                 <div className="mb-4">
                     <FeedbackTextarea
+                        id={textareaId}
+                        name={textareaName}
+                        aria-label="Enter your feedback"
                         placeholder="Please provide any additional details about the message or your feedback, our team will not reply directly but it will assist us in improving our service."
                         ref={textAreaRef}
                         rows={6}
-                        className="w-full p-4 border border-gray-300 rounded"
+                        className="w-full p-4 bg-background border border-gray-300 rounded"
                         onChange={() => handleFeedbackChange()}
                     />
                 </div>

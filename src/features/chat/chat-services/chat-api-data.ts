@@ -9,7 +9,6 @@ import { PromptGPTProps } from "./models";
 import { chatCatName } from "./chat-utility";
 
 const SYSTEM_PROMPT = `You are ${AI_NAME} who is a helpful AI Assistant.`;
-
 const CONTEXT_PROMPT = ({
   context,
   userQuestion,
@@ -35,10 +34,8 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
   );
 
   const openAI = OpenAIInstance();
-
   const userId = await userHashedId();
   const tenantId = await getTenantId();
-
   const chatHistory = new CosmosDBChatMessageHistory({
     sessionId: chatThread.id,
     userId: userId,
