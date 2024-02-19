@@ -3,15 +3,14 @@ import { AudioLines, FileText, MessageCircle } from "lucide-react";
 import { FC } from "react";
 import { ChatType } from "../../chat-services/models";
 import { useChatContext } from "../chat-context";
+import { getTenantId } from "@/features/auth/helpers";
 
 interface Prop {
   disable: boolean;
 }
 
 export const ChatTypeSelector: FC<Prop> = (props) => {
-
   const { chatBody, onChatTypeChange } = useChatContext();
-
   return (
     <Tabs
       defaultValue={chatBody.chatType}

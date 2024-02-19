@@ -67,7 +67,7 @@ const configureIdentityProvider = () => {
         async authorize(credentials, req): Promise<any> {
           const username = credentials?.username || "dev";
           const email = username + "@localhost";
-          const employee_idp = "localdev";
+          const employee_idp = "keith";
           const upn = credentials?.username || "dev";
           const user = {
             id: hashValue(upn),
@@ -77,7 +77,7 @@ const configureIdentityProvider = () => {
             image: "",
             employee_idp,
             upn,
-            tenantId: "localdev"
+            tenantId: "keith"
           };
           console.log("=== DEV USER LOGGED IN:\n", JSON.stringify(user, null, 2));
           
@@ -142,12 +142,12 @@ export const options: NextAuthOptions = {
       if(profile){
         (user as any).upn = (profile as any).upn as string
         (user as any).tenantId = (profile as any).employee_idp as string
-        if(process.env.ACCESS_GROUPS_REQUIRED === "true"){
-          const allowedGroupGUIDs = process.env.ACCESS_GROUPS.split(",").map(group => group.trim());
-          const userGroupGUIDs = ((profile as any).employee_groups as []) || [];
-          const isMemberOfAllowedGroup = userGroupGUIDs.some(group => allowedGroupGUIDs.includes(group));
-          if (!isMemberOfAllowedGroup){
-            return false
+        if(process.env.PERMITTED_TENANTS_REQUIRED === "true"){
+          const allowedTenantGUIDs = process.env.PERMITTED_TENANTS.split(",").map(tenant => tenant.trim());
+          const userTenantGUID = ((profile as any).employee_idp as string) || "";
+          const isTenantAllowed = allowedTenantGUIDs.includes(userTenantGUID);
+          if (!isTenantAllowed){
+            return false;
           }
         }
       const userRecord = {
