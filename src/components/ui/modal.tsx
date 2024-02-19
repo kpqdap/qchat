@@ -41,10 +41,10 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
     };
 
     return (
-        <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${props.open ? "block" : "hidden"}`}>
+      <div role="dialog" aria-modal="true" aria-labelledby="feedbackHeading" className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${props.open ? "block" : "hidden"}`}>
             <div className="bg-background w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
                 <div className="mb-4">
-                    <Typography variant="h4" className="text-primary">
+                    <Typography id="feedbackHeading" variant="h4" className="text-primary">
                         Submit your feedback
                     </Typography>
                 </div>

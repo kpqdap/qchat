@@ -45,6 +45,7 @@ export interface ChatThreadModel {
   conversationStyle: ConversationStyle;
   chatOverFileName: string;
   type: "CHAT_THREAD";
+  offenderId?: string;
 }
 
 export interface PromptGPTBody {
@@ -55,6 +56,7 @@ export interface PromptGPTBody {
   chatOverFileName: string;
   tenantId: string;
   userId: string;
+  offenderId?: string;
 }
 
 export interface PromptGPTProps extends PromptGPTBody {

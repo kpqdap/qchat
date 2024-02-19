@@ -291,3 +291,18 @@ export const UpdateChatThreadCreatedAt = async (threadId: string) => {
     throw new Error("Chat thread not found");
   }
 };
+
+export const AssociateOffenderWithChatThread = async (chatThreadId: string, offenderId: string | undefined) => {
+  const container = await CosmosDBContainer.getInstance().getContainer();
+  const threads = await FindChatThreadByID(chatThreadId);
+  if (threads.length === 0) {
+    throw new Error("Chat thread not found");
+  }
+  const threadToUpdate = threads[0];
+  threadToUpdate.offenderId = offenderId;
+  const updatedThread = await container.items.upsert<ChatThreadModel>(threadToUpdate);
+  if (!updatedThread) {
+    throw new Error("Failed to associate offender with chat thread");
+  }
+  return updatedThread.resource;
+};

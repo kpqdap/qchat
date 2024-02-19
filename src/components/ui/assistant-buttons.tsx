@@ -37,6 +37,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
   return (
     <div className="container flex items-left w-full">
       <Button
+        aria-label="Copy text"
         variant={"ghost"}
         size={"sm"}
         className={buttonClass}
@@ -56,6 +57,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
         className={buttonClass}
         title="Thumbs up"
         onClick={handleThumbsUpClick}
+        aria-label="Provide positive feedback"
       >
         {thumbsUpClicked ? (
           <CheckIcon size={iconSize} />
@@ -70,6 +72,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
         className={buttonClass}
         title="Thumbs down"
         onClick={handleThumbsDownClick}
+        aria-label="Provide negative feedback"
       >
         {thumbsDownClicked ? (
           <CheckIcon size={iconSize} />

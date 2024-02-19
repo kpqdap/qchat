@@ -43,6 +43,8 @@ const azureEnvVars = [
   "AZURE_SPEECH_URL",
   "AZURE_SPEECH_STT_URL",
   "PROMPT_BUTTON_ENABLED",
+  "PERMITTED_TENANTS",
+  "PERMITTED_TENANTS_REQUIRED",
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
