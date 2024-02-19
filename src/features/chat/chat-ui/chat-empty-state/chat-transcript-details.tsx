@@ -58,7 +58,7 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
               value={offenderId}
               onChange={(e) => setOffenderId(e.target.value)}
             />
-            <Button type="submit" disabled={submitting} className="bg-primary text-foreground p-2 rounded">
+            <Button variant="default" type="submit" disabled={submitting} >
               {submitting ? 'Submitting...' : 'Submit'}
             </Button>
           </div>

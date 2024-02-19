@@ -16,22 +16,25 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
             value="Unsafe"
             className="flex items-center justify-center gap-2 px-3 py-2 flex-grow"
             disabled={!areTabsEnabled}
+            aria-label="Mark feedback as unsafe"
           >
-            <Ban size={20} /> Unsafe
+            <Ban size={20} aria-hidden="true"/> Unsafe
           </TabsTrigger>
           <TabsTrigger
             value="Inaccurate"
             className="flex items-center justify-center gap-2 px-3 py-2 flex-grow"
             disabled={!areTabsEnabled}
+            aria-label="Mark feedback as inaccurate"
           >
-            <XCircle size={20} /> Inaccurate
+            <XCircle size={20} aria-hidden="true"/> Inaccurate
           </TabsTrigger>
           <TabsTrigger
             value="Unhelpful"
             className="flex items-center justify-center gap-2 px-3 py-2 flex-grow"
             disabled={!areTabsEnabled}
+            aria-label="Mark feedback as unhelpful"
           >
-            <FileQuestion size={20} /> Unhelpful
+            <FileQuestion size={20} aria-hidden="true"/> Unhelpful
           </TabsTrigger>
         </TabsList>
       </Tabs>
