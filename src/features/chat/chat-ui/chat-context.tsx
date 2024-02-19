@@ -35,6 +35,7 @@ interface ChatContextProps extends UseChatHelpers {
   isModalOpen?: boolean;
   openModal?: () => void;
   closeModal?: () => void;
+  offenderId?: string;
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null);
@@ -44,6 +45,7 @@ interface Prop {
   id: string;
   chats: Array<ChatMessageModel>;
   chatThread: ChatThreadModel;
+  offenderId?: string;
 }
 
 export const ChatProvider: FC<Prop> = (props) => {
@@ -65,7 +67,8 @@ export const ChatProvider: FC<Prop> = (props) => {
     conversationSensitivity: props.chatThread.conversationSensitivity,
     chatOverFileName: props.chatThread.chatOverFileName,
     tenantId: props.chatThread.tenantId,
-    userId: props.chatThread.userId
+    userId: props.chatThread.userId,
+    offenderId: props.chatThread.offenderId,
   });
 
   const { textToSpeech } = speechSynthesizer;

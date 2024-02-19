@@ -4,14 +4,14 @@ import { ArrowUpCircle, Loader2 } from "lucide-react";
 import { FC, useRef } from "react";
 import { useChatContext } from "../chat-context";
 import { useFileSelection } from "./use-file-selection";
+import { OffenderTranscriptForm } from "../chat-empty-state/chat-transcript-details";
 
 export const ChatFileUI: FC = () => {
-  const { id, fileState, chatBody } = useChatContext();
+  const { id, fileState, chatBody, offenderId } = useChatContext();
   const { isFileNull, setIsFileNull, uploadButtonLabel, isUploadingFile } = fileState;
   const { onSubmit } = useFileSelection({ id });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Function to determine accepted file types
   const getAcceptedFileType = (chatType: string) => {
     switch (chatType) {
       case "data":
@@ -34,7 +34,7 @@ export const ChatFileUI: FC = () => {
         <Input
           ref={fileInputRef}
           id="file-upload"
-          name={fileState.showFileUpload}
+          name="file-upload" // Ensure this name attribute is correctly set
           type="file"
           required
           disabled={isUploadingFile}
@@ -52,7 +52,7 @@ export const ChatFileUI: FC = () => {
           type="submit"
           disabled={!(!isFileNull && !isUploadingFile)}
           className="flex items-center gap-1"
-          aria-disabled={isUploadingFile ? true : undefined}
+          aria-disabled={isUploadingFile ? "true" : undefined}
         >
           {isUploadingFile ? (
             <>
@@ -70,6 +70,11 @@ export const ChatFileUI: FC = () => {
       <p id="file-upload-description" className="text-sm text-muted-foreground">
         {uploadButtonLabel || "Select a file to upload."}
       </p>
+      {chatBody.chatType === "audio" && offenderId != null && (
+      <div>
+        <OffenderTranscriptForm chatThreadId={id} />
+      </div>
+      )}
     </div>
   );
 };

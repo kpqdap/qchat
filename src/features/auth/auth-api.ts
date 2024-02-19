@@ -67,7 +67,7 @@ const configureIdentityProvider = () => {
         async authorize(credentials, req): Promise<any> {
           const username = credentials?.username || "dev";
           const email = username + "@localhost";
-          const employee_idp = "keith";
+          const employee_idp = "localdev";
           const upn = credentials?.username || "dev";
           const user = {
             id: hashValue(upn),
@@ -77,7 +77,7 @@ const configureIdentityProvider = () => {
             image: "",
             employee_idp,
             upn,
-            tenantId: "keith"
+            tenantId: "localdev"
           };
           console.log("=== DEV USER LOGGED IN:\n", JSON.stringify(user, null, 2));
           
