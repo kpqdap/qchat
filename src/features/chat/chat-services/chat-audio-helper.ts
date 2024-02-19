@@ -1,10 +1,12 @@
 "use server";
 import "server-only";
-import { AudioConfig, SpeechRecognitionResult, CancellationDetails, CancellationReason, ResultReason, SpeechConfig, SpeechRecognizer } from "microsoft-cognitiveservices-speech-sdk";
+import { AudioConfig, SpeechRecognitionResult, CancellationDetails, CancellationReason, ResultReason, SpeechConfig, SpeechRecognizer, AudioInputStream } from "microsoft-cognitiveservices-speech-sdk";
 import { arrayBufferToBase64 } from "./chat-document-helper";
 import { GetSpeechToken } from "../chat-ui/chat-speech/speech-service";
+import { AudioOutputFormatImpl } from "microsoft-cognitiveservices-speech-sdk/distrib/lib/src/sdk/Audio/AudioOutputFormat";
+import { FileAudioSource } from "microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.browser/FileAudioSource";
 
-export async function speechToTextRecognizeOnce(formData: FormData) {
+export const speechToTextRecognizeOnce = async (formData: FormData) => {
     try {
         const speechToken = await GetSpeechToken();
         const apimUrl = new URL(speechToken.sttUrl);
@@ -18,11 +20,9 @@ export async function speechToTextRecognizeOnce(formData: FormData) {
 
         /**Convert File to Buffer**/
         const file: File | null = formData.get('audio') as unknown as File;
-        const base64String = await arrayBufferToBase64(await file.arrayBuffer());
-        const buffer = Buffer.from(base64String, 'base64');
 
         // Audio Configurations
-        const audioConfig = AudioConfig.fromWavFileInput(buffer);
+        const audioConfig = await audioConfigFromFile(file);
 
         // Speech recognizer config
         const recognizer = new SpeechRecognizer(speechConfig, audioConfig);
@@ -32,8 +32,7 @@ export async function speechToTextRecognizeOnce(formData: FormData) {
 
         return text;
     } catch (e) {
-        console.log(e);
-        return [];
+        throw (e);
     }
 }
 
@@ -112,4 +111,50 @@ async function startRecognition(recognizer: SpeechRecognizer): Promise<string[]>
         return [];
     }
 
+}
+
+/**
+ * Initialise audio configurations from file
+ */
+const audioConfigFromFile = async (file: File): Promise<AudioConfig> => {
+    try {
+        // Create Buffer
+        const base64String = await arrayBufferToBase64(await file.arrayBuffer());
+        const buffer = Buffer.from(base64String, "base64");
+
+        // Audio Configurations
+        const audioConfig = AudioConfig.fromWavFileInput(buffer, file.name);
+
+        //File Audio Source - Throw error if wav is corrupted or not readable
+        const audioSource = new FileAudioSource(buffer, file.name);
+        (await audioSource.format).formatTag;
+
+        return audioConfig;
+    }
+    catch (e) {
+        throw new Error('Unsupported audio file. ' + e);
+    }
+}
+
+/**
+ * Initialise audio configurations from Stream
+ */
+const audioConfigFromStream = async (file: File) => {
+    try {
+
+        // Get Default Format
+        const audioFormat = AudioOutputFormatImpl.getDefaultInputFormat();
+
+        // Create Stream
+        const arrayBuffer = await file.arrayBuffer();
+        const pushStream = AudioInputStream.createPushStream(audioFormat);
+        pushStream.write(arrayBuffer);
+
+        // Init Audio Config
+        const audioConfig = AudioConfig.fromStreamInput(pushStream);
+
+        return audioConfig;
+    } catch (e) {
+        throw new Error('Unsupported audio file. ' + e);
+    }
 }
