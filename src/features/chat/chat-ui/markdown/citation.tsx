@@ -5,6 +5,10 @@ import { CitationSlider } from "./citation-slider";
 interface Citation {
   name: string;
   id: string;
+  tenantId: string;
+  userId: string;
+  chatThreadId: string;
+  order: number;
 }
 
 interface Props {
@@ -22,7 +26,6 @@ export const citation = {
 };
 
 export const Citation: FC<Props> = (props: Props) => {
-  // group citations by name
   const citations = props.items.reduce((acc, citation) => {
     const { name } = citation;
     if (!acc[name]) {
@@ -46,6 +49,10 @@ export const Citation: FC<Props> = (props: Props) => {
                       index={index + 1}
                       name={item.name}
                       id={item.id}
+                      tenantId={item.tenantId}
+                      userId={item.userId}
+                      order={item.order}
+                      chatThreadId={item.chatThreadId}
                     />
                   </div>
                 );

@@ -75,7 +75,8 @@ export const useFileSelection = (props: Props) => {
         showError(uploadResponse.error);
       }
     } catch (error) {
-      showError("" + error);
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      showError(errorMessage);
     } finally {
       setIsUploadingFile(false);
       setUploadButtonLabel("");

@@ -1,7 +1,6 @@
 "use server";
 import "server-only";
 
-// Converts Blob Array Buffer to Base64 type
 export async function arrayBufferToBase64(buffer: ArrayBuffer) {
     const binary = new Uint8Array(buffer);
     let base64String = '';
@@ -11,7 +10,6 @@ export async function arrayBufferToBase64(buffer: ArrayBuffer) {
     return btoa(base64String);
 }
 
-// Define variables for Document Intelligence
 const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) => {
     const apiVersion = "2023-07-31"
     const analyzeDocumentUrl = process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT + "/formrecognizer/documentModels/" + modelId + ":analyze?api-version=" + apiVersion + "&locale=en-GB";
@@ -20,7 +18,6 @@ const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) =
         'Content-Type': 'application/json',
         'api-key': process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY
     }
-
     return {
         analyzeDocumentUrl,
         analyzeResultUrl,
@@ -38,7 +35,6 @@ export async function customBeginAnalyzeDocument(modelId: string, base64String: 
     }
 
     try {
-        // Analyze Document
         const response = await fetch(analyzeDocumentUrl, {
             method: 'POST',
             headers: analyzeDocumentHeaders,
@@ -88,18 +84,14 @@ async function customGetAnalyzeResult(modelId: string, resultId: string) {
 
             const responseBody = await response.json();
             
-            // Retrieve the operation status from the response body
             operationStatus = responseBody.status;
 
-            if(operationStatus == "succeeded"){
+            if(operationStatus === "succeeded"){
                 analyzedResult = responseBody.analyzeResult;
+                break;
             }
 
-            // If the operation is not completed, wait for a certain period before polling again
-            if (operationStatus !== 'succeeded') {
-                await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
-            }
-
+            await new Promise(resolve => setTimeout(resolve, 5000));
         }
 
         return analyzedResult;        

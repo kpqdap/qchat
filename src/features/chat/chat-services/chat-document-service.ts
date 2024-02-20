@@ -29,7 +29,7 @@ export const UploadDocument = async (formData: FormData): Promise<ServerActionRe
       const { docs } = await LoadFile(formData, chatType);
       const splitDocuments = chunkDocumentWithOverlap(docs.join("\n"));
       fileContent = splitDocuments;
-    }
+        }
     return {
       success: true,
       error: "",
@@ -91,21 +91,27 @@ const LoadFile = async (formData: FormData, chatType: string) => {
 export const IndexDocuments = async (fileName: string, docs: string[], chatThreadId: string): Promise<ServerActionResponse<AzureCogDocumentIndex[]>> => {
   try {
     const documentsToIndex: AzureCogDocumentIndex[] = [];
+    const userId = await userHashedId();
+    const tenantId = await getTenantId();
 
-    for (let index = 0; index < docs.length; index++) {
-      const doc = docs[index];
+    for (let i = 0; i < docs.length; i++) {
+      const docContent = docs[i];
       const docToAdd: AzureCogDocumentIndex = {
         id: uniqueId(),
         chatThreadId,
-        user: await userHashedId(),
-        pageContent: doc,
+        userId: userId,
+        pageContent: docContent,
+        order: i + 1, // Add 1 to index to make it 1-based
         metadata: fileName,
+        tenantId: tenantId,
+        createdDate: new Date().toISOString(),
+        fileName: fileName,
         embedding: [],
       };
 
       documentsToIndex.push(docToAdd);
     }
-
+    
     await indexDocuments(documentsToIndex);
 
     await UpsertChatDocument(fileName, chatThreadId);

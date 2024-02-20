@@ -6,9 +6,16 @@ export const CitationAction = async (
   previousState: any,
   formData: FormData
 ) => {
-  const result = await simpleSearch({
-    filter: `id eq '${formData.get("id")}'`,
-  });
+  const id = formData.get("id") as string;
+  const chatThreadId = formData.get("chatThreadId") as string;
+  const userId = formData.get("userId") as string;
+  const tenantId = formData.get("tenantId") as string;
+
+  const filter = {
+    filter: `id eq '${id}' and chatThreadId eq '${chatThreadId}' and userId eq '${userId}' and tenantId eq '${tenantId}'`,
+  };
+  console.log(filter);
+  const result = await simpleSearch(userId, chatThreadId, tenantId, filter);
 
   if (result.length === 0) return <div>Not found</div>;
 
