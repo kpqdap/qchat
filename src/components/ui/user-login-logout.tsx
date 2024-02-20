@@ -9,18 +9,20 @@ import { Button } from '@/components/ui/button';
 export const UserComponent: React.FC = () => {
     const { data: session } = useSession({ required: false });
 
+    const signInProvider = process.env.NODE_ENV === 'development' ? 'credentials' : 'azure-ad';
+
     return (
         <div>
             {session ? (
-                <Button onClick={() => signOut({ callbackUrl: '/' })} className="flex items-center" aria-label="Log out">
-                    <LogOut className="w-4 h-4 mr-2" aria-hidden="true"/>
+                <Button onClick={() => signOut({ callbackUrl: '/', redirect: true })} className="flex items-center bg-darkbackground text-white" aria-label="Log out" variant="link">
+                    <LogOut className="w-4 h-4 mr-2 text-darkAltButton" aria-hidden="true"/>
                     <Typography variant="span">Log out</Typography>
                 </Button>
             ) : (
-                <button onClick={() => signIn()} className="flex items-center" aria-label="Log in">
-                    <LogIn className="w-4 h-4 mr-2" aria-hidden="true"/>
+                <Button onClick={() => signIn(signInProvider)} className="flex items-center bg-darkbackground text-darkAltButton text-white" aria-label="Log in" variant="link">
+                    <LogIn className="w-4 h-4 mr-2 text-darkAltButton" aria-hidden="true"/>
                     <Typography variant="span">Log in</Typography>
-                </button>
+                </Button>
             )}
         </div>
     );
