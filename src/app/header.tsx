@@ -1,5 +1,6 @@
 import React from 'react';
 import { QgovSvg } from '@/components/ui/qldgovlogo';
+import { QgovMiniSvg } from '@/components/ui/qldgovminilogo';
 import Typography from "@/components/typography";
 import { UserComponent } from '@/components/ui/user-login-logout';
 import { MiniMenu } from '@/features/main-menu/mini-menu';
@@ -22,10 +23,10 @@ const Sidebar: React.FC = () => {
 export const Header: React.FC = () => {
     return (
         <div className="header-content">
-            <div className="bg-[#09549F] text-white p-4">
+            <div className="bg-darkbackground text-white">
                 <div className="container mx-auto flex justify-between items-center">
-                    <div className="block md:hidden lg:hidden scale-75 sm:scale-100">
-                        <QgovSvg />
+                    <div className="block md:hidden lg:hidden pb-2 scale-75 sm:scale-90 md:scale-100 lg:scale-110">
+                        <QgovMiniSvg />
                     </div>
                     <Typography variant="span" aria-label="Site domain: qchat.ai.qld.gov.au" className="hidden md:block lg:block">qchat.ai.qld.gov.au</Typography>
 

@@ -7,6 +7,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useMiniMenuContext } from "./mini-menu-context";
 import { Menu, X, LogIn, LogOut, Moon, Sun, Home, Bookmark, Bell, UserCog } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Typography from "@/components/typography";
 
 export const MiniMenu: React.FC = () => {
     const { isMenuOpen, toggleMenu } = useMiniMenuContext();
@@ -28,13 +29,14 @@ export const MiniMenu: React.FC = () => {
         <div className="relative">
             <Button
                 onClick={toggleMenu}
-                className="w-[40px] h-[40px] p-1 text-accent-foreground hover:text-secondary"
-                variant="ghost"
+                className=" p-1 text-darkAltButton bg-darkbackground  hover:bg-buttonHover flex items-center"
                 aria-expanded={isMenuOpen}
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                variant="link"
             >
-                {isMenuOpen ? <X /> : <Menu />}
+                {isMenuOpen ? <X className="w-4 h-4 mr-2 text-darkAltButton" aria-hidden="true"/> : <Menu className="w-4 h-4 mr-2 text-darkAltButton" aria-hidden="true"/> }
             </Button>
+            <Typography variant="span">Menu</Typography>
             {isMenuOpen && (
                 <div className="fixed top-0 right-0 bottom-0 left-0 z-[99999] bg-background" role="dialog" aria-modal="true" aria-labelledby="menu-heading">
                     <div className="absolute top-0 right-0 m-4">
