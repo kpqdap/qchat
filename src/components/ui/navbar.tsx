@@ -28,7 +28,7 @@ export const NavBar: React.FC = () => {
                 <div className="flex justify-between items-center">
                     <ol className="flex space-x-10">
                         {links.map((link, index) => (
-                            <li key={index} className="prose prose-slate dark:prose-invert">
+                            <li key={index} className="flex items-center">
                                 <a href={link.href} className="flex items-center" aria-label={link.name}>
                                     {link.icon && (
                                         React.createElement(link.icon, {
@@ -36,7 +36,7 @@ export const NavBar: React.FC = () => {
                                             'aria-hidden': true
                                         })
                                     )}
-                                    <Typography variant="h3" className="flex items-center">{link.name}</Typography>
+                                    <Typography variant="h3">{link.name}</Typography>
                                 </a>
                             </li>
                         ))}

@@ -11,10 +11,10 @@ const Sidebar: React.FC = () => {
             <div className="hidden md:block">
                 <QgovSvg />
             </div>
-            <div className="hidden md:block h-12 w-0.5 bg-lime-500"></div>
+            <div className="hidden md:block h-12 w-0.5 bg-designAccent"></div>
             <div className="flex flex-col items-left">
-                <Typography variant="h1" className="block">QChat</Typography>
-                <Typography variant="h2" className="block">The Queensland Government AI Assistant</Typography>
+                <Typography variant="h1" className="block text-siteTitle">QChat</Typography>
+                <Typography variant="h2" className="block text-textMuted">The Queensland Government AI Assistant</Typography>
             </div>
         </div>
     );
