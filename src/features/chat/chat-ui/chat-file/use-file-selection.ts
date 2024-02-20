@@ -44,7 +44,8 @@ export const useFileSelection = (props: Props) => {
             const indexResponse = await IndexDocuments(
               file.name,
               [doc],
-              props.id
+              props.id,
+              index + 1
             );
 
             if (!indexResponse.success) {
@@ -74,7 +75,8 @@ export const useFileSelection = (props: Props) => {
         showError(uploadResponse.error);
       }
     } catch (error) {
-      showError("" + error);
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      showError(errorMessage);
     } finally {
       setIsUploadingFile(false);
       setUploadButtonLabel("");

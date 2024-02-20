@@ -7,6 +7,7 @@ import { AI_NAME } from "@/features/theme/customise";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { convertMarkdownToWordDocument } from "@/features/common/file-export";
 import ChatInputMenu from "./chat-input-menu";
+import { useSession } from "next-auth/react";
 
 interface Props {}
 
@@ -26,9 +27,12 @@ const ChatInput: FC<Props> = (props) => {
     return formattedDate.split(',').join('_').split(' ').join('_').split(':').join('_');
   };
 
-  const exportDocument = () => {
+  const exportDocument = async () => {
     const fileName = `QChatExport_${getFormattedDateTime()}.docx`;
-    convertMarkdownToWordDocument(messages, fileName, AI_NAME);
+    const userId = chatBody.userId;
+    const tenantId = chatBody.tenantId;
+    const chatThreadId = chatBody.id;
+    convertMarkdownToWordDocument(messages, fileName, AI_NAME, userId, tenantId, chatThreadId);
   };
   
   const submit = (e: FormEvent<HTMLFormElement>) => {
