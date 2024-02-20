@@ -2,6 +2,7 @@ import { Document, Paragraph, Packer, TextRun, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
 import { marked } from 'marked';
 import { toast } from '@/components/ui/use-toast';
+import { citationRetrieval } from '@/features/chat/chat-ui/markdown/citation-retrieval';
 
 interface MessageType {
   role: string;
@@ -20,6 +21,7 @@ class CustomRenderer extends marked.Renderer {
   em(text: string): string {
     return `<em>${text}</em>`;
   }
+
 
   heading(text: string, level: number): string {
     return `<h${level}>${text}</h${level}>`;
@@ -129,10 +131,8 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
     doc.body.childNodes.forEach(processNode);
     return paragraphs;
   };
-  
 
-
-  export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string) => {
+  export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string, userId:string, tenantId:string, chatThreadId:string) => {
     const renderer = new CustomRenderer();
     marked.use({ renderer });
 
@@ -143,11 +143,14 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
             heading: HeadingLevel.HEADING_2,
         });
 
-        const content = await marked.parse(message.content);
+        const processedContent = await processCitationsInText(message.content);
+        console.log(processedContent);
+        const content = await marked.parse(processedContent);
+        console.log(content);
         const contentParagraphs = createParagraphFromHtml(content);
-
+      
         return [authorParagraph, ...contentParagraphs, new Paragraph('')];
-    });
+      });
 
     const messageParagraphs = (await Promise.all(messageParagraphPromises)).flat();
 
@@ -157,18 +160,26 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
 
     Packer.toBlob(doc).then(blob => {
         saveAs(blob, fileName);
-        // Display a toast notification for successful export
         toast({
             title: "Success",
             description: "Chat exported to Word document",
-            // You can customize other properties as needed
         });
     }).catch(err => {
-        // Display a toast notification for any error during export
         toast({
             title: "Error",
             description: "Failed to export chat to Word document",
-            // You can customize other properties as needed
         });
     });
 };
+
+const processCitationsInText = (text: string) => {
+  console.log("Original text:", text);
+  
+  const citationPattern = /{% citation[^\n]*/g;
+
+  let processedText = text.replace(citationPattern, '-- References were removed for privacy reasons --');
+  
+  console.log("Processed text:", processedText);
+  return processedText;
+};
+
