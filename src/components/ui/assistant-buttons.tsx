@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { CheckIcon, ClipboardIcon, ThumbsUp, ThumbsDown } from "lucide-react";
-import { useWindowSize } from "./windowsize"; // Import useWindowSize
+import { useWindowSize } from "./windowsize";
 
 interface AssistantButtonsProps {
   isIconChecked: boolean;
@@ -35,11 +35,11 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
   }
 
   return (
-    <div className="container flex items-left w-full">
+    <div className="container flex w-full p-2 gap-4">
       <Button
         aria-label="Copy text"
         variant={"ghost"}
-        size={"sm"}
+        size={"default"}
         className={buttonClass}
         title="Copy text"
         onClick={handleCopyButton}
@@ -53,7 +53,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
 
       <Button
         variant={"ghost"}
-        size={"sm"}
+        size={"default"}
         className={buttonClass}
         title="Thumbs up"
         onClick={handleThumbsUpClick}
@@ -68,7 +68,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
 
       <Button
         variant={"ghost"}
-        size={"sm"}
+        size={"default"}
         className={buttonClass}
         title="Thumbs down"
         onClick={handleThumbsDownClick}

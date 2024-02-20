@@ -28,11 +28,11 @@ export function ThemeSwitch() {
 
   return (
     <Tabs defaultValue={defaultTab}>
-      <TabsList aria-label="Theme Switch" className="flex flex-row items-center justify-center flex-1">
+      <TabsList aria-label="Theme Switch" className="flex flex-row items-center justify-center flex-1 gap-1 bg-backgroundShade">
         <TabsTrigger
           value="dark"
           onClick={() => handleTabChange("dark")}
-          className={`h-[40px] w-[40px] rounded-full focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-blue-500`}
+          className={`h-[40px] w-[40px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton`}
           role="button"
           aria-label="Switch to dark mode"
           tabIndex={0}
@@ -42,7 +42,7 @@ export function ThemeSwitch() {
         <TabsTrigger
           value="light"
           onClick={() => handleTabChange("light")}
-          className={`h-[40px] w-[40px] rounded-full focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-blue-500`}
+          className={`h-[40px] w-[40px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton`}
           role="button"
           aria-label="Switch to light mode"
           tabIndex={0}

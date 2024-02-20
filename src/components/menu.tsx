@@ -31,7 +31,7 @@ const MenuContent = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col flex-1 overflow-y-auto py-2 gap-0.5",
+      "flex flex-col flex-1 overflow-y-auto gap-1 py-2",
       className
     )}
     {...props}
@@ -49,8 +49,8 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
     <Link
       className={cn(
         props.className,
-        "items-center text-sm font-medium flex gap-2 p-2 py-1 hover:bg-primary/25",
-        props.isSelected && "bg-primary/25"
+        "items-center text-sm font-medium rounded-md flex gap-2 p-2 hover:bg-altBackgroundShade hover:border-altButtonHover border-separate border-2 border-transparent transition-colors",
+        props.isSelected && "bg-altBackgroundShade border-altBorder"
       )}
       href={props.href}
     >

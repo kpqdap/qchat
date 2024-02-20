@@ -23,7 +23,7 @@ export const NavBar: React.FC = () => {
     ];
 
     return (
-        <nav aria-label="Main navigation" className="bg-secondary p-2 hidden md:block">
+        <nav aria-label="Main navigation" className="bg-backgroundShade p-2 hidden md:block">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     <ol className="flex space-x-10">

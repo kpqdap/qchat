@@ -14,7 +14,7 @@ export const ChatFileSlider = () => {
     <div>
       <Sheet>
         <SheetTrigger asChild>
-          <Button size="icon" variant={"ghost"}>
+          <Button size="icon" variant={"default"}>
             <FileText size={16} />
           </Button>
         </SheetTrigger>
