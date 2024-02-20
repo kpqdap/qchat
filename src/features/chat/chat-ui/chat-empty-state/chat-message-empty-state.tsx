@@ -44,25 +44,29 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
     <div className="grid grid-cols-5 w-full items-center container overflow-auto mx-auto max-w-3xl justify-center h-full p-4 gap-9 pb-[80px]">
       <Card className="col-span-5 flex flex-col gap-2 p-5 ">
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-text">
             Set the Sensitivity of your chat
           </p>
           <ChatSensitivitySelector disable={false} />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-text">
             Choose a conversation style
           </p>
           <ChatStyleSelector disable={false} />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-text">
             How would you like to chat?
           </p>
           <ChatTypeSelector disable={false} />
         </div>
         {showFileUpload === "data" || showFileUpload === "audio" ? <ChatFileUI /> : (
           <div className="flex flex-col gap-1">
+            <br />
+            <p className="text-sm text-text">
+              Try a suggested starter prompt...
+            </p>
             <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
           </div>
         )}

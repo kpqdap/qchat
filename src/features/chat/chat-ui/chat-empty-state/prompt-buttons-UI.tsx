@@ -33,7 +33,7 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt 
           <li key={index} className="mb-2 bg-background rounded text-foreground">
             <Button
               onClick={() => handlePromptClick(prompt)}
-              className={`w-full text-center p-2 rounded text-foreground ${selectedPrompt === prompt ? 'bg-background' : 'text-foreground'}`}
+              className={`w-full text-center p-2 rounded text-buttonText ${selectedPrompt === prompt ? 'bg-button' : 'text-buttonText'}`}
               disabled={selectedPrompt === prompt}
               aria-pressed={selectedPrompt === prompt}
             >

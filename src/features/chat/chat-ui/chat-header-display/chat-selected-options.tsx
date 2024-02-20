@@ -18,7 +18,7 @@ export const ChatSelectedOptions: FC<Prop> = () => {
   return (
     <div className="hidden sm:block">
       <Tabs defaultValue="selected" aria-label="Selected Chat Options">
-        <TabsList className="grid w-full grid-cols-1 h-12 items-stretch">
+        <TabsList className="grid w-full grid-cols-1 h-12 items-stretch" tabIndex={0}>
           <TabsTrigger value="selected" className="flex gap-2 items-center justify-center" disabled={true} aria-disabled="true">
             {getSensitivityIcon(chatBody.conversationSensitivity)}
             <span className="mx-1">{formatSensitivityValue(chatBody.conversationSensitivity)}</span>

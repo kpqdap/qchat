@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { MessageSquarePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
@@ -33,12 +33,12 @@ export const MiniNewChat = () => {
         aria-label="Start a new chat"
         role="button"
         tabIndex={0}
-        className="gap-2 rounded-full w-[40px] h-[40px] p-1 text-primary"
-        variant="outline"
+        className="gap-2 rounded-md w-[40px] h-[40px] p-1"
+        variant="default"
         onClick={startNewChat}
         onKeyDown={(e) => e.key === 'Enter' && startNewChat()}
       >
-        <PlusCircle size={40} strokeWidth={1.2} aria-hidden="true" />
+        <MessageSquarePlus size={40} strokeWidth={1.2} aria-hidden="true" />
       </Button>
     </div>
   );

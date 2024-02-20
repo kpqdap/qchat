@@ -139,9 +139,9 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
           </span>
           {selectedThreadId !== thread.id && (
             <Button
-              className="invisible group-hover:visible hover:text-brand"
+              className="invisible group-hover:visible"
               size="sm"
-              variant="ghost"
+              variant="default"
               aria-label={`Edit ${thread.name}`}
               onClick={() => handleOpenModal(thread.id)}
             >

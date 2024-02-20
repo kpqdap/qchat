@@ -83,10 +83,10 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
   };
 
   return (
-    <article className="container mx-auto py-1 flex flex-col">
-      <section className="flex-col overflow-hidden p-1 gap-4">
+    <article className="container mx-auto py-1 flex flex-col pb-4">
+      <section className="bg-background rounded-md flex-col overflow-hidden p-4 gap-4">
         <header className="flex justify-between items-center w-full">
-          <Typography variant="h3" className="capitalize flex-1 text-primary">
+          <Typography variant="h3" className="capitalize flex-1 text-heading" tabIndex={0}>
             {props.name}
           </Typography>
           <Modal
@@ -96,7 +96,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
             onSubmit={handleModalSubmit}
           />
         </header>
-        <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none bg-card text-sm md:text-md md:text-base">
+        <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-text text-sm md:text-md md:text-base" tabIndex={0}>
           <Markdown content={props.message} />
         </div>
         <div className="sr-only" aria-live="assertive">
