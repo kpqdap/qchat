@@ -45,7 +45,8 @@ export const useFileSelection = (props: Props) => {
             const indexResponse = await IndexDocuments(
               file.name,
               [doc],
-              props.id
+              props.id,
+              index + 1
             );
 
             if (!indexResponse.success) {

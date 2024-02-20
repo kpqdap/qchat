@@ -14,18 +14,16 @@ export const CitationAction = async (
   const filter = {
     filter: `id eq '${id}' and chatThreadId eq '${chatThreadId}' and userId eq '${userId}' and tenantId eq '${tenantId}'`,
   };
-  console.log(filter);
   const result = await simpleSearch(userId, chatThreadId, tenantId, filter);
 
   if (result.length === 0) return <div>Not found</div>;
-
   const firstResult = result[0];
 
   return (
     <div className="flex flex-col gap-4">
       <div className="border rounded-sm p-2">
         <div className="font-bold">File name</div>
-        <div>{firstResult.metadata} </div>
+        <div>{firstResult.metadata}</div>
       </div>
       <p>{firstResult.pageContent}</p>
     </div>

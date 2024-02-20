@@ -88,7 +88,7 @@ const LoadFile = async (formData: FormData, chatType: string) => {
 };
 
 
-export const IndexDocuments = async (fileName: string, docs: string[], chatThreadId: string): Promise<ServerActionResponse<AzureCogDocumentIndex[]>> => {
+export const IndexDocuments = async (fileName: string, docs: string[], chatThreadId: string, order: number): Promise<ServerActionResponse<AzureCogDocumentIndex[]>> => {
   try {
     const documentsToIndex: AzureCogDocumentIndex[] = [];
     const userId = await userHashedId();
@@ -101,7 +101,7 @@ export const IndexDocuments = async (fileName: string, docs: string[], chatThrea
         chatThreadId,
         userId: userId,
         pageContent: docContent,
-        order: i + 1, // Add 1 to index to make it 1-based
+        order: order,
         metadata: fileName,
         tenantId: tenantId,
         createdDate: new Date().toISOString(),

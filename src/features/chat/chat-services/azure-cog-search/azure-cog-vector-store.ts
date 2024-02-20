@@ -70,7 +70,6 @@ export const simpleSearch = async (
     top: filter?.top || 10,
     vectorQueries: []
   };
-
   const resultDocuments = (await fetcher(url, {
     method: "POST",
     body: JSON.stringify(searchBody),
@@ -208,6 +207,5 @@ const fetcher = async (url: string, init?: RequestInit) => {
       throw new Error(`Azure Cog Search Error: ${response.statusText}`);
     }
   }
-
   return await response.json();
 };

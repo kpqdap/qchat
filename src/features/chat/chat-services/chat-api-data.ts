@@ -20,7 +20,7 @@ const CONTEXT_PROMPT = ({
 - Given the following extracted parts of a document, create a final answer. \n
 - If you don't know the answer, just say that you don't know. Don't try to make up an answer.\n
 - You must always include a citation at the end of your answer and don't include full stop.\n
-- Use the format for your citation {% citation items=[{name:"filename 1", id:"file id", order:1}, {name:"filename 2", id:"file id", order:2}] /%}\n 
+- Use the format for your citation {% citation items=[{name:"filename 1", id:"file id", order:"1"}, {name:"filename 2", id:"file id", order:"2"}] /%}\n 
 ----------------\n 
 context:\n 
 ${context}
@@ -53,7 +53,7 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
   const context = relevantDocuments
   .map((result, index) => {
     const content = result.pageContent.replace(/(\r\n|\n|\r)/gm, "");
-    const context = `[${index}]. file name: ${result.metadata} \n file id: ${result.id} \n section: ${result.order} \n ${content}`;
+    const context = `[${index}]. file name: ${result.metadata} \n file id: ${result.id} \n order: ${result.order} \n ${content}`;
     return context;
   })
     .join("\n------\n");
