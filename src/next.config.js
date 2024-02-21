@@ -81,6 +81,15 @@ const nextConfig = {
         headers: securityHeaders,
       },
       {
+        source: '/:path*{/}?',
+        headers: [
+          {
+            key: 'X-Accel-Buffering',
+            value: 'no',
+          },
+        ],
+      },
+      {
         source: "/favicon.ico",
         headers: [
           {
