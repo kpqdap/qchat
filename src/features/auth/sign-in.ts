@@ -1,14 +1,7 @@
-import { testCosmosDBConnection } from "../common/cosmos-ping";
 import { CosmosDBUserContainer, UserRecord } from "../user-management/user-cosmos";
 
 export class UserSignInHandler {
     static async handleSignIn(user: UserRecord) {
-        const connectionTestResult = await testCosmosDBConnection();
-
-        if (!connectionTestResult) {
-            console.error("Cosmos DB connection failed, aborting user sign-in.");
-            throw new Error("Unable to connect to Cosmos DB.");
-        }
         const container = new CosmosDBUserContainer();
 
         try {
