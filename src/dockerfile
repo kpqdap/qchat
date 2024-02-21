@@ -1,4 +1,4 @@
-FROM node:21.6.2-alpine:3.19.1 AS base
+FROM node:21.6.2-alpine AS base
 
 # Create the directory for Azure to copy certificates into it
 RUN apk --no-cache add ca-certificates \
@@ -35,6 +35,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # RUN yarn build
 
 # If using npm comment out above and use below instead
+RUN npm install -g npm@latest
 RUN npm run build
 
 # Production image, copy all the files and run next
