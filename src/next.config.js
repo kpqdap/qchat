@@ -68,7 +68,8 @@ const nextConfig = {
   output: "standalone",
   experimental: {
     serverActions: {
-      allowedOrigins: [localUrl, fullUrl],
+      allowedOrigins: [localUrl],
+      allowedOrigins: [fullUrl],
     },
   },
   async redirects() {
