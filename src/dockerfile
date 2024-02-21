@@ -1,4 +1,4 @@
-FROM node:21.6.2-alpine AS base
+FROM node:21.6.2-alpine:3.19.1 AS base
 
 # Create the directory for Azure to copy certificates into it
 RUN apk --no-cache add ca-certificates \
