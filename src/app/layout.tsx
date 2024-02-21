@@ -33,9 +33,9 @@ export default function RootLayout({
               <header className="header flex flex-col w-full background">
                 <Header />
                 <NavBar />
+                <div className="bg-designAccent h-1"></div>
               </header>
-              <div className="bg-designAccent h-1"></div>
-              <main className="main flex flex-col w-full h-75vh">
+              <main className="main flex flex-col w-full h-full">
                 <div
                   className={cn(
                     "flex w-full h-full gap-2 bg-primary"

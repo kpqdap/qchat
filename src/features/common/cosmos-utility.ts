@@ -16,7 +16,7 @@ export const SaveUtilityFunctionUsage = async (chatThreadId: string, utilityFunc
         tenantId: tenantId,
         isDeleted: false,
         createdAt: new Date(),
-        content: `Parameters: ${JSON.stringify(utilityFunctionParams)}, Result: ${JSON.stringify(utilityFunctionResult)}`, // Content detailing utility function invocation
+        content: `Parameters: ${JSON.stringify(utilityFunctionParams)}, Result: ${JSON.stringify(utilityFunctionResult)}`,
         role: "system",
         type: "CHAT_UTILITY",
     };

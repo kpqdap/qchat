@@ -1,5 +1,5 @@
 export const Paragraph = ({ children, className }: any) => {
-  return <div className={String(className)} bg-altBackground text-primary>{children}</div>;
+  return <div className={String(className)} bg-altbackground text-primary>{children}</div>;
 };
 
 export const paragraph = {
