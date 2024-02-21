@@ -1,31 +1,48 @@
-import { ApplicationInsights, IConfig } from '@microsoft/applicationinsights-web';
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
-import { createBrowserHistory, History } from 'history';
+import { createBrowserHistory } from 'history';
 
-const browserHistory: History = createBrowserHistory({ });
+export interface IAppInsightsContext {
+  appInsights: ApplicationInsights;
+  reactPlugin: ReactPlugin;
+  browserHistory: ReturnType<typeof createBrowserHistory>;
+  clickPlugin: ClickAnalyticsPlugin;
+}
 
-const reactPlugin: ReactPlugin = new ReactPlugin();
+export const createAppInsights = (): IAppInsightsContext | null => {
+  if (typeof window === 'undefined') {
+    console.warn('Application Insights cannot be initialized server-side.');
+    return null;
+  }
+  
+  try {
+    const browserHistory = createBrowserHistory();
+    const reactPlugin = new ReactPlugin();
+    const clickPlugin = new ClickAnalyticsPlugin();
 
-const clickPluginInstance: ClickAnalyticsPlugin = new ClickAnalyticsPlugin();
-const clickPluginConfig = {
-  autoCapture: true,
-};
-
-const key = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
-
-const configObj = {
-  connectionString: key,
-  enableAutoRouteTracking: true,
-  extensions: [reactPlugin, clickPluginInstance],
-  extensionConfig: {
-    [clickPluginInstance.identifier]: clickPluginConfig,
-    [reactPlugin.identifier]: {
-      history: browserHistory
+    const connectionString = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
+    if (!connectionString) {
+      throw new Error('Connection string for Application Insights is undefined or empty.');
     }
-  },
-};
 
-const appInsights: ApplicationInsights = new ApplicationInsights({ config: configObj });
-appInsights.loadAppInsights();
-appInsights.trackPageView();
+    const config = {
+      connectionString,
+      enableAutoRouteTracking: true,
+      extensions: [reactPlugin, clickPlugin],
+      extensionConfig: {
+        [clickPlugin.identifier]: { autoCapture: true },
+        [reactPlugin.identifier]: { history: browserHistory },
+      },
+    };
+
+    const appInsights = new ApplicationInsights({ config });
+    appInsights.loadAppInsights();
+    appInsights.trackPageView();
+
+    return { appInsights, reactPlugin, browserHistory, clickPlugin };
+  } catch (error) {
+    console.error('Failed to initialize Application Insights:', error);
+    return null;
+  }
+};

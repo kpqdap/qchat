@@ -26,7 +26,7 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; img-src 'self'; font-src 'self' data:; connect-src 'self' https://qdap-dev-apim.azure-api.net; media-src 'self'; frame-src 'self'; object-src 'none';"
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; img-src 'self'; font-src 'self' data:; connect-src 'self' https://qdap-dev-apim.azure-api.net https://australiaeast-1.in.applicationinsights.azure.com/; media-src 'self'; frame-src 'self'; object-src 'none';"
   },
   { 
     key: 'Referrer-Policy', 
@@ -34,7 +34,7 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'accelerometer=(),autoplay=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),sync-xhr=(self),usb=(),web-share=(),xr-spatial-tracking=()',
+    value: 'accelerometer=(),autoplay=(),camera=(),display-capture=(),encrypted-media=(),fullscreen=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),sync-xhr=(self),usb=(),xr-spatial-tracking=()',
   },
   { 
     key: 'X-DNS-Prefetch-Control', 
@@ -64,6 +64,15 @@ const nextConfig = {
     serverActions: {
       allowedOrigins: [localUrl, fullUrl],
     },
+  },
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/api/auth/signin/azure-ad',
+        permanent: true,
+      },
+    ]
   },
   async headers() {
     return [

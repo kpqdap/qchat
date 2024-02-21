@@ -2,7 +2,6 @@ import { Document, Paragraph, Packer, TextRun, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
 import { marked } from 'marked';
 import { toast } from '@/components/ui/use-toast';
-import { citationRetrieval } from '@/features/chat/chat-ui/markdown/citation-retrieval';
 
 interface MessageType {
   role: string;
@@ -72,7 +71,6 @@ class CustomRenderer extends marked.Renderer {
     return `<del>${text}</del>`;
   }
 
-  // Add more overrides for other Markdown elements as needed
 }
 
 const createParagraphFromHtml = (html: string): Paragraph[] => {
@@ -123,7 +121,6 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
               bullet: { level: 0 }
             }));
             break;
-          // Add more cases for other HTML elements as needed
         }
       }
     };
@@ -144,9 +141,7 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
         });
 
         const processedContent = await processCitationsInText(message.content);
-        console.log(processedContent);
         const content = await marked.parse(processedContent);
-        console.log(content);
         const contentParagraphs = createParagraphFromHtml(content);
       
         return [authorParagraph, ...contentParagraphs, new Paragraph('')];
@@ -172,14 +167,9 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
     });
 };
 
-const processCitationsInText = (text: string) => {
-  console.log("Original text:", text);
-  
+const processCitationsInText = (text: string) => {  
   const citationPattern = /{% citation[^\n]*/g;
-
   let processedText = text.replace(citationPattern, '-- References were removed for privacy reasons --');
-  
-  console.log("Processed text:", processedText);
-  return processedText;
+    return processedText;
 };
 
