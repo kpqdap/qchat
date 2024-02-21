@@ -72,6 +72,11 @@ const nextConfig = {
         destination: '/api/auth/signin/azure-ad',
         permanent: true,
       },
+      {
+        source: '/logout',
+        destination: '/api/auth/signout',
+        permanent: true,
+      },
     ]
   },
   async headers() {
@@ -100,7 +105,7 @@ const nextConfig = {
       },
     ];
   },
-  // compress: false, //it breaks the chuncked layout response.
+  //compress: false,
   poweredByHeader: false,
 };
 
