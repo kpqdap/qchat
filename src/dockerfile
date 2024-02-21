@@ -39,7 +39,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the application using npm or yarn
 RUN npm run build
-RUN npm outdated
 
 # Runner stage for the production image
 FROM base AS runner
