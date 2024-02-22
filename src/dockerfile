@@ -11,7 +11,7 @@ WORKDIR /app
 
 # Upgrade npm to the latest version
 RUN npm install -g npm@latest
-RUN npm outdated
+RUN npm list ip
 
 # Dependencies stage for installing Node.js dependencies
 FROM base AS deps
@@ -39,6 +39,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the application using npm or yarn
 RUN npm run build
+RUN npm list ip
 
 # Runner stage for the production image
 FROM base AS runner
