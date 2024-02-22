@@ -45,6 +45,7 @@ const azureEnvVars = [
   "PROMPT_BUTTON_ENABLED",
   "PERMITTED_TENANTS",
   "PERMITTED_TENANTS_REQUIRED",
+  "AZURE_COSMOSDB_TENANT_CONTAINER_NAME",
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
