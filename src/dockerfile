@@ -64,11 +64,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 
 # Network configuration
-ENV PORT 443
+ENV PORT 3000
 ENV HOSTNAME 0.0.0.0
 
 # Expose the port the app runs on
-EXPOSE 443
+EXPOSE 3000
 
 # Command to run the application
 CMD ["node", "server.js"]
