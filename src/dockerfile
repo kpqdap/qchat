@@ -46,7 +46,7 @@ FROM base AS runner
 WORKDIR /app
 
 RUN npm install -g npm@latest && \
-    npm install ip@2.0.1 && \
+    npm install ip@2.0.1
 
 # Set environment variables for production
 ENV NODE_ENV production
