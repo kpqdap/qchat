@@ -1,6 +1,5 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
-import { createHash } from 'crypto';
-import { hashValue, userHashedId } from "../auth/helpers";
+import { hashValue } from "../auth/helpers";
 
 const AZURE_COSMOSDB_URI = process.env.AZURE_COSMOSDB_URI;
 const AZURE_COSMOSDB_KEY = process.env.AZURE_COSMOSDB_KEY;
@@ -150,33 +149,37 @@ export class CosmosDBUserContainer {
     }
 
     public async updateUser(user: UserRecord): Promise<void> {
-      const container = await this.getContainer();
-      if (!user.id) {
-          throw new Error("User must have an id to be updated.");
-      }
-  
-    //   const { resource: existingUser } = await container.item(user.id, user.tenantId).read<UserRecord>();
-    //   if (!existingUser) {
-    //       throw new Error("User not found.");
-    //   }
-  
-      const updatedUser = user as UserRecord;
-  
-      const updateTimestamp = new Date().toISOString();
-      const currentUser = hashValue(user.upn);
-      const changes: string[] = updatedUser.history || [];
-  
-      Object.keys(user).forEach((key) => {
-          if (Object.prototype.hasOwnProperty.call(updatedUser, key)) {
-              if (user[key] !== updatedUser[key] && key !== 'history') {
-                  changes.push(`${updateTimestamp}: ${key} changed from ${updatedUser[key]} to ${user[key]} by ${currentUser}`);
-              }
-          }
-      });
-  
-      updatedUser.history = changes;
-      updatedUser.last_login = new Date(updateTimestamp);
-      
-      await container.items.upsert(updatedUser);
-  }  
+        const container = await this.getContainer();
+        if (!user.tenantId || user.tenantId.trim() === "") {
+            throw new Error("tenantId is required to update a user.");
+        }
+    
+        if (!user.id) {
+            throw new Error("User must have an id to be updated.");
+        }
+    
+        const { resource: existingUser } = await container.item(user.id, user.tenantId).read<UserRecord>();
+        if (!existingUser) {
+            throw new Error("User not found.");
+        }
+    
+        const updatedUser = user as UserRecord;
+    
+        const updateTimestamp = new Date().toISOString();
+        const currentUser = hashValue(user.upn);
+        const changes: string[] = updatedUser.history || [];
+    
+        Object.keys(user).forEach((key) => {
+            if (Object.prototype.hasOwnProperty.call(updatedUser, key)) {
+                if (user[key] !== updatedUser[key] && key !== 'history') {
+                    changes.push(`${updateTimestamp}: ${key} changed from ${updatedUser[key]} to ${user[key]} by ${currentUser}`);
+                }
+            }
+        });
+    
+        updatedUser.history = changes;
+        updatedUser.last_login = new Date(updateTimestamp);
+        
+        await container.items.upsert(updatedUser);
+    }    
 };
