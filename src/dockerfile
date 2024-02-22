@@ -11,8 +11,7 @@ WORKDIR /app
 
 # Upgrade npm to the latest version
 RUN npm install -g npm@latest && \
-    npm install ip@2.0.1 && \
-
+    npm install ip@2.0.1
 # Dependencies stage for installing Node.js dependencies
 FROM base AS deps
 
