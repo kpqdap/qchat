@@ -52,6 +52,7 @@ const configureIdentityProvider = (): Provider[] => {
             upn: profile.upn,
             tenantId: profile.employee_idp,
             isAdmin: isAdmin ? "true" : "false",
+            userId: profile.upn,
           }
         }            
       }),
@@ -79,6 +80,7 @@ const configureIdentityProvider = (): Provider[] => {
             name: username,
             email: email,
             upn: upn,
+            userId: upn,
             tenantId: employee_idp,
             isAdmin: isAdmin ? "true" : "false",
           };
@@ -153,6 +155,7 @@ export const options: NextAuthOptions = {
           email: user.email ?? '',
           name: user.name ?? '',
           upn: user.upn,
+          userId: user.upn,
           isAdmin: user.isAdmin,
         };
       

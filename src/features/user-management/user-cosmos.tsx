@@ -1,6 +1,6 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
 import { createHash } from 'crypto';
-import { hashValue } from "../auth/helpers";
+import { hashValue, userHashedId } from "../auth/helpers";
 
 const AZURE_COSMOSDB_URI = process.env.AZURE_COSMOSDB_URI;
 const AZURE_COSMOSDB_KEY = process.env.AZURE_COSMOSDB_KEY;
@@ -10,6 +10,7 @@ const defaultHeaders = {'api-key': process.env.AZURE_SEARCH_API_KEY};
 
 export type UserIdentity = {
   id: string;
+  userId: string;
   tenantId: string;
   email: string | null | undefined;
   name: string | null | undefined;
@@ -79,7 +80,7 @@ export class CosmosDBUserContainer {
         const container = await this.getContainer();
         const hashedUserId = hashValue(user.upn);
         const creationDate = new Date().toISOString();
-        const historyLog = `${creationDate}: User created by ${hashValue(user.upn)}`;
+        const historyLog = `${creationDate}: User created by ${hashedUserId}`;
 
         await container.items.create({
             ...user,
@@ -103,7 +104,8 @@ export class CosmosDBUserContainer {
       if (!user) {
           console.log("Creating a record for a new user due to failed login attempt with UPN:", upn);
           user = {
-              id: createHash('sha256').update(upn).digest('hex'),
+              id: hashValue(upn),
+              userId: upn,
               tenantId: tenantId,
               email: null,
               name: null,
@@ -161,7 +163,7 @@ export class CosmosDBUserContainer {
       const updatedUser = existingUser as UserRecord;
   
       const updateTimestamp = new Date().toISOString();
-      const currentUser = hashValue(user.upn);
+      const currentUser = userHashedId();
       const changes: string[] = updatedUser.history || [];
   
       Object.keys(user).forEach((key) => {
