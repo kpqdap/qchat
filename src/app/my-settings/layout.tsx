@@ -3,7 +3,7 @@ import { AI_NAME } from "@/features/theme/customise";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: AI_NAME,
+  title: AI_NAME + " - My Settings",
   description: AI_NAME,
 };
 
