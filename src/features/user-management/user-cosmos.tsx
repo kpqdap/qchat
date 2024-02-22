@@ -1,6 +1,6 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
 import { createHash } from 'crypto';
-import { userHashedId } from "../auth/helpers";
+import { hashValue } from "../auth/helpers";
 
 const AZURE_COSMOSDB_URI = process.env.AZURE_COSMOSDB_URI;
 const AZURE_COSMOSDB_KEY = process.env.AZURE_COSMOSDB_KEY;
@@ -77,9 +77,9 @@ export class CosmosDBUserContainer {
         user.last_failed_login = null;
 
         const container = await this.getContainer();
-        const hashedUserId = createHash('sha256').update(user.id).digest('hex');
+        const hashedUserId = hashValue(user.upn);
         const creationDate = new Date().toISOString();
-        const historyLog = `${creationDate}: User created by ${userHashedId()}`;
+        const historyLog = `${creationDate}: User created by ${hashValue(user.upn)}`;
 
         await container.items.create({
             ...user,
@@ -161,7 +161,7 @@ export class CosmosDBUserContainer {
       const updatedUser = existingUser as UserRecord;
   
       const updateTimestamp = new Date().toISOString();
-      const currentUser = userHashedId();
+      const currentUser = hashValue(user.upn);
       const changes: string[] = updatedUser.history || [];
   
       Object.keys(user).forEach((key) => {
