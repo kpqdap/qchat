@@ -7,7 +7,7 @@ export class UserSignInHandler {
       const tenantContainerExtended = new CosmosDBTenantContainerExtended();
     
       try {
-        const existingUser = await userContainer.getUserByUPN(user.upn ?? '', user.tenantId);
+        const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
         if (!existingUser) {
           console.log("Creating new user with UPN:", user.upn); // Log before creating
           await userContainer.createUser({
