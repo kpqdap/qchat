@@ -36,6 +36,7 @@ export type UserModel = {
   upn: string;
   tenantId: string;
   isAdmin: string;
+  userId: string;
 };
 
 export const hashValue = (value: string): string => {
