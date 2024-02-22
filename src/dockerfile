@@ -67,8 +67,5 @@ USER nextjs
 ENV PORT 443
 ENV HOSTNAME 0.0.0.0
 
-# Expose the port the app runs on
-EXPOSE 443
-
 # Command to run the application
 CMD ["node", "server.js"]
