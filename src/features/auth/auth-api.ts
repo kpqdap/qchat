@@ -63,8 +63,10 @@ const configureIdentityProvider = (): Provider[] => {
       CredentialsProvider({
         name: "localdev",
         credentials: {
-          username: { label: "Username", type: "text", placeholder: "dev" },
-          password: { label: "Password", type: "password" },
+          username: { label: "Username", type: "text", placeholder: "dev", default: "dev" },
+          password: { label: "Password", type: "password", default: "dev"},
+          tenantId : { label: "Tenant ID", type: "text", placeholder: "localdev", default: "localdev"},
+          upn: { label: "UPN", type: "text", placeholder: "dev", default: "dev" },
         },
         async authorize(credentials, req) {
           const username = credentials?.username || "dev";
@@ -86,10 +88,10 @@ const configureIdentityProvider = (): Provider[] => {
             isAdmin: user.isAdmin || "false",
           };
         }
+        
       })
     );
   }
-
   return providers;
 };
 
@@ -139,12 +141,17 @@ export const options: NextAuthOptions = {
   providers: [...configureIdentityProvider()],
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (profile && user?.tenantId && user?.upn) {
+      if (process.env.NODE_ENV === 'development') {
+        user.tenantId = user.tenantId || 'defaultTenantId';
+        user.upn = user.upn || 'defaultUpn';
+      }
+
+      if (user?.tenantId && user?.upn) {
         const userIdentity: UserIdentity = {
-          id: hashValue(user?.upn),
+          id: hashValue(user.upn),
           tenantId: user.tenantId,
-          email: user?.email ?? '',
-          name: user?.name ?? '',
+          email: user.email ?? '',
+          name: user.name ?? '',
           upn: user.upn,
           isAdmin: user.isAdmin,
         };
@@ -157,7 +164,7 @@ export const options: NextAuthOptions = {
           failed_login_attempts: 0,
           last_failed_login: null,
         };
-        
+
         const groupsString = ((profile as any).employee_groups as string[])?.join(',');
 
         const userRecord: UserRecord = {
@@ -215,5 +222,4 @@ export const options: NextAuthOptions = {
     maxAge: 8*60*60,
   },
 };
-
 export const handlers = NextAuth(options);
