@@ -155,15 +155,15 @@ export class CosmosDBUserContainer {
           throw new Error("User must have an id to be updated.");
       }
   
-      const { resource: existingUser } = await container.item(user.id, user.tenantId).read<UserRecord>();
-      if (!existingUser) {
-          throw new Error("User not found.");
-      }
+    //   const { resource: existingUser } = await container.item(user.id, user.tenantId).read<UserRecord>();
+    //   if (!existingUser) {
+    //       throw new Error("User not found.");
+    //   }
   
-      const updatedUser = existingUser as UserRecord;
+      const updatedUser = user as UserRecord;
   
       const updateTimestamp = new Date().toISOString();
-      const currentUser = userHashedId();
+      const currentUser = hashValue(user.upn);
       const changes: string[] = updatedUser.history || [];
   
       Object.keys(user).forEach((key) => {
