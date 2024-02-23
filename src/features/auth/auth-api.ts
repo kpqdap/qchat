@@ -81,7 +81,7 @@ const configureIdentityProvider = (): Provider[] => {
             name: profile.name,
             email: profile.email,
             upn: profile.upn,
-            tenantId: profile.tid,
+            tenantId: profile.employee_idp,
             qchatAdmin: qchatAdmin,
             userId: profile.upn,
           };
@@ -196,7 +196,7 @@ export const options: NextAuthOptions = {
           return false;
         }
       } else {
-        console.error("TenantId or upn is missing. Sign-in aborted.");
+        console.error("TenantId or upn is missing. Sign-in aborted.", user.tenantId, user.upn);
         return false;
       }
     },
