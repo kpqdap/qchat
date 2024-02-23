@@ -16,19 +16,14 @@ export const createDatabaseAndContainersIfNotExists = async (
 ): Promise<ExportedContainers> => {
   try {
     const client = new CosmosClient({ endpoint, key, defaultHeaders });
-    console.log(`Creating or retrieving database for tenant '${tenantId}'...`);
 
-    // Create or get the database based on the tenant ID
     const databaseId = `${tenantId}`;
     const databaseResponse = await client.databases.createIfNotExists({
       id: databaseId,
     });
-    console.log(`Database '${databaseId}' created or retrieved successfully.`);
     const database = databaseResponse.database;
 
-    // Create or get the 'Users' container
     const usersContainerId = "users";
-    console.log(`Creating or retrieving 'Users' container...`);
     const usersContainerResponse = await database.containers.createIfNotExists({
       id: usersContainerId,
       partitionKey: {
@@ -37,12 +32,9 @@ export const createDatabaseAndContainersIfNotExists = async (
         version: 2
       },
     });
-    console.log(`'Users' container created or retrieved successfully.`);
     const usersContainer = usersContainerResponse.container;
 
-    // Create or get the 'History' container
     const historyContainerId = "history";
-    console.log(`Creating or retrieving 'History' container...`);
     const historyContainerResponse = await database.containers.createIfNotExists({
       id: historyContainerId,
       partitionKey: {
@@ -51,7 +43,6 @@ export const createDatabaseAndContainersIfNotExists = async (
         version: 2
       },
     });
-    console.log(`'History' container created or retrieved successfully.`);
     const historyContainer = historyContainerResponse.container;
 
     return {

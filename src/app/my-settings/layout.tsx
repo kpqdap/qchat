@@ -13,7 +13,6 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
   return (
     <>
       <div className="flex-1 flex overflow-hidden bg-card">
-        {/* Ensure UserSettingsMenu is designed to accept and render children */}
         <UserSettingsMenu>
           {children}
         </UserSettingsMenu>

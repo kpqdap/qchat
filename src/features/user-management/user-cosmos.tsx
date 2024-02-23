@@ -23,7 +23,8 @@ export type UserActivity = {
   accepted_terms: boolean | null | undefined;
   accepted_terms_date: string | null | undefined;
   history?: string[];
-   [key: string]: any;
+    [key: string]: any;
+  groups?: string[] | null | undefined;
   failed_login_attempts: number;
   last_failed_login: Date | null;
 };
@@ -45,19 +46,15 @@ export class CosmosDBUserContainer {
             defaultHeaders: defaultHeaders
         });
         this.container = this.initDBContainer();
-        console.log("CosmosDBUserContainer initialized", this.client, this.databaseId, this.container);
     }
 
     private async initDBContainer(): Promise<Container> {
-        await this.createDatabaseIfNotExists();
         const database = this.client.database(this.databaseId);
-        console.log("Creating container:", CONTAINER_NAME);
         const partitionKey = {
             paths: ["/tenantId", "/userId"],
             kind: PartitionKeyKind.MultiHash,
             version: PartitionKeyDefinitionVersion.V2,
         };
-        console.log("Partition Key being used:", partitionKey);
         const containerResponse = await database.containers.createIfNotExists({
             id: CONTAINER_NAME,
             partitionKey: {
@@ -66,7 +63,6 @@ export class CosmosDBUserContainer {
                 version: PartitionKeyDefinitionVersion.V2,
             },
         });
-        console.log("Partition Key being used:", partitionKey);
         return containerResponse.container;
     }
 
@@ -110,7 +106,6 @@ export class CosmosDBUserContainer {
       let user = resources[0];
   
       if (!user) {
-          console.log("Creating a record for a new user due to failed login attempt with UPN:", upn);
           user = {
               id: hashValue(upn),
               userId: upn,
@@ -161,25 +156,22 @@ export class CosmosDBUserContainer {
         
         const keyUserId = user.userId;
         const keyTenantId = user.tenantId;
-        const partitionKey = {paths:["/" + keyUserId,"/" + keyUserId],
+        const partitionKey = {paths:["/" + keyTenantId,"/" + keyUserId],
             kind: PartitionKeyKind.MultiHash,
             version: PartitionKeyDefinitionVersion.V2,
         };
     
         const container = await this.getContainer();
         if (!tenantId || tenantId.trim() === "") {
-            console.log("TenantId is missing. User update aborted.");
             throw new Error("tenantId is required to update a user.");
         }
     
         if (!userId) {
-            console.log("User id is missing. User update aborted.");
             throw new Error("User must have an id to be updated.");
         }
     
         const { resource: existingUser } = await container.item(user.id, partitionKey as any).read<UserRecord>();
         if (!existingUser) {
-            console.log("User not found for update. Aborting.");
             throw new Error("User not found.");
         }
     

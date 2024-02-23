@@ -41,7 +41,7 @@ const validateEnv = () => {
   }
 };
 
-validateEnv();
+//validateEnv();
 
 const configureIdentityProvider = (): Provider[] => {
   const providers: Provider[] = [];
@@ -206,6 +206,7 @@ export const options: NextAuthOptions = {
         authToken.qchatAdmin = user.qchatAdmin ?? false;
         authToken.tenantId = user.tenantId ?? '';
         authToken.upn = user.upn ?? '';
+
       }
       if (account && account.access_token && account.refresh_token) {
         const expiresIn = Number(account.expires_in ?? 0);

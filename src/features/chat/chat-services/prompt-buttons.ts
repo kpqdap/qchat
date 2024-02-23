@@ -4,7 +4,7 @@ import { GenericChatAPI } from "./generic-chat-api";
 
 export const PromptButtons = async (): Promise<string[]> => {
   const apiName = "generatePromptButtons";
-  if (process.env.PROMPT_BUTTON_ENABLED === "enabled") {
+  if (process.env.PROMPT_BUTTON_ENABLED) {
     try {
         const promptButtons = await GenericChatAPI(apiName, {
           messages: [

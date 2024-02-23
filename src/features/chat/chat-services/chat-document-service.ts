@@ -12,7 +12,7 @@ import { isNotNullOrEmpty } from "./utils";
 import { arrayBufferToBase64, customBeginAnalyzeDocument } from "./chat-document-helper";
 import { speechToTextRecognizeOnce } from "./chat-audio-helper";
 
-const MAX_DOCUMENT_SIZE = 20000000;
+const MAX_DOCUMENT_SIZE = process.env.MAX_DOCUMENT_SIZE as unknown as number;
 
 export const UploadDocument = async (formData: FormData): Promise<ServerActionResponse<string[]>> => {
   try {

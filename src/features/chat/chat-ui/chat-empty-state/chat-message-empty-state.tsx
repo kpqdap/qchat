@@ -8,6 +8,8 @@ import { PromptButton } from "./prompt-buttons-UI";
 import { Card } from "@/components/ui/card";
 import Typography from "@/components/typography";
 import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service";
+import { EasterEgg } from "./chat-easter-egg";
+
 
 interface Prop { }
 

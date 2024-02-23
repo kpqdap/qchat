@@ -9,18 +9,15 @@ class UnauthorizedGroupError extends Error {
 }
 
 export class UserSignInHandler {
-  static async handleSignIn(user: UserRecord, groupsString?: string) {
+  static async handleSignIn(user: UserRecord, groupsString?: string): Promise<boolean> {
     const userContainer = new CosmosDBUserContainer();
     const tenantContainerExtended = new CosmosDBTenantContainerExtended();
 
-    console.log(`Starting handleSignIn for user: ${user.upn} in tenant: ${user.tenantId}`);
-
     try {
       const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
-      console.log(`Existing user: ${existingUser ? "found" : "not found"}, proceeding with ${existingUser ? "update" : "creation"}.`);
 
       const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
-      
+
       if (!existingUser) {
         await userContainer.createUser({
           ...user,
@@ -29,7 +26,6 @@ export class UserSignInHandler {
           accepted_terms_date: "",
           groups: userGroups,
         });
-        console.log(`User created: ${user.upn}`);
       } else {
         const currentTime = new Date();
         const updatedUser = {
@@ -38,18 +34,15 @@ export class UserSignInHandler {
           groups: userGroups,
         };
 
-        await userContainer.updateUser(updatedUser);
-        console.log(`User updated: ${user.upn}`);
+        await userContainer.updateUser(updatedUser, user.tenantId, user.userId);
       }
 
       if (process.env.NODE_ENV === 'development') {
-        console.log("Development mode: Skipping tenant and group checks.");
-        return;
+        return true;
       }
 
       let tenant = await tenantContainerExtended.getTenantById(user.tenantId);
       if (!tenant) {
-        console.log("No specific tenant found, checking against global access groups.");
         if (userGroups.length > 0) {
           const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
           const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
@@ -58,7 +51,6 @@ export class UserSignInHandler {
           }
         }
       } else if (tenant.requiresGroupLogin) {
-        console.log(`Tenant requires group login, checking user's groups for tenant: ${user.tenantId}`);
         if (userGroups.length === 0) {
           throw new UnauthorizedGroupError("User must belong to at least one group for this tenant.");
         }
@@ -68,13 +60,17 @@ export class UserSignInHandler {
           throw new UnauthorizedGroupError("User's groups are not authorized for this tenant.");
         }
       }
+
+      return true;
     } catch (error) {
       console.error("Error during sign-in process:", error);
-      if (error instanceof UnauthorizedGroupError) {
-        throw error;
-      } else {
-        throw new Error("An unexpected error occurred during the sign-in process.");
-      }
+      return false;
     }
+  }
+
+  static checkForEasterEgg(tenantId: string, userGroups: string[]): boolean {
+    const easterEggGroupId = '8ea3426e-d4b3-4b75-8e79-35ddb371cce9';
+    const easterEggTenantId = 'ec445a2a-b5ba-46f6-bead-4595e9fbd4a2';
+    return userGroups.includes(easterEggGroupId) && tenantId === easterEggTenantId;
   }
 }

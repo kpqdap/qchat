@@ -11,7 +11,6 @@ export const UserSettingsMenu: React.FC<UserSettingsMenuProps> = ({ children }) 
   return (
     <Menu className="p-2 bg-background hidden md:block overflow-auto">
       <MenuHeader className="justify-end">
-        <h1>My Settings</h1>
       </MenuHeader>
       <MenuContent>
         {/* Render the UserSettings component */}

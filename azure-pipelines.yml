@@ -18,7 +18,9 @@ variables:
   poolName: 'QGGPT_Pool'
 
   # App Settings variables
-  appSettings: '-ADMIN_EMAIL_ADDRESS "$(ADMIN_EMAIL_ADDRESS)"
+  appSettings: '-ACCESS_GROUPS "$(ACCESS_GROUPS)"
+                -ACCESS_GROUPS_REQUIRED "$(ACCESS_GROUPS_REQUIRED)"
+                -ADMIN_EMAIL_ADDRESS "$(ADMIN_EMAIL_ADDRESS)"
                 -AZURE_AD_AUTHORIZATION_ENDPOINT "$(AZURE_AD_AUTHORIZATION_ENDPOINT)"
                 -AZURE_AD_CLIENT_ID "$(AZURE_AD_CLIENT_ID)"
                 -AZURE_AD_CLIENT_SECRET "$(AZURE_AD_CLIENT_SECRET)"
@@ -27,12 +29,18 @@ variables:
                 -AZURE_AD_TENANT_ID "$(AZURE_AD_TENANT_ID)"
                 -AZURE_AD_TOKEN_ENDPOINT "$(AZURE_AD_TOKEN_ENDPOINT)"
                 -AZURE_AD_USERINFO_ENDPOINT "$(AZURE_AD_USERINFO_ENDPOINT)"
+                -AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING "$(AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING)"
+                -AZURE_COSMOSDB_CONFIG_CONTAINER_NAME "$(AZURE_COSMOSDB_CONFIG_CONTAINER_NAME)"
                 -AZURE_COSMOSDB_CONTAINER_NAME "$(AZURE_COSMOSDB_CONTAINER_NAME)"
                 -AZURE_COSMOSDB_DB_NAME "$(AZURE_COSMOSDB_DB_NAME)"
                 -AZURE_COSMOSDB_KEY "$(AZURE_COSMOSDB_KEY)"
+                -AZURE_COSMOSDB_TENANT_CONTAINER_NAME "$(AZURE_COSMOSDB_TENANT_CONTAINER_NAME)"
                 -AZURE_COSMOSDB_URI "$(AZURE_COSMOSDB_URI)"
+                -AZURE_COSMOSDB_USER_CONTAINER_NAME "$(AZURE_COSMOSDB_USER_CONTAINER_NAME)"
+                -AZURE_COSMOSDB_USER_PREFS_CONTAINER_NAME "$(AZURE_COSMOSDB_USER_PREFS_CONTAINER_NAME)"
                 -AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT "$(AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT)"
                 -AZURE_DOCUMENT_INTELLIGENCE_KEY "$(AZURE_DOCUMENT_INTELLIGENCE_KEY)"
+                -AZURE_KEY_VAULT_NAME "$(AZURE_KEY_VAULT_NAME)"
                 -AZURE_OPENAI_API_DEPLOYMENT_NAME "$(AZURE_OPENAI_API_DEPLOYMENT_NAME)"
                 -AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME "$(AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME)"
                 -AZURE_OPENAI_API_INSTANCE_NAME "$(AZURE_OPENAI_API_INSTANCE_NAME)"
@@ -43,24 +51,25 @@ variables:
                 -AZURE_SEARCH_NAME "$(AZURE_SEARCH_NAME)"
                 -AZURE_SPEECH_KEY "$(AZURE_SPEECH_KEY)"
                 -AZURE_SPEECH_REGION "$(AZURE_SPEECH_REGION)"
-                -NEXTAUTH_ALLOWED_ORIGINS "$(NEXTAUTH_ALLOWED_ORIGINS)"
+                -AZURE_SPEECH_STT_URL "$(AZURE_SPEECH_STT_URL)"
+                -AZURE_SPEECH_URL "$(AZURE_SPEECH_URL)"
+                -FEATURE_FILEEXPORT "$(FEATURE_FILEEXPORT)"
+                -FEATURE_QUASYMODO "$(FEATURE_QUASYMODO)"
+                -FEATURE_TRANSCRIBE_TENANTS "$(FEATURE_TRANSCRIBE_TENANTS)"
+                -MAX_UPLOAD_DOCUMENT_SIZE "$(MAX_UPLOAD_DOCUMENT_SIZE)"
+                -NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING "$(NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING)"
                 -NEXTAUTH_SECRET "$(NEXTAUTH_SECRET)"
                 -NEXTAUTH_URL "$(NEXTAUTH_URL)"
                 -OPENAI_API_KEY "$(OPENAI_API_KEY)"
-                -PUBLIC_SPEECH_ENABLED "$(PUBLIC_SPEECH_ENABLED)"
-                -NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING "$(NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING)"
-                -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"
-                -QGAIP_APIM_HEALTHCHECK_URI "$(QGAIP_APIM_HEALTHCHECK_URI)"
-                -QGAIP_QCHAT_FQDN_URI "$(QGAIP_QCHAT_FQDN_URI)"
-                -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"
-                -ACCESS_GROUPS "$(ACCESS_GROUPS)"
-                -ACCESS_GROUPS_REQUIRED "$(ACCESS_GROUPS_REQUIRED)"
-                -QGAIP_APIM_BASE "$(QGAIP_APIM_BASE)"
-                -AZURE_SPEECH_URL "$(AZURE_SPEECH_URL)"
-                -AZURE_SPEECH_STT_URL "$(AZURE_SPEECH_STT_URL)"
-                -PROMPT_BUTTON_ENABLED "$(PROMPT_BUTTON_ENABLED)"
                 -PERMITTED_TENANTS "$(PERMITTED_TENANTS)"
-                -PERMITTED_TENANTS_REQUIRED "$(PERMITTED_TENANTS_REQUIRED)"'
+                -PERMITTED_TENANTS_REQUIRED "$(PERMITTED_TENANTS_REQUIRED)"
+                -PROMPT_BUTTON_ENABLED "$(PROMPT_BUTTON_ENABLED)"
+                -PUBLIC_SPEECH_ENABLED "$(PUBLIC_SPEECH_ENABLED)"
+                -QGAIP_APIM_BASE "$(QGAIP_APIM_BASE)"
+                -QGAIP_APIM_HEALTHCHECK_URI "$(QGAIP_APIM_HEALTHCHECK_URI)"
+                -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"
+                -QGAIP_QCHAT_FQDN_URI "$(QGAIP_QCHAT_FQDN_URI)"
+                -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"'
 
  
 stages:
@@ -81,6 +90,14 @@ stages:
           displayName: 'Build and Push to DEV'
           inputs:
             containerRegistry: 'Dev-qggptdevacr'
+            repository: 'az_qggpt_image'
+            command: 'buildAndPush'
+            Dockerfile: 'src/dockerfile'
+        
+        - task: Docker@2
+          displayName: 'Build and Push to PROD'
+          inputs:
+            containerRegistry: 'Prod-qggptprdacr'
             repository: 'az_qggpt_image'
             command: 'buildAndPush'
             Dockerfile: 'src/dockerfile'
@@ -134,6 +151,76 @@ stages:
                   scriptLocation: 'inlineScript'
                   inlineScript: |
                     $registryName = 'qggptdevacr'
+                    $doNotDeleteTags = '$(Build.BuildId)'
+                    $skipLastTags = 3
+                    
+                    # Get a list of repositories in the ACR
+                    $repoArray = (az acr repository list --name $registryName --output json | ConvertFrom-Json)
+                    
+                    # Loop through each repository
+                    foreach ($repo in $repoArray)
+                    {
+                        # Get a list of tags for the repository, skip the number of tags specified in $skipLastTags
+                        $tagsArray = (az acr repository show-tags --name $registryName --repository $repo --orderby time_asc --output json | ConvertFrom-Json ) | Select-Object -SkipLast $skipLastTags
+                    
+                        # Loop through each tag and delete the image
+                        foreach($tag in $tagsArray)
+                        {
+                            # Skip recently build tag
+                            if($doNotDeleteTags -contains $tag) 
+                            {
+                                Write-Output("Tag skipped - $tag")
+                            }
+                            else
+                            {
+                                # Delete the image
+                                try 
+                                {
+                                    az acr repository delete --name $registryName --image "$repo`:$tag" --yes
+                                    Write-Output "Deleted images: $repo`:$tag"
+                                }
+                                catch 
+                                {
+                                    Write-Error ("Failed to delete image $repo`:$tag. Error: $_")
+                                }
+                            }
+                        }
+                    }
+                  powerShellErrorActionPreference: 'continue'
+
+- stage: Production
+  displayName: Production Stage
+  dependsOn: Development
+  condition: succeeded()
+  variables:
+    - group: prod-az-qggpt-variables
+  jobs:
+    - deployment: Prod
+      displayName: Prod
+      environment: 'Prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:              
+              - task: AzureRmWebAppDeployment@4
+                displayName: 'Azure Web App Container Deploy'
+                inputs:
+                  ConnectionType: 'AzureRM'
+                  azureSubscription: 'Prod QGGPT'
+                  appType: 'webAppContainer'
+                  WebAppName: 'qggptprodopenai'
+                  DockerNamespace: 'qggptprdacr.azurecr.io'
+                  DockerRepository: 'az_qggpt_image'
+                  DockerImageTag: '$(Build.BuildId)'
+                  AppSettings: '$(appSettings)'
+
+              - task: AzureCLI@2
+                inputs:
+                  azureSubscription: 'Prod QGGPT'
+                  scriptType: 'ps'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    $registryName = 'qggptprdacr'
                     $doNotDeleteTags = '$(Build.BuildId)'
                     $skipLastTags = 3
                     
