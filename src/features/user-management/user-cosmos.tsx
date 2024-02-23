@@ -14,7 +14,7 @@ export type UserIdentity = {
   email: string | null | undefined;
   name: string | null | undefined;
   upn: string;
-  isAdmin: string | null | undefined;
+  qchatAdmin: boolean;
 };
 
 export type UserActivity = {
@@ -50,6 +50,13 @@ export class CosmosDBUserContainer {
     private async initDBContainer(): Promise<Container> {
         await this.createDatabaseIfNotExists();
         const database = this.client.database(this.databaseId);
+        console.log("Creating container:", CONTAINER_NAME);
+        const partitionKey = {
+            paths: ["/tenantId", "/userId"],
+            kind: PartitionKeyKind.MultiHash,
+            version: PartitionKeyDefinitionVersion.V2,
+        };
+        
         const containerResponse = await database.containers.createIfNotExists({
             id: CONTAINER_NAME,
             partitionKey: {
@@ -58,6 +65,7 @@ export class CosmosDBUserContainer {
                 version: PartitionKeyDefinitionVersion.V2,
             },
         });
+        console.log("Partition Key being used:", partitionKey);
         return containerResponse.container;
     }
 
@@ -115,7 +123,7 @@ export class CosmosDBUserContainer {
               accepted_terms_date: null,
               failed_login_attempts: 1,
               last_failed_login: new Date(),
-              isAdmin: "false",
+              qchatAdmin: false,
               history: [`Failed login attempt recorded on ${new Date().toISOString()}`],
           };
   

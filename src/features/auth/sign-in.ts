@@ -9,42 +9,61 @@ class UnauthorizedGroupError extends Error {
 }
 
 export class UserSignInHandler {
-  static async handleSignIn(user: UserRecord, groupsString: string) {
+  static async handleSignIn(user: UserRecord, groupsString?: string) {
     const userContainer = new CosmosDBUserContainer();
     const tenantContainerExtended = new CosmosDBTenantContainerExtended();
 
+    console.log(`Starting handleSignIn for user: ${user.upn} in tenant: ${user.tenantId}`);
+
     try {
       const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
+      console.log(`Existing user: ${existingUser ? "found" : "not found"}, proceeding with ${existingUser ? "update" : "creation"}.`);
+
+      const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
+      
       if (!existingUser) {
         await userContainer.createUser({
           ...user,
           first_login: new Date(),
           accepted_terms: false,
           accepted_terms_date: "",
-          groups: groupsString.split(',').map(group => group.trim()),
+          groups: userGroups,
         });
+        console.log(`User created: ${user.upn}`);
       } else {
         const currentTime = new Date();
         const updatedUser = {
           ...existingUser,
           last_login: currentTime,
-          groups: groupsString.split(',').map(group => group.trim()),
+          groups: userGroups,
         };
 
         await userContainer.updateUser(updatedUser);
+        console.log(`User updated: ${user.upn}`);
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Development mode: Skipping tenant and group checks.");
+        return;
       }
 
       let tenant = await tenantContainerExtended.getTenantById(user.tenantId);
       if (!tenant) {
-        const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
-        const userGroups = groupsString.split(',').map(group => group.trim());
-
-        const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
-        if (!isUserGroupApproved) {
-          throw new UnauthorizedGroupError("User does not belong to any authorised groups.");
+        console.log("No specific tenant found, checking against global access groups.");
+        if (userGroups.length > 0) {
+          const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
+          const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
+          if (!isUserGroupApproved) {
+            throw new UnauthorizedGroupError("User does not belong to any authorised groups.");
+          }
         }
       } else if (tenant.requiresGroupLogin) {
-        const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString);
+        console.log(`Tenant requires group login, checking user's groups for tenant: ${user.tenantId}`);
+        if (userGroups.length === 0) {
+          throw new UnauthorizedGroupError("User must belong to at least one group for this tenant.");
+        }
+
+        const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "");
         if (!groupsApproved) {
           throw new UnauthorizedGroupError("User's groups are not authorized for this tenant.");
         }

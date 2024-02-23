@@ -15,6 +15,7 @@ import { signOut, useSession } from "next-auth/react";
 
 const UserProfile = () => {
   const { data: session } = useSession();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,12 +27,12 @@ const UserProfile = () => {
             {session?.user?.image ? (
               <Avatar className="">
                 <AvatarImage
-                  src={session?.user?.image!}
-                  alt={session?.user?.name!}
+                  src={session.user.image}
+                  alt={session.user.name ?? "You"}
                 />
               </Avatar>
             ) : (
-              <UserCircle></UserCircle>
+              <UserCircle />
             )}
           </Button>
         </div>
@@ -40,13 +41,13 @@ const UserProfile = () => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {session?.user?.name}
+              {session?.user?.name ?? "Anonymous"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {session?.user?.email}
+              {session?.user?.email ?? "No email provided"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {session?.user?.isAdmin ? "Admin" : ""}
+              {session?.user?.qchatAdmin ? "Admin" : ""}
             </p>
           </div>
         </DropdownMenuLabel>
