@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 export const UserComponent: React.FC = () => {
     const { data: session, status } = useSession({ required: false });
 
-    const signInProvider = process.env.NODE_ENV === 'development' ? 'credentials' : 'azure-ad';
+    const signInProvider = process.env.NODE_ENV === 'development' ? 'QChatDevelopers' : 'azure-ad';
 
     if (status === "loading") {
         return <div>Loading...</div>;

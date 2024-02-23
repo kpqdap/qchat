@@ -45,6 +45,7 @@ export class CosmosDBUserContainer {
             defaultHeaders: defaultHeaders
         });
         this.container = this.initDBContainer();
+        console.log("CosmosDBUserContainer initialized", this.client, this.databaseId, this.container);
     }
 
     private async initDBContainer(): Promise<Container> {
@@ -56,7 +57,7 @@ export class CosmosDBUserContainer {
             kind: PartitionKeyKind.MultiHash,
             version: PartitionKeyDefinitionVersion.V2,
         };
-        
+        console.log("Partition Key being used:", partitionKey);
         const containerResponse = await database.containers.createIfNotExists({
             id: CONTAINER_NAME,
             partitionKey: {
@@ -156,18 +157,29 @@ export class CosmosDBUserContainer {
         }
     }
 
-    public async updateUser(user: UserRecord): Promise<void> {
+    public async updateUser(user: UserRecord, tenantId: string, userId: string): Promise<void> {
+        
+        const keyUserId = user.userId;
+        const keyTenantId = user.tenantId;
+        const partitionKey = {paths:["/" + keyUserId,"/" + keyUserId],
+            kind: PartitionKeyKind.MultiHash,
+            version: PartitionKeyDefinitionVersion.V2,
+        };
+    
         const container = await this.getContainer();
-        if (!user.tenantId || user.tenantId.trim() === "") {
+        if (!tenantId || tenantId.trim() === "") {
+            console.log("TenantId is missing. User update aborted.");
             throw new Error("tenantId is required to update a user.");
         }
     
-        if (!user.id) {
+        if (!userId) {
+            console.log("User id is missing. User update aborted.");
             throw new Error("User must have an id to be updated.");
         }
     
-        const { resource: existingUser } = await container.item(user.id, user.tenantId).read<UserRecord>();
+        const { resource: existingUser } = await container.item(user.id, partitionKey as any).read<UserRecord>();
         if (!existingUser) {
+            console.log("User not found for update. Aborting.");
             throw new Error("User not found.");
         }
     
@@ -187,7 +199,8 @@ export class CosmosDBUserContainer {
     
         updatedUser.history = changes;
         updatedUser.last_login = new Date(updateTimestamp);
-        
+    
         await container.items.upsert(updatedUser);
-    }    
+    }
+    
 };
