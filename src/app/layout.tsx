@@ -25,11 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full overflow-auto ">
+    <html lang="en" className="h-full overflow-auto">
       <body className={cn("font-sans flex flex-col w-full h-full")}>
         <GlobalConfigProvider>
           <Providers>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ThemeProvider>
               <header className="header flex flex-col w-full background">
                 <Header />
                 <NavBar />

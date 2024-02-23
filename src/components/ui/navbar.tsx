@@ -17,9 +17,9 @@ interface LinkItem {
 export const NavBar: React.FC = () => {
     const links: LinkItem[] = [
         { name: 'Home', href: '/', icon: HomeIcon },
-        { name: 'Prompt Guides', href: '/prompt-guide', icon: BookMarked },
-        { name: "What's New", href: '/whats-new', icon: BellPlus },
-        { name: 'My Settings', href: '/my-settings', icon: UserCog }
+        // { name: 'Prompt Guides', href: '/prompt-guide', icon: BookMarked },
+        // { name: "What's New", href: '/whats-new', icon: BellPlus },
+        // { name: 'My Settings', href: '/my-settings', icon: UserCog }
     ];
 
     return (

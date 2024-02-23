@@ -20,7 +20,7 @@ export const ChatSensitivitySelector: FC<Prop> = ({ disable }) => {
         <Tooltip.Trigger asChild>
           <div>
             <Tabs defaultValue={chatBody.conversationSensitivity}>
-              <TabsList aria-label="Conversation Sensitivity" className="grid w-full grid-cols-3 gap-4 h-12 items-stretch">
+              <TabsList aria-label="Conversation Sensitivity" className="grid w-full grid-cols-3 h-12 items-stretch">
                 <TabsTrigger
                   value="official"
                   className="flex gap-2 items-center justify-center"

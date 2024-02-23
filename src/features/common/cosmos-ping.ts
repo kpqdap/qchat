@@ -11,7 +11,7 @@ async function testCosmosDBConnection() {
         return true;
     }
     catch (error) {
-        console.error("Failed to connect to CosmosDB:", error);
+        console.log("Failed to connect to CosmosDB:", error);
         return false;
     }
 }

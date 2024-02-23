@@ -3,6 +3,8 @@ import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
 import { createBrowserHistory } from 'history';
 
+const appInsightsKey = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
+
 export interface IAppInsightsContext {
   appInsights: ApplicationInsights;
   reactPlugin: ReactPlugin;
@@ -21,7 +23,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     const reactPlugin = new ReactPlugin();
     const clickPlugin = new ClickAnalyticsPlugin();
 
-    const connectionString = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
+    const connectionString = appInsightsKey;
     if (!connectionString) {
       throw new Error('Connection string for Application Insights is undefined or empty.');
     }
@@ -42,7 +44,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
 
     return { appInsights, reactPlugin, browserHistory, clickPlugin };
   } catch (error) {
-    console.error('Failed to initialize Application Insights:', error);
+    console.log('Failed to initialize Application Insights:', error);
     return null;
   }
 };

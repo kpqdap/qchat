@@ -35,7 +35,8 @@ export type UserModel = {
   email: string;
   upn: string;
   tenantId: string;
-  isAdmin: string;
+  qchatAdmin: boolean;
+  userId: string;
 };
 
 export const hashValue = (value: string): string => {

@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, Profile, User } from "next-auth";
 import { Provider } from "next-auth/providers";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,43 +7,74 @@ import { JWT } from "next-auth/jwt";
 import { UserSignInHandler } from "./sign-in";
 import { UserActivity, UserIdentity, UserRecord } from "../user-management/user-cosmos";
 
+interface Credentials {
+  username?: string;
+}
+
+export interface AuthToken extends JWT {
+  qchatAdmin?: boolean;
+  exp: number;
+  iat: number;
+  refreshExpiresIn: number;
+}
+
+interface ExtendedProfile extends Profile {
+  employee_groups?: string[];
+}
+
+const validateEnv = () => {
+  const requiredEnvVars = [
+    'NEXTAUTH_SECRET',
+    'AZURE_AD_CLIENT_ID',
+    'AZURE_AD_CLIENT_SECRET',
+    'AZURE_AD_TENANT_ID',
+    'AZURE_AD_OPENID_CONFIGURATION',
+    'AZURE_AD_AUTHORIZATION_ENDPOINT',
+    'AZURE_AD_TOKEN_ENDPOINT',
+    'AZURE_AD_USERINFO_ENDPOINT',
+    'AZURE_AD_REDIRECT_URL',
+  ];
+
+  const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+  if (missingEnvVars.length) {
+    throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  }
+};
+
+//validateEnv();
+
 const configureIdentityProvider = (): Provider[] => {
   const providers: Provider[] = [];
+  const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => email.toLowerCase().trim()) || [];
 
-  const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => email.toLowerCase().trim());
-
-  if (
-    process.env.AZURE_AD_CLIENT_ID &&
-    process.env.AZURE_AD_CLIENT_SECRET &&
-    process.env.AZURE_AD_TENANT_ID
-  ) {
+  if (process.env.AZURE_AD_CLIENT_ID && process.env.AZURE_AD_CLIENT_SECRET && process.env.AZURE_AD_TENANT_ID) {
     providers.push(
       AzureADProvider({
-        clientId: process.env.AZURE_AD_CLIENT_ID!,
-        clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-        tenantId: process.env.AZURE_AD_TENANT_ID!,
-        wellKnown: process.env.AZURE_AD_OPENID_CONFIGURATION!,
+        clientId: process.env.AZURE_AD_CLIENT_ID,
+        clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+        tenantId: process.env.AZURE_AD_TENANT_ID,
+        wellKnown: process.env.AZURE_AD_OPENID_CONFIGURATION,
         authorization: {
-          url: process.env.AZURE_AD_AUTHORIZATION_ENDPOINT!,
+          url: process.env.AZURE_AD_AUTHORIZATION_ENDPOINT,
           params: {
-            client_id: process.env.AZURE_AD_CLIENT_ID!,
-            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!,
-            response_type: "code"
+            client_id: process.env.AZURE_AD_CLIENT_ID,
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL,
+            response_type: "code",
           }
         },
         token: {
-          url: process.env.AZURE_AD_TOKEN_ENDPOINT!,
+          url: process.env.AZURE_AD_TOKEN_ENDPOINT,
           params: {
-            client_id: process.env.AZURE_AD_CLIENT_ID!,
-            client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
+            client_id: process.env.AZURE_AD_CLIENT_ID,
+            client_secret: process.env.AZURE_AD_CLIENT_SECRET,
             grant_type: "authorization_code",
-            redirect_uri: process.env.AZURE_AD_REDIRECT_URL!,
+            redirect_uri: process.env.AZURE_AD_REDIRECT_URL,
           }
         },
-        userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT!,
+        userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT,
         profile: (profile) => {
           const email = profile.email?.toLowerCase();
-          const isAdmin = adminEmails?.includes(email);
+          const qchatAdmin = adminEmails.includes(email);
           return {
             ...profile,
             id: profile.sub,
@@ -51,9 +82,10 @@ const configureIdentityProvider = (): Provider[] => {
             email: profile.email,
             upn: profile.upn,
             tenantId: profile.employee_idp,
-            isAdmin: isAdmin ? "true" : "false",
-          }
-        }            
+            qchatAdmin: qchatAdmin,
+            userId: profile.upn,
+          };
+        }
       }),
     );
   }
@@ -61,41 +93,35 @@ const configureIdentityProvider = (): Provider[] => {
   if (process.env.NODE_ENV === "development") {
     providers.push(
       CredentialsProvider({
-        name: "localdev",
+        name: "QChatDevelopers",
         credentials: {
-          username: { label: "Username", type: "text", placeholder: "dev", default: "dev" },
-          password: { label: "Password", type: "password", default: "dev"},
-          tenantId : { label: "Tenant ID", type: "text", placeholder: "localdev", default: "localdev"},
-          upn: { label: "UPN", type: "text", placeholder: "dev", default: "dev" },
-        },
-        async authorize(credentials, req) {
-          const username = credentials?.username || "dev";
-          const email = username + "@localhost";
-          const isAdmin = adminEmails?.includes(email.toLowerCase());
-          const employee_idp = "localdev";
-          const upn = credentials?.username ? credentials.username : "dev" || "dev";
-          const user: UserIdentity = {
-            id: hashValue(upn),
+          username: { label: "Username", type: "text", placeholder: "Enter your username" },
+        },        
+        async authorize(credentials: Record<string, any> | undefined, req): Promise<User> {
+          const typedCredentials = credentials as Credentials;
+        
+          const username = typedCredentials.username || "dev";
+          const email = `${username}@localhost`;
+          const qchatAdmin = adminEmails.includes(email.toLowerCase());
+
+          const userIdentity: User = {
+            id: hashValue(username),
             name: username,
             email: email,
-            upn: upn,
-            tenantId: employee_idp,
-            isAdmin: isAdmin ? "true" : "false",
+            upn: username,
+            tenantId: "localdev",
+            qchatAdmin: qchatAdmin,
+            userId: username,
           };
-          console.log("=== DEV USER LOGGED IN:\n", JSON.stringify(user, null, 2));
-          return {
-            ...user,
-            isAdmin: user.isAdmin || "false",
-          };
+          return userIdentity
         }
-        
       })
     );
   }
   return providers;
 };
 
-async function refreshAccessToken(token: JWT) {
+async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
   try {
     const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!;
     const formData = new URLSearchParams({
@@ -106,33 +132,27 @@ async function refreshAccessToken(token: JWT) {
     });
 
     const response = await fetch(tokenUrl, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: formData,
       method: "POST",
     });
 
-    const refreshedTokens = await response.json();
-
     if (!response.ok) {
-      throw refreshedTokens;
+      throw new Error(`Failed to refresh access token. Status: ${response.status}`);
     }
 
-    token.accessToken = refreshedTokens.access_token;
-    token.refreshToken = refreshedTokens.refresh_token;
-    token.expiresIn = Date.now() + refreshedTokens.expires_in * 1000;
-    token.refreshExpiresIn = Date.now() + refreshedTokens.refresh_expires_in * 1000;
+    const refreshedTokens = await response.json();
 
     return {
       ...token,
+      accessToken: refreshedTokens.access_token,
+      refreshToken: refreshedTokens.refresh_token,
+      expiresIn: Date.now() + refreshedTokens.expires_in * 1000,
+      refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
     };
-  } catch (e) {
-    console.log(e);
-    return {
-      ...token,
-      e: "RefreshAccessTokenError",
-    };
+  } catch (error) {
+    console.log("RefreshAccessTokenError", error);
+    return { ...token, error: "RefreshAccessTokenError" };
   }
 }
 
@@ -141,85 +161,79 @@ export const options: NextAuthOptions = {
   providers: [...configureIdentityProvider()],
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (process.env.NODE_ENV === 'development') {
-        user.tenantId = user.tenantId || 'defaultTenantId';
-        user.upn = user.upn || 'defaultUpn';
-      }
-
       if (user?.tenantId && user?.upn) {
+        const now = new Date()
+        const ExtendedProfile = profile as ExtendedProfile;
         const userIdentity: UserIdentity = {
           id: hashValue(user.upn),
           tenantId: user.tenantId,
           email: user.email ?? '',
           name: user.name ?? '',
           upn: user.upn,
-          isAdmin: user.isAdmin,
+          userId: user.upn,
+          qchatAdmin: user.qchatAdmin,
         };
-      
         const userActivity: UserActivity = {
-          last_login: new Date(),
-          first_login: new Date(),
+          last_login: now,
+          first_login: now,
           accepted_terms: true,
-          accepted_terms_date: new Date().toISOString(),
+          accepted_terms_date: now.toISOString(),
           failed_login_attempts: 0,
           last_failed_login: null,
         };
-
-        const groupsString = ((profile as any).employee_groups as string[])?.join(',');
-
-        const userRecord: UserRecord = {
-          ...userIdentity,
-          ...userActivity,
-        };
-      
+        const userRecord: UserRecord = { ...userIdentity, ...userActivity };
         try {
+          const groupsArray = ExtendedProfile?.employee_groups as string[] | undefined;
+          const groupsString = groupsArray?.join(',');
           await UserSignInHandler.handleSignIn(userRecord, groupsString);
           return true;
         } catch (error) {
-          console.error("Error in signIn callback:", error);
+          console.log("Error in signIn callback:", error);
           return false;
         }
       } else {
-        console.error("TenantId or upn is missing. Sign-in aborted.");
+        console.log("TenantId or upn is missing. Sign-in aborted.", user.tenantId, user.upn);
         return false;
       }
     },
-    async jwt({token, user, account, profile, session}) {
+    async jwt({ token, user, account }) {
+      let authToken = token as AuthToken;
       if (user) {
-        token.isAdmin = user.isAdmin;
-        token.tenantId = user.tenantId;
-        token.upn = user.upn;
+        authToken.qchatAdmin = user.qchatAdmin ?? false;
+        authToken.tenantId = user.tenantId ?? '';
+        authToken.upn = user.upn ?? '';
+
       }
-      if (user?.isAdmin) {
-        token.isAdmin = user.isAdmin;
-      }
-      if(account){
-        token.accessToken = account.access_token
-        token.refreshToken = account.refresh_token
-        token.expiresIn = Date.now() + (account as any).expires_in as number * 1000
-        token.refreshExpiresIn = Date.now() + (account as any).refresh_expires_in as number * 1000
+      if (account && account.access_token && account.refresh_token) {
+        const expiresIn = Number(account.expires_in ?? 0);
+        const refreshExpiresIn = Number(account.refresh_expires_in ?? 0);
+
+        authToken.accessToken = account.access_token;
+        authToken.refreshToken = account.refresh_token;
+        authToken.expiresIn = Date.now() + expiresIn * 1000;
+        authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000;
       }
 
-      if (Date.now() < (token.expiresIn as number)) {
-        return token
+      if (authToken.refreshToken && typeof authToken.expiresIn === 'number' && Date.now() > authToken.expiresIn) {
+        authToken = await refreshAccessToken(authToken);
       }
 
-      if (process.env.NODE_ENV === "development"){
-        return token
-      }
-
-      return refreshAccessToken(token)
+      return authToken;
     },
-    async session({session, token, user }) {
-      session.user.isAdmin = token.isAdmin as string
-      session.user.tenantId = token.tenantId as string
-      session.user.upn = token.upn as string
-      return session
+    async session({ session, token }) {
+      const authToken = token as AuthToken;
+      session.user.qchatAdmin = authToken.qchatAdmin ?? false;
+      session.user.tenantId = authToken.tenantId ? String(authToken.tenantId) : '';
+      session.user.upn = authToken.upn ? String(authToken.upn) : '';
+      return session;
     }
+    
+    
   },
   session: {
     strategy: "jwt",
-    maxAge: 8*60*60,
+    maxAge: 8 * 60 * 60,
   },
 };
+
 export const handlers = NextAuth(options);

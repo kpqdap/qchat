@@ -91,7 +91,7 @@ export class CosmosDBTenantContainer {
             requiresGroupLogin: tenant.requiresGroupLogin,
         });
     } catch (e) {
-        console.error("Error creating tenant:", e);
+        console.log("Error creating tenant:", e);
         throw e;
     }
   }
@@ -107,7 +107,7 @@ export class CosmosDBTenantContainer {
       const { resources } = await container.items.query<TenantRecord>(query).fetchAll();
       return resources[0];
     } catch (e) {
-      console.error("Error retrieving Tenant by Tenant ID:", e);
+      console.log("Error retrieving Tenant by Tenant ID:", e);
       return undefined;
     }
   }
@@ -123,7 +123,7 @@ export class CosmosDBTenantContainer {
       const existingTenant = response.resource;
   
       if (!existingTenant) {
-        console.error("Tenant not found:", tenant.id);
+        console.log("Tenant not found:", tenant.id);
         throw new Error("Tenant not found.");
       }
   
@@ -154,7 +154,7 @@ export class CosmosDBTenantContainer {
   
       await container.items.upsert(updatedTenant);
     } catch (e) {
-      console.error("Error updating tenant:", e);
+      console.log("Error updating tenant:", e);
       throw e;
     }
   }

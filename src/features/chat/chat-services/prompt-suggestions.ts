@@ -17,27 +17,27 @@ export const getPromptSuggestions = async (input: string): Promise<string[]> => 
       });
   
       if (!promptSuggestion || promptSuggestion.length === 0) {
-        console.error('Error: Unexpected prompt suggestion structure from OpenAI API.');
+        console.log('Error: Unexpected prompt suggestion structure from OpenAI API.');
         return [];
       }
   
       const prompt = promptSuggestion;
   
       if (prompt == null) {
-        console.error('Error: Prompt is null or undefined.');
+        console.log('Error: Prompt is null or undefined.');
         return [];
       }
   
       const cleanedPrompt = prompt.replace(/^"+|"+$/g, '');
   
       if (cleanedPrompt.trim() === '') {
-        console.error('Error: Cleaned prompt is empty.');
+        console.log('Error: Cleaned prompt is empty.');
         return [];
       }
   
       return [cleanedPrompt];
     } catch (e) {
-      console.error(`An error occurred: ${e}`);
+      console.log(`An error occurred: ${e}`);
       return [''];
     }
   };

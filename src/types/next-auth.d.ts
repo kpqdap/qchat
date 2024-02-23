@@ -6,14 +6,16 @@ declare module "next-auth" {
 
     interface Session {
         user: {
-            isAdmin: string;
+            qchatAdmin: boolean;
             tenantId: string;
             upn: string;
+            userId: string;
         } & DefaultSession["user"]
     }
     interface User {
-        isAdmin: string;
+        qchatAdmin: boolean;
         tenantId: string;
         upn: string;
+        userId: string;
     }
 }

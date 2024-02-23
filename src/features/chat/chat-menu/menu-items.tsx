@@ -49,14 +49,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
 
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${isOpen ? 'block' : 'hidden'}`}>
-      <div className="bg-background w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
+      <div className="bg-altBackground w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
         <div className="mb-4">
-          <Typography variant="h4" className="text-primary">
+          <Typography variant="h4" className="text-foreground">
             Edit Chat Name
           </Typography>
         </div>
         <div className="mb-4">
-          <label htmlFor="newChatName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="newChatName" className="block text-sm font-medium text-foreground">
             New Chat Name
           </label>
           <input
@@ -66,7 +66,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
             onChange={(e) => setNewName(e.target.value)}
             maxLength={120}
             ref={inputRef}
-            className="mt-1 w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 w-full p-2 bg-background border-altBackground rounded-md shadow-sm"
             autoComplete="off"
           />
           {newName.length > 30 && newName.length <= 120 && (
@@ -110,7 +110,7 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
         await RenameChatThreadByID(selectedThreadId, newName);
         window.location.reload();
       } catch (e) {
-        console.error(e);
+        console.log(e);
         showError("" + e);
       } finally {
         handleCloseModal();

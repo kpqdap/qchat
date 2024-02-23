@@ -8,6 +8,8 @@ import { PromptButton } from "./prompt-buttons-UI";
 import { Card } from "@/components/ui/card";
 import Typography from "@/components/typography";
 import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service";
+import { EasterEgg } from "./chat-easter-egg";
+
 
 interface Prop { }
 
@@ -22,7 +24,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       const id = chatThreadModel.chatThreadId;
       UpsertPromptButton(prompt, id);
     } else {
-      console.error('Failed to create chat thread');
+      console.log('Failed to create chat thread');
     }
   }
 
@@ -33,7 +35,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       setInput(prompt);
       callUpsertPromptButton(prompt);
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.log('An error occurred:', error);
     }
   };
 
@@ -43,6 +45,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
   return (
     <div className="grid grid-cols-5 w-full items-center container overflow-auto mx-auto max-w-3xl justify-center h-full p-4 gap-9 pb-[80px]">
       <Card className="col-span-5 flex flex-col gap-2 p-5 ">
+          <EasterEgg />
         <div className="flex flex-col gap-1">
           <p className="text-sm text-text">
             Set the Sensitivity of your chat

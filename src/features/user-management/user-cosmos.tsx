@@ -1,5 +1,4 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos";
-import { createHash } from 'crypto';
 import { hashValue } from "../auth/helpers";
 
 const AZURE_COSMOSDB_URI = process.env.AZURE_COSMOSDB_URI;
@@ -10,11 +9,12 @@ const defaultHeaders = {'api-key': process.env.AZURE_SEARCH_API_KEY};
 
 export type UserIdentity = {
   id: string;
+  userId: string;
   tenantId: string;
   email: string | null | undefined;
   name: string | null | undefined;
   upn: string;
-  isAdmin: string | null | undefined;
+  qchatAdmin: boolean;
 };
 
 export type UserActivity = {
@@ -23,7 +23,8 @@ export type UserActivity = {
   accepted_terms: boolean | null | undefined;
   accepted_terms_date: string | null | undefined;
   history?: string[];
-   [key: string]: any;
+    [key: string]: any;
+  groups?: string[] | null | undefined;
   failed_login_attempts: number;
   last_failed_login: Date | null;
 };
@@ -48,8 +49,12 @@ export class CosmosDBUserContainer {
     }
 
     private async initDBContainer(): Promise<Container> {
-        await this.createDatabaseIfNotExists();
         const database = this.client.database(this.databaseId);
+        const partitionKey = {
+            paths: ["/tenantId", "/userId"],
+            kind: PartitionKeyKind.MultiHash,
+            version: PartitionKeyDefinitionVersion.V2,
+        };
         const containerResponse = await database.containers.createIfNotExists({
             id: CONTAINER_NAME,
             partitionKey: {
@@ -79,7 +84,7 @@ export class CosmosDBUserContainer {
         const container = await this.getContainer();
         const hashedUserId = hashValue(user.upn);
         const creationDate = new Date().toISOString();
-        const historyLog = `${creationDate}: User created by ${hashValue(user.upn)}`;
+        const historyLog = `${creationDate}: User created by ${hashedUserId}`;
 
         await container.items.create({
             ...user,
@@ -101,9 +106,9 @@ export class CosmosDBUserContainer {
       let user = resources[0];
   
       if (!user) {
-          console.log("Creating a record for a new user due to failed login attempt with UPN:", upn);
           user = {
-              id: createHash('sha256').update(upn).digest('hex'),
+              id: hashValue(upn),
+              userId: upn,
               tenantId: tenantId,
               email: null,
               name: null,
@@ -114,7 +119,7 @@ export class CosmosDBUserContainer {
               accepted_terms_date: null,
               failed_login_attempts: 1,
               last_failed_login: new Date(),
-              isAdmin: "false",
+              qchatAdmin: false,
               history: [`Failed login attempt recorded on ${new Date().toISOString()}`],
           };
   
@@ -142,39 +147,52 @@ export class CosmosDBUserContainer {
             const { resources } = await container.items.query<UserRecord>(query).fetchAll();
             return resources[0];
         } catch (e) {
-            console.error("Error retrieving user by UPN:", e);
+            console.log("Error retrieving user by UPN:", e);
             return undefined;
         }
     }
 
-    public async updateUser(user: UserRecord): Promise<void> {
-      const container = await this.getContainer();
-      if (!user.id) {
-          throw new Error("User must have an id to be updated.");
-      }
-  
-      const { resource: existingUser } = await container.item(user.id, user.tenantId).read<UserRecord>();
-      if (!existingUser) {
-          throw new Error("User not found.");
-      }
-  
-      const updatedUser = existingUser as UserRecord;
-  
-      const updateTimestamp = new Date().toISOString();
-      const currentUser = hashValue(user.upn);
-      const changes: string[] = updatedUser.history || [];
-  
-      Object.keys(user).forEach((key) => {
-          if (Object.prototype.hasOwnProperty.call(updatedUser, key)) {
-              if (user[key] !== updatedUser[key] && key !== 'history') {
-                  changes.push(`${updateTimestamp}: ${key} changed from ${updatedUser[key]} to ${user[key]} by ${currentUser}`);
-              }
-          }
-      });
-  
-      updatedUser.history = changes;
-      updatedUser.last_login = new Date(updateTimestamp);
-      
-      await container.items.upsert(updatedUser);
-  }  
+    public async updateUser(user: UserRecord, tenantId: string, userId: string): Promise<void> {
+        
+        const keyUserId = user.userId;
+        const keyTenantId = user.tenantId;
+        const partitionKey = {paths:["/" + keyTenantId,"/" + keyUserId],
+            kind: PartitionKeyKind.MultiHash,
+            version: PartitionKeyDefinitionVersion.V2,
+        };
+    
+        const container = await this.getContainer();
+        if (!tenantId || tenantId.trim() === "") {
+            throw new Error("tenantId is required to update a user.");
+        }
+    
+        if (!userId) {
+            throw new Error("User must have an id to be updated.");
+        }
+    
+        // const { resource: existingUser } = await container.item(user.id, partitionKey as any).read<UserRecord>();
+        // if (!existingUser) {
+        //     throw new Error("User not found.");
+        // }
+
+        const updatedUser = user as UserRecord;
+    
+        const updateTimestamp = new Date().toISOString();
+        const currentUser = hashValue(user.upn);
+        const changes: string[] = updatedUser.history || [];
+    
+        Object.keys(user).forEach((key) => {
+            if (Object.prototype.hasOwnProperty.call(updatedUser, key)) {
+                if (user[key] !== updatedUser[key] && key !== 'history') {
+                    changes.push(`${updateTimestamp}: ${key} changed from ${updatedUser[key]} to ${user[key]} by ${currentUser}`);
+                }
+            }
+        });
+    
+        updatedUser.history = changes;
+        updatedUser.last_login = new Date(updateTimestamp);
+    
+        await container.items.upsert(updatedUser);
+    }
+    
 };

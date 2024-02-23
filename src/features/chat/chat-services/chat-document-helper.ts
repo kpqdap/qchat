@@ -55,7 +55,7 @@ export async function customBeginAnalyzeDocument(modelId: string, base64String: 
         throw new Error('Failed to get Result ID. Status: ' + response.status)
     }
     catch (e) {
-        console.error('Error at BeginAnalyzeDocument:', e);
+        console.log('Error at BeginAnalyzeDocument:', e);
     }
 }
 
@@ -97,6 +97,6 @@ async function customGetAnalyzeResult(modelId: string, resultId: string) {
         return analyzedResult;        
     }
     catch(e){
-        console.error('Error at AnalyzeResult', e);
+        console.log('Error at AnalyzeResult', e);
     }
 }

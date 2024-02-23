@@ -30,7 +30,7 @@ export const MainMenu = () => {
           <Home />
         </Link>
       </Button>
-      {session?.user?.isAdmin ? (
+      {session?.user?.qchatAdmin ? (
         <Button
           asChild
           className="rounded-full w-[40px] h-[40px] p-2 text-primary"

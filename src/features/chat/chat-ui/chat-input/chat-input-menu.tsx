@@ -15,7 +15,6 @@ interface ChatInputMenuProps {
 const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit, setInput, messageCopy }) => {
   const firstMenuItemRef = useRef<HTMLDivElement>(null);
 
-  // When the dropdown menu is opened, focus the first menu item
   useEffect(() => {
     if (firstMenuItemRef.current) {
       firstMenuItemRef.current.focus();
@@ -34,22 +33,13 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
   const copyToClipboard = () => {
     const formattedMessages = messageCopy.map(message => {
       const author = message.role === 'system' || message.role === 'assistant' ? "AI" : "You";
+      // fix the author name on export and copy to clipboard
       return `${author}: ${message.content}`;
     }).join('\n');
   
     navigator.clipboard.writeText(formattedMessages)
-      .then(() => {
-        toast({
-          title: "Success",
-          description: "Messages copied to clipboard",
-        });
-      })
-      .catch(err => {
-        toast({
-          title: "Error",
-          description: "Failed to copy messages to clipboard",
-        });
-      });
+      .then(() => toast({ title: "Success", description: "Messages copied to clipboard" }))
+      .catch(err => toast({ title: "Error", description: "Failed to copy messages to clipboard" }));
   };
 
   return (
@@ -67,13 +57,12 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
           <Menu aria-hidden="true" focusable="false" />
         </Button>
       </DropdownMenu.Trigger>
-
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           id="chat-input-options"
           role="menu"
           aria-label="Chat input options"
-          className="min-w-[220px] bg-popover text-popover-foreground p-[5px] shadow-lg rounded-md"
+          className="min-w-[220px] bg-background text-popover-foreground p-[5px] shadow-lg rounded-md"
           sideOffset={5}
         >
           <DropdownMenu.Item

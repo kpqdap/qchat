@@ -4,7 +4,7 @@ import { GenericChatAPI } from "./generic-chat-api";
 
 export const PromptButtons = async (): Promise<string[]> => {
   const apiName = "generatePromptButtons";
-  if (process.env.PROMPT_BUTTON_ENABLED === "enabled") {
+  if (process.env.PROMPT_BUTTON_ENABLED) {
     try {
         const promptButtons = await GenericChatAPI(apiName, {
           messages: [
@@ -25,14 +25,14 @@ export const PromptButtons = async (): Promise<string[]> => {
         const prompts = JSON.parse(prompt as string) as string[];
   
       if (prompts.some(prompt => prompt === null)) {
-        console.error('Error: Unexpected prompt button structure from OpenAI API.');
+        console.log('Error: Unexpected prompt button structure from OpenAI API.');
         return [];
       }
   
         const filteredPrompts = prompts.filter(prompt => prompt !== null);
   
         if (filteredPrompts.length === 0) {
-          console.error('Error: All prompts are null. Unexpected prompt button structure from OpenAI API.');
+          console.log('Error: All prompts are null. Unexpected prompt button structure from OpenAI API.');
           return [];
         }
         
@@ -40,7 +40,7 @@ export const PromptButtons = async (): Promise<string[]> => {
   
   
     } catch (e) {
-      console.error(`An error occurred: ${e}`);
+      console.log(`An error occurred: ${e}`);
       return ['Write a Ministerial Briefing Note', 'Provide a summary of the below text'];
     }
   } else {

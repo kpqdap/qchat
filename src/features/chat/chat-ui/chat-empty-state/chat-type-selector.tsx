@@ -61,7 +61,7 @@ export const ChatTypeSelector: FC<Prop> = (props) => {
                 <TabsTrigger
                   value="audio"
                   className="flex gap-2"
-                  // disabled={!isAllowedTenant || props.disable}
+                  disabled={!isAllowedTenant || props.disable}
                   role="tab"
                   aria-selected={chatBody.chatType === "audio"}
                   aria-disabled={!isAllowedTenant || props.disable ? "true" : undefined}
