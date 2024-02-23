@@ -97,10 +97,7 @@ const configureIdentityProvider = (): Provider[] => {
         credentials: {
           username: { label: "Username", type: "text", placeholder: "Enter your username" },
         },        
-        async authorize(credentials: Record<string, any> | undefined, req): Promise<User | null> {
-          if (!credentials) {
-            return null;
-          }
+        async authorize(credentials: Record<string, any> | undefined, req): Promise<User> {
           const typedCredentials = credentials as Credentials;
         
           const username = typedCredentials.username || "dev";
@@ -116,8 +113,8 @@ const configureIdentityProvider = (): Provider[] => {
             qchatAdmin: qchatAdmin,
             userId: username,
           };
-
-          return userIdentity.qchatAdmin ? userIdentity : null;
+          console.log(userIdentity);
+          return userIdentity
         }
       })
     );
