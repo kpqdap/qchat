@@ -113,7 +113,6 @@ const configureIdentityProvider = (): Provider[] => {
             qchatAdmin: qchatAdmin,
             userId: username,
           };
-          console.log(userIdentity);
           return userIdentity
         }
       })
@@ -152,7 +151,7 @@ async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
       refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
     };
   } catch (error) {
-    console.error("RefreshAccessTokenError", error);
+    console.log("RefreshAccessTokenError", error);
     return { ...token, error: "RefreshAccessTokenError" };
   }
 }
@@ -189,11 +188,11 @@ export const options: NextAuthOptions = {
           await UserSignInHandler.handleSignIn(userRecord, groupsString);
           return true;
         } catch (error) {
-          console.error("Error in signIn callback:", error);
+          console.log("Error in signIn callback:", error);
           return false;
         }
       } else {
-        console.error("TenantId or upn is missing. Sign-in aborted.", user.tenantId, user.upn);
+        console.log("TenantId or upn is missing. Sign-in aborted.", user.tenantId, user.upn);
         return false;
       }
     },

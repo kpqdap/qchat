@@ -51,7 +51,7 @@ export const createDatabaseAndContainersIfNotExists = async (
       historyContainer,
     };
   } catch (error) {
-    console.error(`Failed to create database and containers for tenant '${tenantId}':`, error);
+    console.log(`Failed to create database and containers for tenant '${tenantId}':`, error);
     return {
       database: null,
       usersContainer: null,

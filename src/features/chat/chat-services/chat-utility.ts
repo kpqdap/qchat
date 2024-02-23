@@ -22,12 +22,12 @@ async function generateChatName(chatMessage: string): Promise<string> {
         if (name) {
             return name.replace(/^"+|"+$/g, ''); // Remove proceeding and trailing quotes from the returned message
         } else {
-            console.error('Error: Unexpected response structure from OpenAI API.');
+            console.log('Error: Unexpected response structure from OpenAI API.');
             return "";
         }
 
     } catch (e) {
-        console.error(`An error occurred: ${e}`);
+        console.log(`An error occurred: ${e}`);
         const words: string[] = chatMessage.split(' ');
         const name: string = 'New Chat by Error';
         return name;
@@ -71,7 +71,7 @@ async function generateChatCategory(chatMessage: string): Promise<string> {
         }
 
     } catch (e) {
-        console.error(`An error occurred: ${e}`);
+        console.log(`An error occurred: ${e}`);
         const words: string[] = chatMessage.split(' ');
         const category: string = 'Uncategorised';
         return category;

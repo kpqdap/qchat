@@ -1,13 +1,6 @@
 import { CosmosDBUserContainer, UserRecord } from "../user-management/user-cosmos";
 import { CosmosDBTenantContainerExtended } from "../tenant-management/tenant-groups";
 
-class UnauthorizedGroupError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "UnauthorizedGroupError";
-  }
-}
-
 export class UserSignInHandler {
   static async handleSignIn(user: UserRecord, groupsString?: string): Promise<boolean> {
     const userContainer = new CosmosDBUserContainer();
@@ -47,23 +40,20 @@ export class UserSignInHandler {
           const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
           const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
           if (!isUserGroupApproved) {
-            throw new UnauthorizedGroupError("User does not belong to any authorised groups.");
           }
         }
       } else if (tenant.requiresGroupLogin) {
         if (userGroups.length === 0) {
-          throw new UnauthorizedGroupError("User must belong to at least one group for this tenant.");
         }
 
         const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "");
         if (!groupsApproved) {
-          throw new UnauthorizedGroupError("User's groups are not authorized for this tenant.");
         }
       }
 
       return true;
     } catch (error) {
-      console.error("Error during sign-in process:", error);
+      console.log("Error during sign-in process:", error);
       return false;
     }
   }

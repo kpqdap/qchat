@@ -110,7 +110,7 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
         await RenameChatThreadByID(selectedThreadId, newName);
         window.location.reload();
       } catch (e) {
-        console.error(e);
+        console.log(e);
         showError("" + e);
       } finally {
         handleCloseModal();

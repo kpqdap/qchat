@@ -11,7 +11,7 @@ export class CosmosDBTenantContainerExtended extends CosmosDBTenantContainer {
       const groupsToCheck = groupsString.split(',').map(group => group.trim());
       return groupsToCheck.every(group => (tenant.groups ?? []).includes(group));
     } catch (e) {
-      console.error("Error checking groups for tenant:", e);
+      console.log("Error checking groups for tenant:", e);
       throw e;
     }
   }

@@ -15,7 +15,7 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt 
         const data = await PromptButtons();
         setPrompts(data);
       } catch (error) {
-        console.error('Error fetching prompts from backend:', error);
+        console.log('Error fetching prompts from backend:', error);
       }
     };
 

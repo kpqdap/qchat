@@ -56,7 +56,7 @@ export const FindAllChatThreadForCurrentUser = async () => {
       .fetchAll();
     return resources;
   } catch (error) {
-    console.error("Failed to fetch chat threads for current user:", error);
+    console.log("Failed to fetch chat threads for current user:", error);
     throw error;
   }
 };
@@ -90,7 +90,7 @@ export const FindChatThreadByID = async (id: string) => {
 
     return resources;
   } catch (error) {
-    console.error("Failed to fetch chat thread by ID:", error);
+    console.log("Failed to fetch chat thread by ID:", error);
     throw error;
   }
 };

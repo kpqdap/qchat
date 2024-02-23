@@ -24,7 +24,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       const id = chatThreadModel.chatThreadId;
       UpsertPromptButton(prompt, id);
     } else {
-      console.error('Failed to create chat thread');
+      console.log('Failed to create chat thread');
     }
   }
 
@@ -35,7 +35,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       setInput(prompt);
       callUpsertPromptButton(prompt);
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.log('An error occurred:', error);
     }
   };
 
