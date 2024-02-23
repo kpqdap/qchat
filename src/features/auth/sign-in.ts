@@ -67,10 +67,4 @@ export class UserSignInHandler {
       return false;
     }
   }
-
-  static checkForEasterEgg(tenantId: string, userGroups: string[]): boolean {
-    const easterEggGroupId = '8ea3426e-d4b3-4b75-8e79-35ddb371cce9';
-    const easterEggTenantId = 'ec445a2a-b5ba-46f6-bead-4595e9fbd4a2';
-    return userGroups.includes(easterEggGroupId) && tenantId === easterEggTenantId;
-  }
-}
+};
