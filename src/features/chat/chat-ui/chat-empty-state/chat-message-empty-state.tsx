@@ -45,6 +45,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
   return (
     <div className="grid grid-cols-5 w-full items-center container overflow-auto mx-auto max-w-3xl justify-center h-full p-4 gap-9 pb-[80px]">
       <Card className="col-span-5 flex flex-col gap-2 p-5 ">
+          <EasterEgg />
         <div className="flex flex-col gap-1">
           <p className="text-sm text-text">
             Set the Sensitivity of your chat
