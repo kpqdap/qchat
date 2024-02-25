@@ -56,6 +56,7 @@
     "@types/react-dom": "^18.2.18",
     "ai": "2.2.20",
     "ajv": "^8.12.0",
+    "applicationinsights": "^2.9.4",
     "autoprefixer": "^10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

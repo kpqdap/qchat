@@ -14,7 +14,7 @@ export const ChatUI: FC<Prop> = () => {
   return (
     <div className="h-full relative overflow-hidden flex-1 bg-altBackground shadow-md text-text sm:text-lg lg:text-xl">
     {messages.length !== 0 ? (
-      <ChatMessageContainer/>
+      <ChatMessageContainer chatId={""} sentiment={""} threadId={""}/>
     ) : (
       <ChatMessageEmptyState/>
     )}

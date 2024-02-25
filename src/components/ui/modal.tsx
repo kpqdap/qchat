@@ -4,12 +4,13 @@ import { FeedbackTextarea } from "./feedback-textarea";
 import FeedbackButtons from './feedback-reasons';
 import { Button } from "./button";
 import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
+import { ChatSentiment } from "@/features/chat/chat-services/models";
 
 interface ModalProps {
     chatThreadId: string;
     open: boolean;
     onClose: () => void;
-    onSubmit: (chatMessageId: string, feedback: string, reason: string) => void;
+    onSubmit: (chatMessageId: string, feedback: string, reason: string, threadId: string) => void;
 }
 
 export default function Modal(props: ModalProps): ReturnType<FC> {
@@ -34,9 +35,9 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
     };
 
     async function handleSubmit(): Promise<void> {
-      props.onSubmit(props.chatThreadId, feedback, reason); 
+      props.onSubmit(props.chatThreadId, feedback, reason, props.chatThreadId); 
       setFeedback('');
-      CreateUserFeedbackChatId(props.chatThreadId, feedback, "negative", reason);
+      CreateUserFeedbackChatId(props.chatThreadId, feedback, ChatSentiment.Negative, reason, props.chatThreadId);
       props.onClose(); 
     };
 

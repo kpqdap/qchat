@@ -6,13 +6,15 @@ import { useSession } from "next-auth/react";
 import { useRef } from "react";
 import { useChatContext } from "./chat-context";
 import { ChatHeader } from "./chat-header";
+import { ChatRole } from "../chat-services/models";
 
 interface Props {
   chatId: string;
   sentiment: string;
+  threadId: string;
 };
 
-export const ChatMessageContainer = () => {
+export const ChatMessageContainer: React.FC<Props> = ({ chatId, threadId }) => {
   const { data: session } = useSession();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -29,13 +31,14 @@ export const ChatMessageContainer = () => {
         {messages.map((message, index) => (
           <ChatRow
             chatMessageId={message.id}
-            name={message.role === "user" ? session?.user?.name! : AI_NAME}
+            name={message.role === ChatRole.User ? session?.user?.name! : AI_NAME}
             profilePicture={
-              message.role === "user" ? session?.user?.image! : ""
+              message.role === ChatRole.User ? session?.user?.image! : ""
             }
             message={message.content}
-            type={message.role}
+            type={message.role as ChatRole}
             key={index}
+            chatThreads={threadId}
           />
         ))}
         {isLoading && <ChatLoading />}

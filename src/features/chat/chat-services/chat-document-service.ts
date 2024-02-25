@@ -59,7 +59,7 @@ const LoadFile = async (formData: FormData, chatType: string) => {
 
         const base64String = await arrayBufferToBase64(await blob.arrayBuffer());
 
-        const analyzeDocument = await customBeginAnalyzeDocument("prebuilt-read", base64String);
+        const analyzeDocument = await customBeginAnalyzeDocument("prebuilt-read", base64String, "base64");
         
         // const poller = await client.beginAnalyzeDocument("prebuilt-read", await blob.arrayBuffer());
         // const { paragraphs } = await poller.pollUntilDone();
