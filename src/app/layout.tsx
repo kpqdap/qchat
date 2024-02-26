@@ -30,20 +30,22 @@ export default function RootLayout({
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider>
-              <header className="header flex flex-col w-full background">
+              <header className="header flex flex-col w-full background xs:h-full sm:h-1/6">
                 <Header />
-                <NavBar />
-                <div className="bg-designAccent h-1"></div>
               </header>
-              <main className="main flex flex-col w-full h-full">
+              <nav className="nav flex flex-col w-full background">
+                <NavBar />
+              </nav>
+              <main className="main grid grid-cols-6 w-full h-full">
                 <div
                   className={cn(
-                    "flex w-full h-full gap-2 bg-primary"
+                    "col-span-6 w-full gap-2 bg-primary"
                   )}
                 >
                   {children}
                 </div>
               </main>
+              <Footer />
               <Toaster />
             </ThemeProvider>
           </Providers>

@@ -7,7 +7,7 @@ export const ChatMenu = async () => {
   const items = await FindAllChatThreadForCurrentUser();
 
   return (
-    <Menu className=" p-2 bg-background hidden md:block overflow-auto">
+    <Menu className="hidden md:block lg:col-span-2 xl:col-span-1 w-auto p-2 bg-background overflow-auto h-full">
       <MenuHeader className="justify-end">
         <NewChat />
       </MenuHeader>
