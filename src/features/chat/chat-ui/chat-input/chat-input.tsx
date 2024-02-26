@@ -7,11 +7,10 @@ import { AI_NAME } from "@/features/theme/customise";
 import { ChatFileSlider } from "../chat-file/chat-file-slider";
 import { convertMarkdownToWordDocument } from "@/features/common/file-export";
 import ChatInputMenu from "./chat-input-menu";
-import { useSession } from "next-auth/react";
 
 interface Props {}
 
-const ChatInput: FC<Props> = (props) => {
+const ChatInput: FC<Props> = () => {
   const { setInput, handleSubmit, isLoading, input, chatBody, isModalOpen, messages } = useChatContext();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -37,8 +36,10 @@ const ChatInput: FC<Props> = (props) => {
   
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleSubmit(e);
-    setInput("");
+    if (!isModalOpen) {
+      handleSubmit(e);
+      setInput("");
+    }
   };
 
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -46,11 +47,12 @@ const ChatInput: FC<Props> = (props) => {
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !isModalOpen) {
       event.preventDefault(); 
-
-      handleSubmit(event as unknown as FormEvent<HTMLFormElement>);
-      setInput("");
+      if (!isLoading) { // Ensure we don't attempt to submit when data is loading or in an improper state.
+        handleSubmit(event as unknown as FormEvent<HTMLFormElement>);
+        setInput("");
+      }
     }
   };
 

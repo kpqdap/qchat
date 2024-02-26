@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full overflow-auto">
-      <body className={cn("font-sans flex flex-col w-full h-full")}>
+      <body className={cn("font-sans flex flex-col min-w-[400px] w-full h-full")}>
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider>
@@ -36,14 +36,12 @@ export default function RootLayout({
               <nav className="nav flex flex-col w-full background">
                 <NavBar />
               </nav>
-              <main className="main grid grid-cols-6 w-full h-full">
-                <div
-                  className={cn(
-                    "col-span-6 w-full gap-2 bg-primary"
-                  )}
-                >
-                  {children}
-                </div>
+              {/* <main className="main grid grid-cols-6 w-full h-5/6 bg-background"> */}
+              <main className="main w-full h-5/6 bg-background">
+                {children}
+                {/* <div className={cn("col-span-6 w-full gap-2 bg-primary h-full")}>
+                
+                </div> */}
               </main>
               <Footer />
               <Toaster />

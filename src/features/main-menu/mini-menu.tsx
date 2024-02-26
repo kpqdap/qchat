@@ -14,9 +14,9 @@ export const MiniMenu: React.FC = () => {
 
     const menuItems = [
         { name: 'Home', href: '/chat', icon: Home, ariaLabel: 'Navigate to home page' },
-        { name: 'Prompt Guides', href: '/prompt-guide', icon: Bookmark, ariaLabel: 'Navigate to prompt guides' },
-        { name: "What's New", href: '/whats-new', icon: Bell, ariaLabel: "Navigate to what's new page" },
-        { name: 'Settings', href: '/settings', icon: UserCog, ariaLabel: 'Navigate to settings' },
+        // { name: 'Prompt Guides', href: '/prompt-guide', icon: Bookmark, ariaLabel: 'Navigate to prompt guides' },
+        // { name: "What's New", href: '/whats-new', icon: Bell, ariaLabel: "Navigate to what's new page" },
+        // { name: 'Settings', href: '/settings', icon: UserCog, ariaLabel: 'Navigate to settings' },
     ];
 
     const toggleTheme = () => {
