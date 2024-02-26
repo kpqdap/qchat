@@ -1,6 +1,7 @@
 "use server";
 import "server-only";
 import { GenericChatAPI } from "./generic-chat-api";  
+import { translator } from "./chat-translator";
 
 export const PromptButtons = async (): Promise<string[]> => {
   const apiName = "generatePromptButtons";
@@ -20,9 +21,11 @@ export const PromptButtons = async (): Promise<string[]> => {
             },
           ],
         });
+ 
+        const translatedPromptButtons = await translator(promptButtons);
+        const prompt = translatedPromptButtons;
+        const prompts = JSON.parse(prompt as unknown as string) as string[];
   
-        const prompt = promptButtons;
-        const prompts = JSON.parse(prompt as string) as string[];
   
       if (prompts.some(prompt => prompt === null)) {
         console.log('Error: Unexpected prompt button structure from OpenAI API.');
