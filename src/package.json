@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@azure-rest/ai-translation-text": "^1.0.0-beta.1",
     "@azure/ai-form-recognizer": "^5.0.0",
     "@azure/cosmos": "^4.0.0",
     "@azure/identity": "^4.0.1",
