@@ -16,7 +16,7 @@ export const NavBar: React.FC = () => {
 
     const links: LinkItem[] = [
         { name: 'Home', href: '/', icon: HomeIcon },
-        { name: 'Settings', href: '/settings', icon: UserCog }
+        // { name: 'Settings', href: '/settings', icon: UserCog }
     ];
 
     return (
