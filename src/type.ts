@@ -51,6 +51,9 @@ const azureEnvVars = [
   "QGAIP_QCHAT_APP_URI",
   "QGAIP_QCHAT_FQDN_URI",
   "SYSTEM_PROMPT",
+  "TRANSLATOR_ENABLED",
+  "AZURE_TRANSLATOR_URL",
+  "AZURE_TRANSLATOR_KEY"
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
