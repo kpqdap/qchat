@@ -5,19 +5,17 @@ import { UserSettings } from "@/features/user-management/menu-items";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: AI_NAME + " - My Settings",
+  title: AI_NAME + " - Settings",
   description: AI_NAME,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <>
-      <div className="flex-1 flex overflow-hidden bg-card">
-        <UserSettingsMenu>
-          {children}
-        </UserSettingsMenu>
+      <div className="grid grid-cols-6 overflow-hidden bg-card w-full">
+        <UserSettingsMenu />
+        {children}
       </div>
     </>
   );
-}
-
+};

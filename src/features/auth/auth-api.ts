@@ -154,7 +154,7 @@ async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
     console.log("RefreshAccessTokenError", error);
     return { ...token, error: "RefreshAccessTokenError" };
   }
-}
+};
 
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,

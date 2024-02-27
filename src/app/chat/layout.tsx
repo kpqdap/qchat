@@ -16,7 +16,7 @@ export default async function RootLayout({
 }) {
   return (
     <>
-      <div className="flex-1 flex overflow-hidden bg-card/100 ">
+      <div className="grid grid-cols-6 overflow-hidden bg-card/100 h-full">
         <ChatMenuContainer>
           <ChatMenu />
         </ChatMenuContainer>
@@ -24,4 +24,4 @@ export default async function RootLayout({
       </div>
     </>
   );
-}
+};

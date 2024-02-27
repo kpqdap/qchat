@@ -1,9 +1,9 @@
 import { getTenantId, userHashedId } from "@/features/auth/helpers";
 import { FindAllChats } from "@/features/chat/chat-services/chat-service";
-import { ChatMessageModel, MESSAGE_ATTRIBUTE } from "@/features/chat/chat-services/models";
+import { ChatMessageModel, ChatRole, ChatSentiment, MESSAGE_ATTRIBUTE } from "@/features/chat/chat-services/models";
 import { CosmosDBContainer } from "@/features/common/cosmos";
 import { uniqueId } from "@/features/common/util";
-import { ChatCompletionMessage } from "openai/resources";
+import { ChatCompletionMessage, ChatCompletionRole } from "openai/resources";
 
 export interface CosmosDBChatMessageHistoryFields {
   sessionId: string;
@@ -42,15 +42,17 @@ export class CosmosDBChatMessageHistory {
       type: MESSAGE_ATTRIBUTE,
       isDeleted: false,
       content: message.content ?? "",
-      role: message.role,
+      role: mapChatCompletionRoleToChatRole(message.role),
       threadId: this.sessionId,
       userId: fetchedUserId,
       tenantId: fetchedTenantId,
       context: citations,
-      systemPrompt: process.env.SYSTEM_PROMPT ?? "" ,
+      systemPrompt: process.env.SYSTEM_PROMPT ?? "",
       feedback: "",
-      sentiment: "neutral",
+      sentiment: ChatSentiment.Neutral,
       reason: "",
+      contextPrompt: "",
+      contentSafetyWarning: ""
     };
     await UpsertChat(modelToSave);
   }
@@ -70,4 +72,8 @@ function mapOpenAIChatMessages(
       content: message.content,
     };
   });
+}
+
+function mapChatCompletionRoleToChatRole(role: ChatCompletionRole): ChatRole {
+  return role as unknown as ChatRole;
 }

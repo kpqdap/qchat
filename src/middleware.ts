@@ -6,7 +6,6 @@ const requireAuth: string[] = [
   "/chat",
   "/api",
   "/reporting",
-  "/unauthorized",
   "/my-settings",
   "/tenant",
   "/admin",
@@ -29,7 +28,7 @@ export async function middleware(request: NextRequest) {
 
         if (requireAdmin.some((path) => pathname.startsWith(path))) {
             if (!token.qchatAdmin || !await additionalAdminCheck(token)) {
-                const url = new URL(`/unauthorized`, request.url);
+                const url = new URL(`/unauthorised`, request.url);
                 return NextResponse.rewrite(url);
             }
         }

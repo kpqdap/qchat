@@ -3,15 +3,53 @@ import { Message } from "ai";
 export const CHAT_DOCUMENT_ATTRIBUTE = "CHAT_DOCUMENT";
 export const CHAT_THREAD_ATTRIBUTE = "CHAT_THREAD";
 export const MESSAGE_ATTRIBUTE = "CHAT_MESSAGE";
-export const CHAT_UTILITY_ATTRIBUTE = "CHAT_MESSAGE";
+export const CHAT_UTILITY_ATTRIBUTE = "CHAT_UTILITY";
+
+export enum ConversationStyle {
+  Creative = "creative",
+  Balanced = "balanced",
+  Precise = "precise",
+};
+
+export enum ConversationSensitivity {
+  Official = "official",
+  Sensitive = "sensitive",
+  Protected = "protected",
+};
+
+export enum ChatType {
+  Simple = "simple",
+  Data = "data",
+  MSSQL = "mssql",
+  Audio = "audio",
+};
+
+export enum FeedbackType {
+  HarmfulUnsafe = "harmful / unsafe",
+  Untrue = "untrue",
+  Unhelpful = "unhelpful",
+};
+
+export enum ChatRole {
+  System = "system",
+  User = "user",
+  Assistant = "assistant",
+  Function = "function",
+};
+
+export enum ChatSentiment {
+  Neutral = "neutral",
+  Positive = "positive",
+  Negative = "negative",
+};
 
 export interface ChatMessageModel {
   id: string;
   createdAt: Date;
   isDeleted: boolean;
   threadId: string;
-  userId: string | undefined | void;
-  tenantId: string | undefined | void;
+  userId: string | undefined;
+  tenantId: string | undefined;
   content: string;
   role: ChatRole;
   context: string;
@@ -20,14 +58,9 @@ export interface ChatMessageModel {
   sentiment: ChatSentiment;
   reason: string;
   systemPrompt: string;
-}
-
-export type ConversationStyle = "creative" | "balanced" | "precise";
-export type ConversationSensitivity = "official" | "sensitive" | "protected";
-export type ChatType = "simple" | "data" | "mssql" | "audio";
-export type FeedbackType = "harmful / unsafe" | "untrue" | "unhelpful";
-export type ChatRole = "system" | "user" | "assistant" | "function";
-export type ChatSentiment = "neutral" | "positive" | "negative";
+  contextPrompt: string;
+  contentSafetyWarning: string;
+};
 
 export interface ChatThreadModel {
   id: string;
@@ -46,7 +79,9 @@ export interface ChatThreadModel {
   chatOverFileName: string;
   type: "CHAT_THREAD";
   offenderId?: string;
-}
+  isDisabled: boolean;
+  contentSafetyWarning: string;
+};
 
 export interface PromptGPTBody {
   id: string;
@@ -57,13 +92,11 @@ export interface PromptGPTBody {
   tenantId: string;
   userId: string;
   offenderId?: string;
-}
+};
 
 export interface PromptGPTProps extends PromptGPTBody {
   messages: Message[];
-  userId: string;
-  tenantId: string;
-}
+};
 
 export interface ChatDocumentModel {
   id: string;
@@ -74,7 +107,7 @@ export interface ChatDocumentModel {
   isDeleted: boolean;
   createdAt: Date;
   type: "CHAT_DOCUMENT";
-}
+};
 
 export interface ChatUtilityModel {
   id: string;
@@ -87,7 +120,7 @@ export interface ChatUtilityModel {
   content: string;
   role: ChatRole;
   type: "CHAT_UTILITY";
-}
+};
 
 export interface ServerActionResponse<T> {
   success: boolean;
@@ -100,5 +133,5 @@ export interface ChatUtilities {
   chatThreadId: string;
   userId: string;
   tenantId: string;
-  promptButton : string;
-}
+  promptButton: string;
+};

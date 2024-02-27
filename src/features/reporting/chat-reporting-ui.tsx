@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { FC } from "react";
 import { AI_NAME } from "../theme/customise";
 import { FindAllChatsInThread, FindChatThreadByID } from "./reporting-service";
+import { ChatRole } from "../chat/chat-services/models";
 
 interface Props {
   chatId: string;
@@ -20,12 +21,13 @@ export const ChatReportingUI: FC<Props> = async (props) => {
         <div className=" pb-[80px] ">
           {chats.map((message, index) => (
             <ChatRow
-              name={message.role === "user" ? chatThread.useName : AI_NAME}
-              profilePicture={message.role === "user" ? "" : ""}
+              name={message.role === ChatRole.User ? chatThread.useName : AI_NAME}
+              profilePicture={message.role === ChatRole.User ? "" : ""}
               message={message.content}
               type={message.role}
               key={index}
-              chatMessageId={chatThread.id}            />
+              chatMessageId={chatThread.id}
+              chatThreads={props.chatId}            />
           ))}
         </div>
       </div>

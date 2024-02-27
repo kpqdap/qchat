@@ -150,7 +150,7 @@ export class CosmosDBUserContainer {
             console.log("Error retrieving user by UPN:", e);
             return undefined;
         }
-    }
+    };
 
     public async updateUser(user: UserRecord, tenantId: string, userId: string): Promise<void> {
         
@@ -193,6 +193,6 @@ export class CosmosDBUserContainer {
         updatedUser.last_login = new Date(updateTimestamp);
     
         await container.items.upsert(updatedUser);
-    }
+    };
     
 };

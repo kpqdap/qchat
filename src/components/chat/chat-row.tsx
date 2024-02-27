@@ -2,7 +2,7 @@
 
 import React, { FC, useState } from "react";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
-import { ChatRole } from "@/features/chat/chat-services/models";
+import { ChatRole, ChatSentiment } from "@/features/chat/chat-services/models";
 import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
 import Typography from "../typography";
 import Modal from "../ui/modal";
@@ -15,6 +15,7 @@ interface ChatRowProps {
   profilePicture: string;
   message: string;
   type: ChatRole;
+  chatThreads: string;
 }
 
 export const ChatRow: FC<ChatRowProps> = (props) => {
@@ -30,7 +31,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
         setThumbsUpClicked(prevState => !prevState);
         setThumbsDownClicked(false);
         setIsIconChecked(false);
-        CreateUserFeedbackChatId(props.chatMessageId, '', 'positive', '');
+        CreateUserFeedbackChatId(props.chatMessageId, '', ChatSentiment.Positive, '', props.chatThreads);
         break;
       case 'ThumbsDown':
         setThumbsDownClicked(prevState => !prevState);
@@ -70,7 +71,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
   };
 
   async function handleModalSubmit(feedback: string, sentiment: string, reason: string): Promise<void> {
-    if (sentiment === 'negative') {
+    if (sentiment === ChatSentiment.Negative) {
       setFeedbackMessage('Negative feedback submitted.');
       setTimeout(() => setFeedbackMessage(''), 2000);
     }

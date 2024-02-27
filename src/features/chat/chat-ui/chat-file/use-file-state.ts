@@ -10,10 +10,10 @@ export interface FileState {
   setIsUploadingFile: (value: boolean) => void;
   uploadButtonLabel: string;
   setUploadButtonLabel: (value: string) => void;
-}
+};
 
 export const useFileState = (): FileState => {
-  const [showFileUpload, _setShowFileUpload] = useState<ChatType>("simple");
+  const [showFileUpload, _setShowFileUpload] = useState<ChatType>(ChatType.Simple);
   const [isFileNull, _setIsFileNull] = useState(true);
   const [isUploadingFile, _setIsUploadingFile] = useState(false);
   const [uploadButtonLabel, _setUploadButtonLabel] = useState("");

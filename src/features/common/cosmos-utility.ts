@@ -1,7 +1,7 @@
 import "server-only";
 import { getTenantId, userHashedId } from "@/features/auth/helpers";
 import { CosmosDBContainer } from "./cosmos";
-import { ChatUtilityModel } from "../chat/chat-services/models";
+import { ChatRole, ChatUtilityModel } from "../chat/chat-services/models";
 
 export const SaveUtilityFunctionUsage = async (chatThreadId: string, utilityFunctionName: string, utilityFunctionParams: any, utilityFunctionResult: any) => {
     const container = await CosmosDBContainer.getInstance().getContainer();
@@ -17,7 +17,7 @@ export const SaveUtilityFunctionUsage = async (chatThreadId: string, utilityFunc
         isDeleted: false,
         createdAt: new Date(),
         content: `Parameters: ${JSON.stringify(utilityFunctionParams)}, Result: ${JSON.stringify(utilityFunctionResult)}`,
-        role: "system",
+        role: ChatRole.System,
         type: "CHAT_UTILITY",
     };
     await container.items.create<ChatUtilityModel>(chatUtilityMessage);

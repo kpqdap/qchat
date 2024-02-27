@@ -21,4 +21,4 @@ export default async function Home({ params }: { params: { id: string } }) {
       <ChatUI />
     </ChatProvider>
   );
-}
+};

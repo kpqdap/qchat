@@ -9,7 +9,7 @@ export const ThemeProvider = ({ children, ...props }: { children: ReactNode }) =
       attribute="class"
       defaultTheme="system" 
       enableSystem={true}
-      {...props} // allows overriding and additional props
+      {...props}
     >
       {children}
     </NextThemesProvider>

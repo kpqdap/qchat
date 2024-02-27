@@ -6,7 +6,7 @@ import { NewChat } from "../../chat-menu/new-chat";
 
 export const StartNewChat: FC<{}> = () => {
   return (
-    <section className="grid grid-cols-3 w-full items-center container mx-auto max-w-3xl justify-center h-full gap-9 bg-altBackground" aria-labelledby="startChatTitle">
+    <section className="grid grid-cols-3 w-full items-center container mx-auto max-w-3xl justify-center max:h-5/6 gap-9 bg-altBackground" aria-labelledby="startChatTitle">
       <Card className="col-span-3 flex flex-col gap-5 p-5 bg-altBackgroundShade">
         <Typography variant="h4" className="text-siteTitle text-2xl" id="startChatTitle">
           {AI_NAME}<br />
