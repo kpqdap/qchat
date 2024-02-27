@@ -5,7 +5,7 @@ import Typography from "@/components/typography";
 
 export const Footer: React.FC = () => {
     return (
-        <footer className="bg-background border-t-[4px] border-accent text-primary h-1/6" role="contentinfo">
+        <footer className="bg-background border-t-[4px] border-accent py-5 h-1/6" role="contentinfo">
             <div className="container mx-auto flex justify-between items-center">
                 <a href="https://qchat.ai.qld.gov.au" className="flex items-center">
                     <Typography variant="h5">qchat.ai.qld.gov.au</Typography>

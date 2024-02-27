@@ -9,7 +9,7 @@ interface LinkItem {
   name: string;
   href: string;
   icon?: React.ElementType;
-}
+};
 
 export const NavBar: React.FC = () => {
 

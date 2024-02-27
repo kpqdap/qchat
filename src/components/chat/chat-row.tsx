@@ -16,6 +16,8 @@ interface ChatRowProps {
   message: string;
   type: ChatRole;
   chatThreads: string;
+  contentSafetyWarning?: string;
+  sentiment?: ChatSentiment;
 }
 
 export const ChatRow: FC<ChatRowProps> = (props) => {
@@ -83,6 +85,12 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     }
   };
 
+  const safetyWarning = props.contentSafetyWarning ? (
+    <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-primary text-sm md:text-md md:text-base bg-alert rounded-md text-center" tabIndex={0} aria-label="Content Safety Warning">
+      {props.contentSafetyWarning}
+    </div>
+  ) : null;
+
   return (
     <article className="container mx-auto py-1 flex flex-col pb-4">
       <section className="bg-background rounded-md flex-col overflow-hidden p-4 gap-4">
@@ -100,6 +108,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
         <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-text text-sm md:text-md md:text-base" tabIndex={0}>
           <Markdown content={props.message} />
         </div>
+        {safetyWarning}
         <div className="sr-only" aria-live="assertive">
           {feedbackMessage}
         </div>

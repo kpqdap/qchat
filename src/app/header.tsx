@@ -4,6 +4,8 @@ import { QgovMiniSvg } from '@/components/ui/qldgovminilogo';
 import Typography from "@/components/typography";
 import { UserComponent } from '@/components/ui/user-login-logout';
 import { MiniMenu } from '@/features/main-menu/mini-menu';
+import { AI_NAME } from "@/features/theme/customise";
+
 
 const Sidebar: React.FC = () => {
     return (
@@ -12,7 +14,7 @@ const Sidebar: React.FC = () => {
                 <QgovSvg />
             </div>
             <div className="col-span-4 md:col-span-3 flex flex-col">
-            <Typography variant="h1" className="text-siteTitle custom-title">QChat</Typography>
+            <Typography variant="h1" className="text-siteTitle custom-title">{AI_NAME}</Typography>
             <Typography variant="h2" className="text-textMuted custom-subtitle pb-0 whitespace-nowrap hidden sm:block">The Queensland Government AI Assistant</Typography>
             </div>
             <div className="col-span-6 md:col-span-1 hidden md:block"></div>
