@@ -82,8 +82,7 @@ stages:
             command: 'build'
             Dockerfile: 'src/dockerfile'
             repository: '$(REPOSITORY)'
-            tags: |
-              - $(Build.BuildId)
+            tags: '$(Build.BuildId)'
 
 - stage: CodeQualityAndSecurity
   displayName: 'Code Quality and Security Analysis'
@@ -125,8 +124,7 @@ stages:
             containerRegistry: '$(CONTAINER_REGISTRY)'
             repository: '$(REPOSITORY)'
             command: 'push'
-            tags: |
-              - $(Build.BuildId)
+            tags: '$(Build.BuildId)'
         - task: AzureRmWebAppDeployment@4
           displayName: 'Deploy to Development Web App'
           inputs:
@@ -207,8 +205,7 @@ stages:
             containerRegistry: '$(REPOSITORY)'
             repository: '$(REPOSITORY)'
             command: 'push'
-            tags: |
-              - $(Build.BuildId)
+            tags: '$(Build.BuildId)'
         - task: AzureRmWebAppDeployment@4
           displayName: 'Deploy to Production Web App'
           inputs:
