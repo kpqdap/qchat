@@ -5,6 +5,7 @@ import { initAndGuardChatSession } from "./chat-thread-service";
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb";
 import { PromptGPTProps } from "./models";
 import { chatCatName } from "./chat-utility";
+import { translator } from "./chat-translator-service";
 
 export const ChatAPISimple = async (props: PromptGPTProps) => {
   const { lastHumanMessage, chatThread } = await initAndGuardChatSession(props);
@@ -44,14 +45,29 @@ export const ChatAPISimple = async (props: PromptGPTProps) => {
       stream: true,
     });
 
+    // const stream = OpenAIStream(response, {
+    //   async onCompletion(completion) {
+    //     try {
+    //       const translatedCompletion = await translator(completion);
+    //       await chatHistory.addMessage({
+    //         content: translatedCompletion,
+    //         role: "assistant",
+    //       });
+    //       await chatCatName(chatThread, lastHumanMessage.content);
+    //     } catch (e) {
+    //       console.log(e)
+    //     }
+    //   }
+    // });
+
     const stream = OpenAIStream(response, {
-      async onCompletion(completion) {
+      onCompletion(completion) {
         try {
-          await chatHistory.addMessage({
+          chatHistory.addMessage({
             content: completion,
             role: "assistant",
           });
-          await chatCatName(chatThread, lastHumanMessage.content);
+          chatCatName(chatThread, lastHumanMessage.content);
         } catch (e) {
           console.log(e)
         }

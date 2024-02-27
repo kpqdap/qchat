@@ -3,11 +3,12 @@ import "server-only";
 import { ChatThreadModel } from "./models";
 import { UpsertChatThread } from "./chat-thread-service";
 import { GenericChatAPI } from "./generic-chat-api";
+import { translator } from "./chat-translator-service";
 
 async function generateChatName(chatMessage: string): Promise<string> {
     const apiName = "generateChatName";
     try {
-        const name = await GenericChatAPI(apiName, {
+        let name = await GenericChatAPI(apiName, {
             messages: [
                 {
                     role: "system",
@@ -19,6 +20,9 @@ async function generateChatName(chatMessage: string): Promise<string> {
             ],
         });
 
+        const translatedChatName = await translator(name);
+        name = translatedChatName;
+        
         if (name) {
             return name.replace(/^"+|"+$/g, ''); // Remove proceeding and trailing quotes from the returned message
         } else {
