@@ -95,6 +95,8 @@ stages:
       displayName: 'CodeQL Analysis'
       pool:
         name: $(poolName)
+      variables:
+        - group: dev-az-qggpt-variables
       steps:
         - checkout: self
         - task: AdvancedSecurity-Codeql-Init@1
@@ -234,7 +236,7 @@ stages:
             scriptType: 'ps'
             scriptLocation: 'inlineScript'
             inlineScript: |
-              $registryName = $(REGISTRY_NAME)'
+              $registryName = '$(REGISTRY_NAME)'
               $doNotDeleteTags = '$(Build.BuildId)'
               $skipLastTags = 3
               # Get a list of repositories in the ACR
