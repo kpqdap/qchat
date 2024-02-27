@@ -3,7 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function ThemeSwitch() {
   const { setTheme, resolvedTheme } = useTheme();

@@ -2,8 +2,8 @@
 
 import { AI_NAME } from "@/features/theme/customise";
 import { signIn } from "next-auth/react";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../../features/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../features/ui/card";
 
 export const LogIn = () => {
   return (

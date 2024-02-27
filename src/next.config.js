@@ -60,16 +60,22 @@ const securityHeaders = [
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
-})
- 
-/** @type {import('next').NextConfig} */
+});
 
 const nextConfig = {
   output: "standalone",
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   experimental: {
+    typedRoutes: true,
+    serverComponentsExternalPackages: [
+      "@azure/storage-blob"
+    ],
     serverActions: {
-      allowedOrigins: [localUrl],
-      allowedOrigins: [fullUrl],
+      allowedOrigins: [localUrl, fullUrl],
     },
   },
   async redirects() {
@@ -112,10 +118,8 @@ const nextConfig = {
       },
     ];
   },
-  //compress: false,
   poweredByHeader: false,
 };
- 
-module.exports = withBundleAnalyzer(nextConfig)
 
+// module.exports = withBundleAnalyzer(nextConfig);
 module.exports = nextConfig;

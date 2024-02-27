@@ -1,5 +1,5 @@
 import { LogIn } from "@/components/login/login";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { userSession } from "@/features/auth/helpers";
 import { redirect } from "next/navigation";
 

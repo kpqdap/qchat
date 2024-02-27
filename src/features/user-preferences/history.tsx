@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/features/ui/button";
+import { Card } from "@/features/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/ui/table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { FindAllChatThreadsForReporting } from "./history-service";

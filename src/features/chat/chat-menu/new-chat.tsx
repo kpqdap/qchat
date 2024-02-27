@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/button";
 import { MessageSquarePlus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { CreateChatThread } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 
@@ -14,7 +14,7 @@ export const NewChat = () => {
     try {
       const newChatThread = await CreateChatThread();
       if (newChatThread) {
-        router.push("/chat/" + newChatThread.id);
+        router.push(`/chat/${newChatThread.id}`);
       }
     } catch (e) {
       showError('Failed to start a new chat. Please try again later.');

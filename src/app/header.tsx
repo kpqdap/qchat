@@ -1,8 +1,8 @@
 import React from 'react';
-import { QgovSvg } from '@/components/ui/qldgovlogo';
-import { QgovMiniSvg } from '@/components/ui/qldgovminilogo';
+import { QgovSvg } from '@/features/ui/qldgovlogo';
+import { QgovMiniSvg } from '@/features/ui/qldgovminilogo';
 import Typography from "@/components/typography";
-import { UserComponent } from '@/components/ui/user-login-logout';
+import { UserComponent } from '@/features/ui/user-login-logout';
 import { MiniMenu } from '@/features/main-menu/mini-menu';
 import { AI_NAME } from "@/features/theme/customise";
 

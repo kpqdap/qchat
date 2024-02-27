@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PromptButtons } from '../../chat-services/prompt-buttons';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
 
 interface Prop {
   onPromptSelected: (prompt: string) => void;

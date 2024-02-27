@@ -1,5 +1,5 @@
 import ChatRow from "@/components/chat/chat-row";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { FC } from "react";
 import { AI_NAME } from "../theme/customise";
 import { FindAllChatsInThread, FindChatThreadByID } from "./history-service";

@@ -11,6 +11,8 @@ const requireAuth: string[] = [
   "/admin",
   "/prompt-guide",
   "/what's-new",
+  "/persona",
+  "/prompt"
 ];
 const requireAdmin: string[] = ["/reporting", "/admin"];
 
@@ -47,13 +49,17 @@ async function additionalAdminCheck(token: AuthToken): Promise<boolean> {
 
 export const config = {
   matcher: [
-    "/chat/:path*",
-    "/reporting/:path*",
+    "/admin/:path*",
     "/api/chat/:path*",
+    "/api/images/:path*",
+    "/chat/:path*",
+    "/persona/:path*",
+    "/prompt-guide/:path*",
+    "/prompt/:path*",
+    "/reporting/:path*",
     "/settings/:path*",
     "/tenant/:path*",
-    "/admin/:path*",
-    "/prompt-guide/:path*",
+    "/unauthorised/:path*",
     "/what's-new/:path*",
   ],
 };

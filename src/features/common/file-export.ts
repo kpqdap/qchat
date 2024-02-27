@@ -1,7 +1,7 @@
 import { Document, Paragraph, Packer, TextRun, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
 import { marked } from 'marked';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/features/ui/use-toast';
 
 interface MessageType {
   role: string;

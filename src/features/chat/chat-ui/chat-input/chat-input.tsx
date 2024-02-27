@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/features/ui/button";
+import { Textarea } from "@/features/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { Loader, Send } from "lucide-react";
 import { FC, FormEvent, useRef, useMemo } from "react";

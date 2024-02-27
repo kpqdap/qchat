@@ -3,7 +3,8 @@ import { FindAllChats } from "@/features/chat/chat-services/chat-service";
 import { ChatMessageModel, ChatRole, ChatSentiment, MESSAGE_ATTRIBUTE } from "@/features/chat/chat-services/models";
 import { CosmosDBContainer } from "@/features/common/cosmos";
 import { uniqueId } from "@/features/common/util";
-import { ChatCompletionMessage, ChatCompletionRole } from "openai/resources";
+import ChatCompletionMessage  from "openai";
+import ChatCompletionRole from "openai";
 
 export interface CosmosDBChatMessageHistoryFields {
   sessionId: string;

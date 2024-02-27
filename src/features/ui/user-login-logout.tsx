@@ -4,7 +4,7 @@ import React from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { LogIn, LogOut } from 'lucide-react';
 import Typography from "@/components/typography";
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
 
 export const UserComponent: React.FC = () => {
     const { data: session, status } = useSession({ required: false });

@@ -1,18 +1,18 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/features/ui/toaster";
 import { GlobalConfigProvider } from "@/features/global-config/global-client-config-context";
 import { Providers } from "@/features/providers";
 import { AI_NAME } from "@/features/theme/customise";
-import { Noto_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "./header";
 import { Footer } from "./footer";
-import { NavBar } from '@/components/ui/navbar';
+import { NavBar } from '@/features/ui/navbar';
 
 export const dynamic = "force-dynamic";
 
-const notoSans = Noto_Sans({ weight: '300', subsets: ["latin"] });
+const notoSans = Noto_Sans({ subsets: ["latin"] });
 
 export const metadata = {
   title: AI_NAME,
@@ -25,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full overflow-auto">
-      <body className={cn("font-sans flex flex-col min-w-[400px] w-full h-full")}>
+    <html lang="en" className="h-full w-full overflow-hidden text-sm">
+      <body className={cn(notoSans.className, "h-full w-full flex flex-col min-w-[400px] bg-background")}>
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider>
@@ -43,7 +43,7 @@ export default function RootLayout({
                 
                 </div> */}
               </main>
-              <Footer />
+              {/* <Footer /> */}
               <Toaster />
             </ThemeProvider>
           </Providers>

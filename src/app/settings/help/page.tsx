@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 
 export const dynamic = "force-dynamic";
 

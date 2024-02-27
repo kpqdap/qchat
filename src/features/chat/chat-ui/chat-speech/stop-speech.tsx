@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/button";
 import { Square } from "lucide-react";
 import { FC } from "react";
 import { useChatContext } from "../chat-context";

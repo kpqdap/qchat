@@ -3,7 +3,7 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from "next/navigation";
 import { useGlobalMessageContext } from '@/features/global-message/global-message-context';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
 import { MenuItem } from '@/components/menu';
 import { FileText, MessageCircle, Trash, Pencil, AudioLines } from 'lucide-react';
 import { ChatThreadModel } from '../chat-services/models';

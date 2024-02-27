@@ -1,5 +1,5 @@
 import Typography from "@/components/typography";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { AI_NAME } from "@/features/theme/customise";
 import { FC } from "react";
 import { NewChat } from "../../chat-menu/new-chat";

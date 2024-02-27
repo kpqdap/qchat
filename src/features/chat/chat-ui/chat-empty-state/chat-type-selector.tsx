@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FC } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/features/ui/tabs";
 import { AudioLines, FileText, MessageCircle } from "lucide-react";
-import { TooltipProvider } from '@/components/ui/tooltip-provider';
+import { TooltipProvider } from '@/features/ui/tooltip-provider';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { ChatType } from "../../chat-services/models";
 import { useChatContext } from "../chat-context";

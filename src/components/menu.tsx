@@ -52,8 +52,7 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
         "items-center text-sm font-medium rounded-md flex gap-2 p-2 hover:bg-altBackgroundShade hover:border-altButtonHover border-separate border-2 border-transparent transition-colors",
         props.isSelected && "bg-altBackgroundShade border-altBorder"
       )}
-      href={props.href}
-    >
+      ref={props.href} href={"/api/health"}    >
       {props.children}
     </Link>
   );
