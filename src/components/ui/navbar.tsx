@@ -12,11 +12,10 @@ interface LinkItem {
 }
 
 export const NavBar: React.FC = () => {
-    // No need for useState here as we're handling hover states via CSS for individual link sections
 
     const links: LinkItem[] = [
         { name: 'Home', href: '/', icon: HomeIcon },
-        // { name: 'Settings', href: '/settings', icon: UserCog }
+        { name: 'Settings', href: '/settings', icon: UserCog }
     ];
 
     return (
