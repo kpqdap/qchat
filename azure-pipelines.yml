@@ -67,6 +67,8 @@ variables:
 stages:
 - stage: Build
   displayName: Build Stage
+  variables:
+  - group: dev-az-qggpt-variables
   jobs:
     - job: BuildJob
       displayName: 'Build Job'
