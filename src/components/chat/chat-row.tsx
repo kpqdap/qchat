@@ -108,6 +108,9 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
         <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-text text-sm md:text-md md:text-base" tabIndex={0}>
           <Markdown content={props.message} />
         </div>
+        <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-primary text-sm md:text-md md:text-base bg-alert rounded-md text-center" tabIndex={0} aria-label="Content Safety Warning">
+        Why did you say that!
+        </div>
         {safetyWarning}
         <div className="sr-only" aria-live="assertive">
           {feedbackMessage}
