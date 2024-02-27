@@ -97,11 +97,11 @@ stages:
         - group: dev-az-qggpt-variables
       steps:
         - checkout: self
-        - task: AdvancedSecurity-Codeql-Init@1
-          inputs:
-            languages: 'javascript'
-            querysuite: 'security-and-quality'
-        - task: AdvancedSecurity-Codeql-Analyze@1
+        # - task: AdvancedSecurity-Codeql-Init@1
+        #   inputs:
+        #     languages: 'javascript'
+        #     querysuite: 'security-and-quality'
+        # - task: AdvancedSecurity-Codeql-Analyze@1
         - task: AdvancedSecurity-Dependency-Scanning@1
           env:
             DependencyScanning.Timeout: 600
