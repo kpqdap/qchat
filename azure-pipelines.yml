@@ -62,10 +62,9 @@ variables:
       -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"
       -QGAIP_QCHAT_FQDN_URI "$(QGAIP_QCHAT_FQDN_URI)"
       -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"
-      
+
   - group: dev-az-qggpt-variables
   - group: prod-az-qggpt-variables
-
 
 stages:
 - stage: Build
@@ -104,30 +103,33 @@ stages:
   variables:
     - group: dev-az-qggpt-variables
   jobs:
-    - job: DeployToDev
+    - deployment: DeployToDev
       displayName: 'Deploy to Development Environment'
+      environment: 'Dev'
       pool:
         name: $(poolName)
-      steps:
-        - task: Docker@2
-          displayName: 'Push Docker Image to Dev Registry'
-          inputs:
-            containerRegistry: '$(CONTAINER_REGISTRY)'
-            repository: '$(REPOSITORY)'
-            command: 'push'
-            tags: '$(Build.BuildId)'
-        - task: AzureRmWebAppDeployment@4
-          displayName: 'Deploy to Development Web App'
-          inputs:
-            ConnectionType: 'AzureRM'
-            azureSubscription: '$(Dev_Service_Connection)'
-            appType: 'webAppContainer'
-            WebAppName: '$(WEBAPPNAME)'
-            DockerNamespace: $(DOCKER_NAMESPACE)
-            DockerRepository: '$(REPOSITORY)'
-            DockerImageTag: '$(Build.BuildId)'
-            AppSettings: '$(appSettings)'
-
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: Docker@2
+                displayName: 'Push Docker Image to Dev Registry'
+                inputs:
+                  containerRegistry: '$(CONTAINER_REGISTRY)'
+                  repository: '$(REPOSITORY)'
+                  command: 'push'
+                  tags: '$(Build.BuildId)'
+              - task: AzureRmWebAppDeployment@4
+                displayName: 'Deploy to Development Web App'
+                inputs:
+                  ConnectionType: 'AzureRM'
+                  azureSubscription: '$(Dev_Service_Connection)'
+                  appType: 'webAppContainer'
+                  WebAppName: '$(WEBAPPNAME)'
+                  DockerNamespace: $(DOCKER_NAMESPACE)
+                  DockerRepository: '$(REPOSITORY)'
+                  DockerImageTag: '$(Build.BuildId)'
+                  AppSettings: '$(appSettings)'
     - job: CleanupImagesDev
       displayName: 'Cleanup Docker Images - Dev'
       dependsOn: DeployToDev
@@ -183,31 +185,35 @@ stages:
   dependsOn: Development
   condition: and(succeeded('Development'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   variables:
-  - group: prod-az-qggpt-variables
+    - group: prod-az-qggpt-variables
   jobs:
-    - job: DeployToProd
+    - deployment: DeployToProd
       displayName: 'Deploy to Production Environment'
+      environment: 'Prod'
       pool:
         name: $(poolName)
-      steps:
-        - task: Docker@2
-          displayName: 'Push Docker Image to Prod Registry'
-          inputs:
-            containerRegistry: '$(REPOSITORY)'
-            repository: '$(REPOSITORY)'
-            command: 'push'
-            tags: '$(Build.BuildId)'
-        - task: AzureRmWebAppDeployment@4
-          displayName: 'Deploy to Production Web App'
-          inputs:
-            ConnectionType: 'AzureRM'
-            azureSubscription: 'Prod QGGPT'
-            appType: 'webAppContainer'
-            WebAppName: '$(WEBAPPNAME)'
-            DockerNamespace: '$(DOCKER_NAMESPACE)'
-            DockerRepository: '$(REPOSITORY)'
-            DockerImageTag: '$(Build.BuildId)'
-            AppSettings: '$(appSettings)'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: Docker@2
+                displayName: 'Push Docker Image to Prod Registry'
+                inputs:
+                  containerRegistry: '$(CONTAINER_REGISTRY)'
+                  repository: '$(REPOSITORY)'
+                  command: 'push'
+                  tags: '$(Build.BuildId)'
+              - task: AzureRmWebAppDeployment@4
+                displayName: 'Deploy to Production Web App'
+                inputs:
+                  ConnectionType: 'AzureRM'
+                  azureSubscription: 'Prod QGGPT'
+                  appType: 'webAppContainer'
+                  WebAppName: '$(WEBAPPNAME)'
+                  DockerNamespace: '$(DOCKER_NAMESPACE)'
+                  DockerRepository: '$(REPOSITORY)'
+                  DockerImageTag: '$(Build.BuildId)'
+                  AppSettings: '$(appSettings)'
 
     - job: CleanupImagesProd
       displayName: 'Cleanup Docker Images - Prod'
