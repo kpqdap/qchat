@@ -83,7 +83,6 @@ stages:
             Dockerfile: 'src/dockerfile'
             repository: '$(REPOSITORY)'
             tags: |
-              - $(Build.SourceVersion)
               - $(Build.BuildId)
 
 - stage: CodeQualityAndSecurity
@@ -127,7 +126,6 @@ stages:
             repository: '$(REPOSITORY)'
             command: 'push'
             tags: |
-              - $(Build.SourceVersion)
               - $(Build.BuildId)
         - task: AzureRmWebAppDeployment@4
           displayName: 'Deploy to Development Web App'
@@ -210,7 +208,6 @@ stages:
             repository: '$(REPOSITORY)'
             command: 'push'
             tags: |
-              - $(Build.SourceVersion)
               - $(Build.BuildId)
         - task: AzureRmWebAppDeployment@4
           displayName: 'Deploy to Production Web App'
