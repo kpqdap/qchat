@@ -86,25 +86,25 @@ stages:
               - $(Build.SourceVersion)
               - $(Build.BuildId)
 
-# - stage: CodeQualityAndSecurity
-#   displayName: 'Code Quality and Security Analysis'
-#   dependsOn: Build
-#   condition: succeeded('Build')
-#   jobs:
-#     - job: CodeQLAnalysis
-#       displayName: 'CodeQL Analysis'
-#       pool:
-#         name: $(poolName)
-#       steps:
-#         - checkout: self
-#         - task: AdvancedSecurity-Codeql-Init@1
-#           inputs:
-#             languages: 'javascript'
-#             querysuite: 'security-and-quality'
-#         - task: AdvancedSecurity-Codeql-Analyze@1
-#         - task: AdvancedSecurity-Dependency-Scanning@1
-#           env:
-#             DependencyScanning.Timeout: 600
+- stage: CodeQualityAndSecurity
+  displayName: 'Code Quality and Security Analysis'
+  dependsOn: Build
+  condition: succeeded('Build')
+  jobs:
+    - job: CodeQLAnalysis
+      displayName: 'CodeQL Analysis'
+      pool:
+        name: $(poolName)
+      steps:
+        - checkout: self
+        - task: AdvancedSecurity-Codeql-Init@1
+          inputs:
+            languages: 'javascript'
+            querysuite: 'security-and-quality'
+        - task: AdvancedSecurity-Codeql-Analyze@1
+        - task: AdvancedSecurity-Dependency-Scanning@1
+          env:
+            DependencyScanning.Timeout: 600
 
 - stage: Development
   displayName: Development Stage
