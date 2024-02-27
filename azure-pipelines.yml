@@ -82,34 +82,20 @@ stages:
             command: 'build'
             Dockerfile: 'src/dockerfile'
             repository: '$(REPOSITORY)'
-            tags: |
-              - $(Build.SourceVersion)
-              - $(Build.BuildId)
-
-# - stage: CodeQualityAndSecurity
-#   displayName: 'Code Quality and Security Analysis'
-#   dependsOn: Build
-#   condition: succeeded('Build')
-#   jobs:
-#     - job: CodeQLAnalysis
-#       displayName: 'CodeQL Analysis'
-#       pool:
-#         name: $(poolName)
-#       steps:
-#         - checkout: self
-#         - task: AdvancedSecurity-Codeql-Init@1
-#           inputs:
-#             languages: 'javascript'
-#             querysuite: 'security-and-quality'
-#         - task: AdvancedSecurity-Codeql-Analyze@1
-#         - task: AdvancedSecurity-Dependency-Scanning@1
-#           env:
-#             DependencyScanning.Timeout: 600
+            tags: '$(Build.BuildId)'
 
 - stage: Development
   displayName: Development Stage
-  dependsOn: CodeQualityAndSecurity
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
+  dependsOn: Build
+  condition: |
+    and(
+      succeeded(),
+      or(
+        eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+        startsWith(variables['Build.SourceBranch'], 'refs/heads/features/')
+      ),
+      ne(variables['Build.Reason'], 'PullRequest')
+    )
   variables:
     - group: dev-az-qggpt-variables
   jobs:
@@ -124,9 +110,7 @@ stages:
             containerRegistry: '$(CONTAINER_REGISTRY)'
             repository: '$(REPOSITORY)'
             command: 'push'
-            tags: |
-              - $(Build.SourceVersion)
-              - $(Build.BuildId)
+            tags: '$(Build.BuildId)'
         - task: AzureRmWebAppDeployment@4
           displayName: 'Deploy to Development Web App'
           inputs:
@@ -207,9 +191,7 @@ stages:
             containerRegistry: '$(REPOSITORY)'
             repository: '$(REPOSITORY)'
             command: 'push'
-            tags: |
-              - $(Build.SourceVersion)
-              - $(Build.BuildId)
+            tags: '$(Build.BuildId)'
         - task: AzureRmWebAppDeployment@4
           displayName: 'Deploy to Production Web App'
           inputs:
@@ -234,7 +216,7 @@ stages:
             scriptType: 'ps'
             scriptLocation: 'inlineScript'
             inlineScript: |
-              $registryName = $(REGISTRY_NAME)'
+              $registryName = '$(REGISTRY_NAME)'
               $doNotDeleteTags = '$(Build.BuildId)'
               $skipLastTags = 3
               # Get a list of repositories in the ACR
