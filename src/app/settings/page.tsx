@@ -1,29 +1,22 @@
-import { Markdown } from "@/components/markdown/markdown";
 import { Card } from "@/components/ui/card";
-import { promises as fs } from "fs";
+import PromptForm from "@/components/ui/form";
+import { Dialog } from "@radix-ui/react-dialog";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const content = await loadContent();
+export default async function Home() {;
   return (
-  <div className="col-span-5 bg-altBackground text-foreground shadow-sm h-full items-left">
-  <section className="w-full container mx-auto max-w-3xl justify-center h-full gap-9 bg-altBackground" aria-labelledby="startChatTitle">
-    <div className="col-span-5 sm:col-span-6 gap-8 py-8">
-    <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-4xl items-left">
-        <Markdown content={content} />
-    </div>
-    </div>
-  </section>
-  </div>
-  );
-}
-
-const loadContent = async () => {
-  return await fs.readFile(
-    process.cwd() + "/public/holding.md",
-    "utf8"
+    <Card className="h-full items-center flex justify-center flex-1 col-span-6 sm:col-span-6 md:col-span-5 lg:col-span-4 xl:col-span-5">
+      <div className="col-span-5 bg-altBackground text-foreground shadow-sm h-full items-left">
+        <section className="w-full container mx-auto max-w-3xl justify-center h-full gap-9 bg-altBackground" aria-labelledby="startChatTitle">
+          <PromptForm />
+          <Dialog />
+          <div className="col-span-5 sm:col-span-6 gap-8 py-8">
+            <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-4xl items-left">
+            </div>
+          </div>
+        </section>
+      </div>
+    </Card>
   );
 };
-
-//p-2 bg-background hidden md:block overflow-auto
