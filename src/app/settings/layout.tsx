@@ -12,7 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <>
-      <div className="grid grid-cols-6 overflow-hidden bg-card w-full">
+      <div className="grid grid-cols-6 overflow-hidden bg-card h-full w-full">
         <UserSettingsMenu />
         {children}
       </div>

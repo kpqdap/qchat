@@ -1,29 +1,54 @@
-import { Markdown } from "@/components/markdown/markdown";
-import { Card } from "@/components/ui/card";
-import { promises as fs } from "fs";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+// import PromptForm from "@/components/ui/form";
+// import { Dialog } from "@radix-ui/react-dialog";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const content = await loadContent();
   return (
-  <div className="col-span-5 bg-altBackground text-foreground shadow-sm h-full items-left">
-  <section className="w-full container mx-auto max-w-3xl justify-center h-full gap-9 bg-altBackground" aria-labelledby="startChatTitle">
-    <div className="col-span-5 sm:col-span-6 gap-8 py-8">
-    <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-4xl items-left">
-        <Markdown content={content} />
+<div className="col-span-5 w-full h-full">
+    <div className="h-full w-full justify-center grid grid-cols-2 grid-rows-2">
+      <Card className="w-full p-4 col-span-1">
+        <div className="h-full flex flex-col justify-between bg-altBackground text-foreground shadow-sm rounded-lg">
+          <CardHeader>
+            <CardTitle className="text-center font-bold my-2">Coming Soon</CardTitle>
+          </CardHeader>
+          <CardDescription className="px-4">
+            This is a description for the first menu option.
+          </CardDescription>
+        </div>
+      </Card>
+      <Card className="w-full p-4 col-span-1">
+        <div className="h-full flex flex-col justify-between bg-altBackground text-foreground shadow-sm rounded-lg">
+          <CardHeader>
+            <CardTitle className="text-center font-bold my-2">Coming Soon</CardTitle>
+          </CardHeader>
+          <CardDescription className="px-4">
+            This is a description for the second menu option.
+          </CardDescription>
+        </div>
+      </Card>
+      <Card className="w-full p-4 col-span-1">
+        <div className="h-full flex flex-col justify-between bg-altBackground text-foreground shadow-sm rounded-lg">
+          <CardHeader>
+            <CardTitle className="text-center font-bold my-2">Coming Soon</CardTitle>
+          </CardHeader>
+          <CardDescription className="px-4">
+            This is a description for the third menu option.
+          </CardDescription>
+        </div>
+      </Card>
+      <Card className="w-full p-4 col-span-1">
+        <div className="h-full flex flex-col justify-between bg-altBackground text-foreground shadow-sm rounded-lg">
+          <CardHeader>
+            <CardTitle className="text-center font-bold my-2">Coming Soon</CardTitle>
+          </CardHeader>
+          <CardDescription className="px-4">
+            This is a description for the fourth menu option.
+          </CardDescription>
+        </div>
+      </Card>
     </div>
-    </div>
-  </section>
-  </div>
-  );
-}
-
-const loadContent = async () => {
-  return await fs.readFile(
-    process.cwd() + "/public/holding.md",
-    "utf8"
+</div>
   );
 };
-
-//p-2 bg-background hidden md:block overflow-auto

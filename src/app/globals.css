@@ -29,6 +29,10 @@
     --QLD-color-alt-border: #7A7A7A;
     --QLD-color-alt-background: #E8E8E8;
     --QLD-color-alt-background-shade: #E0E0E0;
+    --QLD-error: #E22339;
+    --QLD-success: #339D37;
+    --QLD-information: #0085B3;
+    --QLD-alert: #FFCC2C;
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -77,6 +81,10 @@
     --QLD-color-alt-border: #09ACFE;
     --QLD-color-alt-background: #05325F;
     --QLD-color-alt-background-shade: #052C53;
+    --QLD-error: #E22339;
+    --QLD-success: #339D37;
+    --QLD-information: #0085B3;
+    --QLD-alert: #FFCC2C;
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
