@@ -34,6 +34,8 @@ const azureEnvVars = [
   "AZURE_SPEECH_REGION",
   "AZURE_SPEECH_STT_URL",
   "AZURE_SPEECH_URL",
+  "AZURE_TRANSLATOR_KEY",
+  "AZURE_TRANSLATOR_URL",
   "FEATURE_FILEEXPORT",
   "FEATURE_QUASYMODO",
   "FEATURE_TRANSCRIBE_TENANTS",
@@ -52,8 +54,7 @@ const azureEnvVars = [
   "QGAIP_QCHAT_FQDN_URI",
   "SYSTEM_PROMPT",
   "TRANSLATOR_ENABLED",
-  "AZURE_TRANSLATOR_URL",
-  "AZURE_TRANSLATOR_KEY"
+
 ] as const;
 
 type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
