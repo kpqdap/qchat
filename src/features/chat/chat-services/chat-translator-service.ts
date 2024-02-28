@@ -6,7 +6,7 @@ export function getBooleanEnv(variable: string): boolean {
 
 export async function translator(input: string) {
 
-    if (getBooleanEnv('TRANSLATOR_ENABLED')) {
+    if (getBooleanEnv('NEXT_PUBLIC_FEATURE_TRANSLATOR')) {
         if (typeof input === 'string') {
             const normalizedInput = input.toLowerCase();
             const translatedText = await translateFunction([{ text: normalizedInput }], "en-GB", "en-US");
