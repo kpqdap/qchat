@@ -2,7 +2,7 @@
 
 import { Button } from "@/features/ui/button";
 import { MessageSquarePlus } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 

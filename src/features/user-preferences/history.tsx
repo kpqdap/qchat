@@ -51,7 +51,7 @@ export const Reporting = async (props: ReportingProp) => {
                   chatThreads.map((chatThread) => (
                     <TableRow key={chatThread.id}>
                       <TableCell className="font-medium">
-                        <Link href={"/reporting/" + chatThread.id}>
+                        <Link ref={"/reporting/" + chatThread.id} href={"/reporting"}>
                           {chatThread.name}
                         </Link>
                       </TableCell>

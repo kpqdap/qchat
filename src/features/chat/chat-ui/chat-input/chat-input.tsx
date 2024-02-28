@@ -49,7 +49,7 @@ const ChatInput: FC<Props> = () => {
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey && !isModalOpen) {
       event.preventDefault(); 
-      if (!isLoading) { // Ensure we don't attempt to submit when data is loading or in an improper state.
+      if (!isLoading) {
         handleSubmit(event as unknown as FormEvent<HTMLFormElement>);
         setInput("");
       }

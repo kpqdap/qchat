@@ -2,7 +2,7 @@
 
 import { Button } from "@/features/ui/button";
 import { MessageSquarePlus } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { CreateChatThread } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 
@@ -17,7 +17,14 @@ export const NewChat = () => {
         router.push(`/chat/${newChatThread.id}`);
       }
     } catch (e) {
+      console.error(e);
       showError('Failed to start a new chat. Please try again later.');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      startNewChat();
     }
   };
 
@@ -25,11 +32,9 @@ export const NewChat = () => {
     <Button
       className="gap-2 rounded-md w-[40px] h-[40px] p-1"
       variant="default"
-      onClick={() => startNewChat()}
+      onClick={startNewChat}
       aria-label="Start a new chat"
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && startNewChat()}
+      onKeyDown={handleKeyDown}
     >
       <MessageSquarePlus size={40} strokeWidth={1.2} />
     </Button>

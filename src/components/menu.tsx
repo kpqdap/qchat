@@ -1,7 +1,10 @@
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { UrlObject } from "url";
+import RouteImpl from "next/types/index.js";
+
+type RouteImpl = any
 
 const Menu = React.forwardRef<
   HTMLDivElement,
@@ -39,21 +42,24 @@ const MenuContent = React.forwardRef<
 ));
 MenuContent.displayName = "MenuContent";
 
-interface MenuItemProps extends React.HTMLAttributes<HTMLLinkElement> {
-  href: string;
+interface MenuItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
+  href: UrlObject | RouteImpl;
   isSelected?: boolean;
 }
 
-const MenuItem: React.FC<MenuItemProps> = (props) => {
+const MenuItem: React.FC<MenuItemProps> = ({ href, isSelected, children, className, ...props }) => {
   return (
     <Link
+      href={href}
       className={cn(
-        props.className,
+        className,
         "items-center text-sm font-medium rounded-md flex gap-2 p-2 hover:bg-altBackgroundShade hover:border-altButtonHover border-separate border-2 border-transparent transition-colors",
-        props.isSelected && "bg-altBackgroundShade border-altBorder"
+        isSelected ? "bg-altBackgroundShade border-altBorder" : "",
+        
       )}
-      ref={props.href} href={"/api/health"}    >
-      {props.children}
+      {...props}
+    >
+      {children}
     </Link>
   );
 };
