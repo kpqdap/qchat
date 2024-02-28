@@ -96,8 +96,8 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
   const params = useParams();
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
 
-  const handleOpenModal = (threadId: string) => {
-    setSelectedThreadId(threadId);
+  const handleOpenModal = (chatThreadId: string) => {
+    setSelectedThreadId(chatThreadId);
   };
 
   const handleCloseModal = () => {

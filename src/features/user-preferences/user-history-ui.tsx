@@ -7,7 +7,7 @@ import { ChatRole } from "../chat/chat-services/models";
 
 interface Props {
   chatId: string;
-  threadId: string;
+  chatThreadId: string;
 }
 
 export const ChatReportingUI: FC<Props> = async (props) => {

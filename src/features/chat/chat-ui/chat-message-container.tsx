@@ -11,11 +11,11 @@ import { ChatRole } from "../chat-services/models";
 interface Props {
   chatId: string;
   sentiment?: string;
-  threadId: string;
+  chatThreadId: string;
   contentSafetyWarning?: string;
 };
 
-export const ChatMessageContainer: React.FC<Props> = ({ chatId, threadId, sentiment, contentSafetyWarning }) => {
+export const ChatMessageContainer: React.FC<Props> = ({ chatId, chatThreadId, sentiment, contentSafetyWarning }) => {
   const { data: session } = useSession();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +39,7 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatId, threadId, sentim
             message={message.content}
             type={message.role as ChatRole}
             key={index}
-            chatThreads={threadId}
+            chatThreads={chatThreadId}
             contentSafetyWarning={contentSafetyWarning}
           />
         ))}

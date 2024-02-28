@@ -43,7 +43,7 @@ export class CosmosDBChatMessageHistory {
       isDeleted: false,
       content: message.content ?? "",
       role: mapChatCompletionRoleToChatRole(message.role),
-      threadId: this.sessionId,
+      chatThreadId: this.sessionId,
       userId: fetchedUserId,
       tenantId: fetchedTenantId,
       context: citations,
