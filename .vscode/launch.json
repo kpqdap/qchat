@@ -13,7 +13,7 @@
         "type": "chrome",
         "request": "launch",
         "cwd": "${workspaceFolder}/src",
-        "url": "http://localhost:443"
+        "url": "https://localhost:443"
       },
       {
         "name": "Next.js: debug full stack",
