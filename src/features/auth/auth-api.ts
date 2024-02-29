@@ -138,7 +138,8 @@ async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to refresh access token. Status: ${response.status}`);
+      console.log(`Failed to refresh access token. Status: ${response.status}. \n Response: ${await response.json()}`);
+      return token;
     }
 
     const refreshedTokens = await response.json();
