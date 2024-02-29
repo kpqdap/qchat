@@ -58,10 +58,6 @@ const securityHeaders = [
   },
 ];
 
-// const withBundleAnalyzer = require('@next/bundle-analyzer')({
-//   enabled: process.env.ANALYZE === 'true',
-// });
-
 const nextConfig = {
   output: "standalone",
   logging: {
@@ -70,7 +66,6 @@ const nextConfig = {
     },
   },
   experimental: {
-    // typedRoutes: true,
     serverComponentsExternalPackages: [
       "@azure/storage-blob"
     ],
@@ -121,5 +116,4 @@ const nextConfig = {
   poweredByHeader: false,
 };
 
-// module.exports = withBundleAnalyzer(nextConfig);
 module.exports = nextConfig;
