@@ -39,7 +39,7 @@ interface ChatContextProps extends UseChatHelpers {
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null);
-
+console.log("ChatContext", ChatContext);
 interface Prop {
   children: React.ReactNode;
   id: string;

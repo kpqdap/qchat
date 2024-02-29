@@ -7,10 +7,8 @@ export const initUserPrefsContainer = async () => {
   try {
     const endpoint = process.env.AZURE_COSMOSDB_URI;
     const key = process.env.AZURE_COSMOSDB_KEY;
-    // Reintroducing defaultHeaders with 'api-key'
     const defaultHeaders = { 'api-key': process.env.AZURE_SEARCH_API_KEY };
 
-    // Ensure the CosmosClient is correctly configured with defaultHeaders.
     const client = new CosmosClient({ endpoint, key, defaultHeaders });
 
     const databaseResponse = await client.databases.createIfNotExists({
