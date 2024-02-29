@@ -5,7 +5,7 @@ import { ChatStyleSelector } from "./chat-style-selector";
 import { ChatSensitivitySelector } from "./chat-sensitivity-selector";
 import { ChatTypeSelector } from "./chat-type-selector";
 import { PromptButton } from "./prompt-buttons-UI";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import Typography from "@/components/typography";
 import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service";
 import { EasterEgg } from "./chat-easter-egg";

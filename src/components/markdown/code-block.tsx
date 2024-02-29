@@ -2,7 +2,7 @@ import { FC, memo } from "react";
 import { Prism } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ClipboardIcon } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../features/ui/button";
 import { AI_NAME } from "@/features/theme/customise";
 
 

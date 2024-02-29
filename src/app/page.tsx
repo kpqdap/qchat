@@ -1,5 +1,5 @@
 import { LogIn } from "@/components/login/login";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { userSession } from "@/features/auth/helpers";
 import { redirect } from "next/navigation";
 
@@ -11,7 +11,7 @@ export default async function Home() {
     redirect("/chat");
   }
   return (
-    <Card className="max:h-5/6 flex-1 overflow-hidden relative items-center justify-center flex">
+    <Card className="h-full flex-1 overflow-hidden relative items-center justify-center flex">
       <LogIn />
     </Card>
   );

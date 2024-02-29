@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/features/ui/button";
+import { Textarea } from "@/features/ui/textarea";
 import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { Loader, Send } from "lucide-react";
 import { FC, FormEvent, useRef, useMemo } from "react";
@@ -49,7 +49,7 @@ const ChatInput: FC<Props> = () => {
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey && !isModalOpen) {
       event.preventDefault(); 
-      if (!isLoading) { // Ensure we don't attempt to submit when data is loading or in an improper state.
+      if (!isLoading) {
         handleSubmit(event as unknown as FormEvent<HTMLFormElement>);
         setInput("");
       }

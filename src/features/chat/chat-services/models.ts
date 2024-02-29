@@ -47,7 +47,7 @@ export interface ChatMessageModel {
   id: string;
   createdAt: Date;
   isDeleted: boolean;
-  threadId: string;
+  chatThreadId: string;
   userId: string | undefined;
   tenantId: string | undefined;
   content: string;

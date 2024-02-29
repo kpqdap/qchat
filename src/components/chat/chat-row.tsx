@@ -5,9 +5,9 @@ import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { ChatRole, ChatSentiment } from "@/features/chat/chat-services/models";
 import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
 import Typography from "../typography";
-import Modal from "../ui/modal";
+import Modal from "../../features/ui/modal";
 import { Markdown } from "../markdown/markdown";
-import AssistantButtons from "../ui/assistant-buttons";
+import AssistantButtons from "../../features/ui/assistant-buttons";
 
 interface ChatRowProps {
   chatMessageId: string;

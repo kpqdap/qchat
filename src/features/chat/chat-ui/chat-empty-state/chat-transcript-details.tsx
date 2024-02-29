@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as Label from '@radix-ui/react-label';
 import { AssociateOffenderWithChatThread } from '../../chat-services/chat-thread-service';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
 
 interface OffenderTranscriptFormProps {
     chatThreadId: string;

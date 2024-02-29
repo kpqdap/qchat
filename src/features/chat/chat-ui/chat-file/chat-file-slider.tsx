@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/features/ui/sheet";
 import { FileText } from "lucide-react";
 import { ChatFileUI } from "./chat-file-ui";
 

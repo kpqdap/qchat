@@ -1,7 +1,7 @@
 import React from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/features/ui/tabs";
 import { Brush, CircleDot, Scale } from "lucide-react";
-import { TooltipProvider } from '@/components/ui/tooltip-provider';
+import { TooltipProvider } from '@/features/ui/tooltip-provider';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { FC } from "react";
 import { ConversationStyle } from "../../chat-services/models";

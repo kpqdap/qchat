@@ -1,7 +1,7 @@
 "use client";
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage } from "@/features/ui/avatar";
+import { Button } from "@/features/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/features/ui/dropdown-menu";
 import { LogOut, UserCircle } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 

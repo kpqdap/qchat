@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/features/ui/button";
+import { Input } from "@/features/ui/input";
 import { ArrowUpCircle, Loader2 } from "lucide-react";
 import { FC, useRef } from "react";
 import { useChatContext } from "../chat-context";

@@ -87,14 +87,14 @@ export const FindAllChatsInThread = async (chatThreadID: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
 
   const querySpec: SqlQuerySpec = {
-    query: "SELECT * FROM root r WHERE r.userId=@userId AND r.tenantId=@tenantId AND r.type=@type AND r.threadId = @threadId",
+    query: "SELECT * FROM root r WHERE r.userId=@userId AND r.tenantId=@tenantId AND r.type=@type AND r.chatThreadId = @chatThreadId",
     parameters: [
       {
         name: "@type",
         value: MESSAGE_ATTRIBUTE,
       },
       {
-        name: "@threadId",
+        name: "@chatThreadId",
         value: chatThreadID,
       },
       {

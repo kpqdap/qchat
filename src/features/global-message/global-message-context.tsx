@@ -1,4 +1,4 @@
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/features/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { createContext, useContext } from "react";
 

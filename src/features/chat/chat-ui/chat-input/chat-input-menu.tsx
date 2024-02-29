@@ -1,9 +1,9 @@
 import React, { FormEvent, useEffect, useRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/button";
 import { Menu, Bird, File, Clipboard } from "lucide-react";
 import { Message } from 'ai';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/features/ui/use-toast';
 
 interface ChatInputMenuProps {
   onDocExport: () => void;

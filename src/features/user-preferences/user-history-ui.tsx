@@ -1,5 +1,5 @@
 import ChatRow from "@/components/chat/chat-row";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { FC } from "react";
 import { AI_NAME } from "../theme/customise";
 import { FindAllChatsInThread, FindChatThreadByID } from "./history-service";
@@ -7,7 +7,7 @@ import { ChatRole } from "../chat/chat-services/models";
 
 interface Props {
   chatId: string;
-  threadId: string;
+  chatThreadId: string;
 }
 
 export const ChatReportingUI: FC<Props> = async (props) => {
