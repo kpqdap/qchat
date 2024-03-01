@@ -185,8 +185,7 @@ export const options: NextAuthOptions = {
         try {
           const groupsArray = ExtendedProfile?.employee_groups as string[] | undefined;
           const groupsString = groupsArray?.join(',');
-          await UserSignInHandler.handleSignIn(userRecord, groupsString);
-          return true;
+          return await UserSignInHandler.handleSignIn(userRecord, groupsString);
         } catch (error) {
           console.log("Error in signIn callback:", error);
           return false;

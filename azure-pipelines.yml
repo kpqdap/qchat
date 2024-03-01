@@ -222,7 +222,7 @@ stages:
                   inlineScript: |
                     $registryName = 'qggptprdacr'
                     $doNotDeleteTags = '$(Build.BuildId)'
-                    $skipLastTags = 3
+                    $skipLastTags = 30
                     
                     # Get a list of repositories in the ACR
                     $repoArray = (az acr repository list --name $registryName --output json | ConvertFrom-Json)
