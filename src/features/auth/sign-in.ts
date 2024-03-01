@@ -32,6 +32,11 @@ export class UserSignInHandler {
       }
 
       const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
+      if (!tenant) {
+        console.log("Tenant not found.");
+        return false;
+      }
+
       if (permittedTenantsRequired && !tenant) {
         console.log("Tenant not found or access not allowed.");
         return false;
