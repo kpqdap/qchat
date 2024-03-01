@@ -30,30 +30,31 @@ export class UserSignInHandler {
         await userContainer.updateUser(updatedUser, user.tenantId, user.userId);
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        return true;
-      }
-
-      let tenant = await tenantContainerExtended.getTenantById(user.tenantId);
-      if (!tenant) {
-        if (userGroups.length > 0) {
-          const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
-          const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
-          if (!isUserGroupApproved) {
-          }
+      const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
+      if (!tenant && userGroups.length > 0) {
+        const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
+        const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
+        console.log(`User groups: ${userGroups.join(', ')}`);
+        console.log(`Access groups: ${accessGroups.join(', ')}`);
+        console.log(`Group approval result: ${isUserGroupApproved}`);
+        if (!isUserGroupApproved) {
+          return false;
         }
-      } else if (tenant.requiresGroupLogin) {
+      } else if (tenant && tenant.requiresGroupLogin) {
         if (userGroups.length === 0) {
+          return false;
         }
 
         const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "");
+        console.log(`Checking groups for tenant ${user.tenantId}: ${groupsString || "No groups provided"}`);
+        console.log(`Groups approved: ${groupsApproved}`);
         if (!groupsApproved) {
+          return false;
         }
       }
 
       return true;
     } catch (error) {
-      console.log("Error during sign-in process:", error);
       return false;
     }
   }
