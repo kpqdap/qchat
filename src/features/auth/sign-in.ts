@@ -7,11 +7,20 @@ export class UserSignInHandler {
     const tenantContainerExtended = new CosmosDBTenantContainerExtended();
 
     try {
-      const permittedTenantsRequired = process.env.PERMITTED_TENANTS_REQUIRED === "true";
+      const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
+      if (!tenant) {
+        console.log("Tenant not found.");
+        return false;
+      }
+
+      const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
+      if (tenant.requiresGroupLogin) {
+        if (userGroups.length === 0 || !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))) {
+          return false;
+        }
+      }
 
       const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
-      const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
-
       if (!existingUser) {
         await userContainer.createUser({
           ...user,
@@ -22,41 +31,14 @@ export class UserSignInHandler {
         });
       } else {
         const currentTime = new Date();
-        const updatedUser = {
+        await userContainer.updateUser({
           ...existingUser,
           last_login: currentTime,
           groups: userGroups,
-        };
-
-        await userContainer.updateUser(updatedUser, user.tenantId, user.userId);
+        }, user.tenantId, user.userId);
       }
 
-      const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
-      if (!tenant) {
-        console.log("Tenant not found.");
-        return false;
-      }
-
-      if (permittedTenantsRequired && !tenant) {
-        console.log("Tenant not found or access not allowed.");
-        return false;
-      }
-
-      if (userGroups.length > 0) {
-        const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
-        const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
-        if (!isUserGroupApproved) {
-          return false;
-        }
-      }
-
-      if (tenant && tenant.requiresGroupLogin) {
-        if (userGroups.length === 0 || !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))) {
-          return false;
-        }
-      }
-
-      return true; 
+      return true;
     } catch (error) {
       console.error("Error handling sign-in:", error);
       return false;
