@@ -33,9 +33,6 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatId, chatThreadId, se
           <ChatRow
             chatMessageId={message.id}
             name={message.role === ChatRole.User ? session?.user?.name! : AI_NAME}
-            profilePicture={
-              message.role === ChatRole.User ? session?.user?.image! : ""
-            }
             message={message.content}
             type={message.role as ChatRole}
             key={index}

@@ -7,10 +7,20 @@ export class UserSignInHandler {
     const tenantContainerExtended = new CosmosDBTenantContainerExtended();
 
     try {
-      const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
+      const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
+      if (!tenant) {
+        console.log("Tenant not found.");
+        return false;
+      }
 
       const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
+      if (tenant.requiresGroupLogin) {
+        if (userGroups.length === 0 || !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))) {
+          return false;
+        }
+      }
 
+      const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
       if (!existingUser) {
         await userContainer.createUser({
           ...user,
@@ -21,39 +31,16 @@ export class UserSignInHandler {
         });
       } else {
         const currentTime = new Date();
-        const updatedUser = {
+        await userContainer.updateUser({
           ...existingUser,
           last_login: currentTime,
           groups: userGroups,
-        };
-
-        await userContainer.updateUser(updatedUser, user.tenantId, user.userId);
-      }
-
-      if (process.env.NODE_ENV === 'development') {
-        return true;
-      }
-
-      let tenant = await tenantContainerExtended.getTenantById(user.tenantId);
-      if (!tenant) {
-        if (userGroups.length > 0) {
-          const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
-          const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
-          if (!isUserGroupApproved) {
-          }
-        }
-      } else if (tenant.requiresGroupLogin) {
-        if (userGroups.length === 0) {
-        }
-
-        const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "");
-        if (!groupsApproved) {
-        }
+        }, user.tenantId, user.userId);
       }
 
       return true;
     } catch (error) {
-      console.log("Error during sign-in process:", error);
+      console.error("Error handling sign-in:", error);
       return false;
     }
   }

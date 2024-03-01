@@ -13,7 +13,7 @@ export default async function RootLayout({
 }) {
   return (
     <>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 h-full w-full">{children}</div>
     </>
   );
 }

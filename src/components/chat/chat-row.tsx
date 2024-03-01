@@ -12,7 +12,6 @@ import AssistantButtons from "../../features/ui/assistant-buttons";
 interface ChatRowProps {
   chatMessageId: string;
   name: string;
-  profilePicture: string;
   message: string;
   type: ChatRole;
   chatThreads: string;
@@ -126,5 +125,5 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     </article>
   );
 };
-
+console.log("ChatRow", ChatRow);
 export default ChatRow;
