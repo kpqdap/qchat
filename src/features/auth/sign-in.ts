@@ -7,8 +7,9 @@ export class UserSignInHandler {
     const tenantContainerExtended = new CosmosDBTenantContainerExtended();
 
     try {
-      const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
+      const permittedTenantsRequired = process.env.PERMITTED_TENANTS_REQUIRED === "true";
 
+      const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
       const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
 
       if (!existingUser) {
@@ -31,30 +32,28 @@ export class UserSignInHandler {
       }
 
       const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
-      if (!tenant && userGroups.length > 0) {
+      if (permittedTenantsRequired && !tenant) {
+        console.log("Tenant not found or access not allowed.");
+        return false;
+      }
+
+      if (userGroups.length > 0) {
         const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
         const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
-        console.log(`User groups: ${userGroups.join(', ')}`);
-        console.log(`Access groups: ${accessGroups.join(', ')}`);
-        console.log(`Group approval result: ${isUserGroupApproved}`);
         if (!isUserGroupApproved) {
-          return false;
-        }
-      } else if (tenant && tenant.requiresGroupLogin) {
-        if (userGroups.length === 0) {
-          return false;
-        }
-
-        const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "");
-        console.log(`Checking groups for tenant ${user.tenantId}: ${groupsString || "No groups provided"}`);
-        console.log(`Groups approved: ${groupsApproved}`);
-        if (!groupsApproved) {
           return false;
         }
       }
 
-      return true;
+      if (tenant && tenant.requiresGroupLogin) {
+        if (userGroups.length === 0 || !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))) {
+          return false;
+        }
+      }
+
+      return true; 
     } catch (error) {
+      console.error("Error handling sign-in:", error);
       return false;
     }
   }
