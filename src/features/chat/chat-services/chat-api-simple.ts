@@ -162,7 +162,8 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<any> => {
       async onStart() {console.log("Chat streaming started")},
       async onCompletion(completion) {
         try {
-          const translatedCompletion = await translator(completion);
+          // const translatedCompletion = await translator(completion);
+          const translatedCompletion = completion;
           await chatHistory.addMessage({
             content: translatedCompletion,
             role: "assistant",
