@@ -1,7 +1,9 @@
+"use server";
 import "server-only";
 import { OpenAIInstance } from "@/features/common/openai";
 import { CosmosDBContainer } from "@/features/common/cosmos";
 import { getTenantId, userHashedId } from "@/features/auth/helpers";
+import { translator } from "./chat-translator-service";
 
 export interface Message {
     role: 'function' | 'system' | 'user' | 'assistant';
@@ -35,7 +37,7 @@ async function logAPIUsage(apiName: string, apiParams: any, apiResult: any): Pro
     await container.items.create(logEntry);
 }
 
-export const GenericChatAPI = async (apiName: string, props: GenericChatAPIProps): Promise<any> => {
+export const GenericChatAPI = async (apiName: string, props: GenericChatAPIProps): Promise<string | null> => {
   const openAI = OpenAIInstance();
   try {
     const messageResponse = await openAI.chat.completions.create({
@@ -45,11 +47,12 @@ export const GenericChatAPI = async (apiName: string, props: GenericChatAPIProps
     await logAPIUsage(apiName, {messages: props.messages}, messageResponse);
 
     const content = messageResponse.choices[0]?.message?.content;
-    if (content === undefined) {
+    if (content === undefined || content === null) {
       throw new Error('No content found in the response from OpenAI API.');
     }
 
-    return content;
+    const translatedContent = await translator(content); 
+    return translatedContent;
   } catch (e) {
     await logAPIUsage("GenericChatAPI", {messages: props.messages}, { error: (e as Error).message });
     throw e;

@@ -3,7 +3,6 @@ import "server-only";
 import { ChatThreadModel } from "./models";
 import { UpsertChatThread } from "./chat-thread-service";
 import { GenericChatAPI } from "./generic-chat-api";
-import { translator } from "./chat-translator-service";
 
 async function generateChatName(chatMessage: string): Promise<string> {
     const apiName = "generateChatName";
@@ -17,8 +16,6 @@ async function generateChatName(chatMessage: string): Promise<string> {
                 to help users quickly grasp what the conversation was about.`
             }],
         });
-
-        name = await translator(name.trim());
         
         return name || 'New Chat by Error';
     } catch (e) {
@@ -52,9 +49,8 @@ export async function generateChatCategory(chatMessage: string): Promise<string>
             }],
         });
 
-        return category || "Uncategorised!";
+        return category || "Uncategorised";
     } catch (e) {
-        console.error("Error categorizing chat:", e);
         return "Uncategorised";
     }
 };

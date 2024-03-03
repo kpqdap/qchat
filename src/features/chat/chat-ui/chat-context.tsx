@@ -4,24 +4,12 @@ import { useGlobalMessageContext } from "@/features/global-message/global-messag
 import { Message } from "ai";
 import { UseChatHelpers, useChat } from "ai/react";
 import React, { FC, createContext, useContext, useState } from "react";
-import {
-  ChatMessageModel,
-  ChatThreadModel,
-  ChatType,
-  ConversationStyle,
-  ConversationSensitivity,
-  PromptGPTBody,
-} from "../chat-services/models";
+import { ChatMessageModel, ChatThreadModel, ChatType, ConversationStyle, ConversationSensitivity, PromptGPTBody } from "../chat-services/models";
 import { transformCosmosToAIModel } from "../chat-services/utils";
 import { FileState, useFileState } from "./chat-file/use-file-state";
-import {
-  SpeechToTextProps,
-  useSpeechToText,
-} from "./chat-speech/use-speech-to-text";
-import {
-  TextToSpeechProps,
-  useTextToSpeech,
-} from "./chat-speech/use-text-to-speech";
+import { SpeechToTextProps, useSpeechToText } from "./chat-speech/use-speech-to-text";
+import { TextToSpeechProps, useTextToSpeech } from "./chat-speech/use-text-to-speech";
+import Router from "next/router";
 
 interface ChatContextProps extends UseChatHelpers {
   id: string;
@@ -80,7 +68,7 @@ export const ChatProvider: FC<Prop> = (props) => {
     initialMessages: transformCosmosToAIModel(props.chats),
     onFinish: async (lastMessage: Message) => {
       if (isMicrophoneUsed) {
-        await textToSpeech(lastMessage.content);
+        textToSpeech(lastMessage.content);
         resetMicrophoneUsed();
       }
     },
