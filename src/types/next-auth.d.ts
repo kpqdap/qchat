@@ -10,6 +10,7 @@ declare module "next-auth" {
             tenantId: string;
             upn: string;
             userId: string;
+            userContext?: string;
         } & DefaultSession["user"]
     }
     interface User {
@@ -17,5 +18,6 @@ declare module "next-auth" {
         tenantId: string;
         upn: string;
         userId: string;
+        userContext?: string;
     }
 }

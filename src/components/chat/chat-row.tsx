@@ -125,5 +125,4 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     </article>
   );
 };
-console.log("ChatRow", ChatRow);
 export default ChatRow;

@@ -58,7 +58,6 @@ export interface ChatMessageModel {
   sentiment: ChatSentiment;
   reason: string;
   systemPrompt: string;
-  contextPrompt: string;
   contentSafetyWarning: string;
 };
 
@@ -80,7 +79,10 @@ export interface ChatThreadModel {
   type: "CHAT_THREAD";
   offenderId?: string;
   isDisabled: boolean;
-  contentSafetyWarning: string;
+  systemPrompt?: string;
+  contextPrompt?: string;
+  metaPrompt?: string;
+  contentSafetyWarning?: string;
 };
 
 export interface PromptGPTBody {
@@ -92,6 +94,7 @@ export interface PromptGPTBody {
   tenantId: string;
   userId: string;
   offenderId?: string;
+  contextPrompt?: string;
 };
 
 export interface PromptGPTProps extends PromptGPTBody {

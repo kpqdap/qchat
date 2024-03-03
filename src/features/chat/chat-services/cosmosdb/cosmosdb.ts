@@ -51,7 +51,6 @@ export class CosmosDBChatMessageHistory {
       feedback: "",
       sentiment: ChatSentiment.Neutral,
       reason: "",
-      contextPrompt: "",
       contentSafetyWarning: ""
     };
     await UpsertChat(modelToSave);

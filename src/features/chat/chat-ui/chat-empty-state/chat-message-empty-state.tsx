@@ -1,4 +1,4 @@
-import { FC, FormEvent, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { useChatContext } from "../chat-context";
 import { ChatFileUI } from "../chat-file/chat-file-ui";
 import { ChatStyleSelector } from "./chat-style-selector";
@@ -21,10 +21,8 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
   async function callUpsertPromptButton(prompt: string) {
     const chatThreadModel = await CreateChatThread();
     if (chatThreadModel) {
-      const id = chatThreadModel.chatThreadId;
-      UpsertPromptButton(prompt, id);
+        await UpsertPromptButton(prompt, chatThreadModel);
     } else {
-      console.log('Failed to create chat thread');
     }
   }
 
@@ -35,7 +33,6 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       setInput(prompt);
       callUpsertPromptButton(prompt);
     } catch (error) {
-      console.log('An error occurred:', error);
     }
   };
 

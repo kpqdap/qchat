@@ -170,10 +170,8 @@ export const FindAllChatThreadsForReporting = async (
         maxItemCount: pageSize,
       })
       .fetchNext();
-    // console.log("FindAllChatThreadsForReporting resources:", resources);
     return { resources };
   } catch (error) {
-    // console.error("FindAllChatThreadsForReporting error:", error);
     return { resources: [] };
   }
 };
@@ -204,14 +202,11 @@ export const FindChatThreadByID = async (chatThreadId: string) => {
         },
       ],
     };
-    // console.log("FindChatThreadByID query:", querySpec.query);
     const { resources } = await container.items
       .query<ChatThreadModel>(querySpec)
       .fetchAll();
-    // console.log("FindChatThreadByID resources:", resources);
     return resources;
   } catch (error) {
-    // console.error("FindChatThreadByID error:", error);
     return [];
   }
 };
@@ -239,15 +234,12 @@ export const FindAllChatsInThread = async (chatThreadId: string) => {
       ],
     };
 
-    console.log("FindAllChatsInThread query:", querySpec.query);
 
     const { resources } = await container.items
       .query<ChatMessageModel>(querySpec)
       .fetchAll();
-    console.log("FindAllChatsInThread resources:", resources);
     return resources;
   } catch (error) {
-    console.error("FindAllChatsInThread error:", error);
     return [];
   }
 };
@@ -279,10 +271,8 @@ export const FindAllChatsInThread = async (chatThreadId: string) => {
 //     const { resources } = await container.items
 //       .query<ChatMessageModel>(querySpec)
 //       .fetchAll();
-//     console.log("FindAllChatsInThread resources:", resources);
 //     return resources;
 //   } catch (error) {
-//     console.error("FindAllChatsInThread error:", error);
 //     return [];
 //   }
 // };

@@ -147,7 +147,6 @@ export class CosmosDBUserContainer {
             const { resources } = await container.items.query<UserRecord>(query).fetchAll();
             return resources[0];
         } catch (e) {
-            console.log("Error retrieving user by UPN:", e);
             return undefined;
         }
     };

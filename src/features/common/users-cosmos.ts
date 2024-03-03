@@ -26,7 +26,6 @@ export const initUserPrefsContainer = async () => {
 
     return containerResponse.container;
   } catch (error) {
-    console.log("Failed to initialize the User Preferences container:", error);
-    throw error; // Rethrow or handle as appropriate for your application's error handling policy
+    throw error;
   }
 };

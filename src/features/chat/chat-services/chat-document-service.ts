@@ -87,7 +87,6 @@ const LoadFile = async (formData: FormData, chatType: string) => {
   }
 };
 
-
 export const IndexDocuments = async (fileName: string, docs: string[], chatThreadId: string, order: number): Promise<ServerActionResponse<AzureCogDocumentIndex[]>> => {
   try {
     const documentsToIndex: AzureCogDocumentIndex[] = [];

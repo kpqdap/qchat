@@ -44,7 +44,6 @@ export const createAppInsights = (): IAppInsightsContext | null => {
 
     return { appInsights, reactPlugin, browserHistory, clickPlugin };
   } catch (error) {
-    console.log('Failed to initialize Application Insights:', error);
     return null;
   }
 };

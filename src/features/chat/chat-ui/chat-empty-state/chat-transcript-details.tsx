@@ -23,7 +23,6 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
         setMessage(`Offender ID ${offenderId} saved.`);
         setIsIdSaved(true); // Set isIdSaved to true upon successful save
       } catch (error) {
-        console.log(error);
         setMessage('Failed to save offender ID.');
         setIsIdSaved(false); // Ensure isIdSaved is false if saving fails
       } finally {

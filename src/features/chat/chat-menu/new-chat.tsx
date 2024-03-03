@@ -3,7 +3,7 @@
 import { Button } from "@/features/ui/button";
 import { MessageSquarePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CreateChatThread } from "../chat-services/chat-thread-service";
+import { CreateChatThread, FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 
 export const NewChat = () => {
@@ -11,13 +11,27 @@ export const NewChat = () => {
   const { showError } = useGlobalMessageContext();
 
   const startNewChat = async () => {
+    const title = "New Chat";
+
     try {
-      const newChatThread = await CreateChatThread();
-      if (newChatThread) {
-        router.push(`/chat/${newChatThread.id}`);
-      }
-    } catch (e) {
-      console.error(e);
+      const existingThread = await FindChatThreadByTitleAndEmpty(title);
+      
+      if (existingThread) {
+        await UpdateChatThreadCreatedAt(existingThread.id);
+        router.push(`/chat/${existingThread.id}`);
+        router.refresh();
+      } else {
+        try {
+          const newChatThread = await CreateChatThread();
+          if (newChatThread) {
+            router.push(`/chat/${newChatThread.id}`);
+            router.refresh();
+          }
+        } catch (e) {
+          showError('Failed to start a new chat. Please try again later.');
+        }
+      };
+    } catch (error) {
       showError('Failed to start a new chat. Please try again later.');
     }
   };

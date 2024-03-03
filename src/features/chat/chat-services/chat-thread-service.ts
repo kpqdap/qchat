@@ -7,6 +7,8 @@ import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { CosmosDBContainer } from "../../common/cosmos";
 import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, ChatUtilities, ConversationSensitivity, ConversationStyle, PromptGPTProps } from "./models";
+import { FindAllChatDocuments } from "./chat-document-service";
+import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store";
 
 function threeMonthsAgo(): string {
   const date = new Date();
@@ -56,7 +58,6 @@ export const FindAllChatThreadForCurrentUser = async () => {
       .fetchAll();
     return resources;
   } catch (error) {
-    console.log("Failed to fetch chat threads for current user:", error);
     throw error;
   }
 };
@@ -90,11 +91,9 @@ export const FindChatThreadByID = async (id: string) => {
 
     return resources;
   } catch (error) {
-    console.log("Failed to fetch chat thread by ID:", error);
     throw error;
   }
 };
-
 
 export const RenameChatThreadByID = async (
   chatThreadID: string,
@@ -109,6 +108,47 @@ export const RenameChatThreadByID = async (
       const itemToUpdate = { ...thread, name: resolvedTitle };
       await container.items.upsert(itemToUpdate);
     }));
+  }
+};
+
+export const SoftDeleteChatThreadByID = async (chatThreadID: string) => {
+  const tenantId = await getTenantId();
+  const userId = await userHashedId();
+  const container = await CosmosDBContainer.getInstance().getContainer();
+  const threads = await FindChatThreadByID(chatThreadID);
+
+  if (threads.length !== 0) {
+    const chats = await FindAllChats(chatThreadID);
+
+    chats.forEach(async (chat) => {
+      const itemToUpdate = {
+        ...chat,
+      };
+      itemToUpdate.isDeleted = true;
+      await container.items.upsert(itemToUpdate);
+    });
+
+    const chatDocuments = await FindAllChatDocuments(chatThreadID);
+
+    if (chatDocuments.length !== 0) {
+      await deleteDocuments(chatThreadID, userId, tenantId);
+    }
+
+    chatDocuments.forEach(async (chatDocument) => {
+      const itemToUpdate = {
+        ...chatDocument,
+      };
+      itemToUpdate.isDeleted = true;
+      await container.items.upsert(itemToUpdate);
+    });
+
+    threads.forEach(async (thread) => {
+      const itemToUpdate = {
+        ...thread,
+      };
+      itemToUpdate.isDeleted = true;
+      await container.items.upsert(itemToUpdate);
+    });
   }
 };
 
@@ -136,20 +176,16 @@ export const UpsertChatThread = async (chatThread: ChatThreadModel) => {
   return updatedChatThread;
 };
 
-export const UpsertPromptButton = async (prompt: string, chatThreadId: string) => {
+export const UpsertPromptButton = async (prompt: string, chatThread: ChatThreadModel) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
   const updatedChatPrompts = await container.items.upsert<ChatUtilities>({
-    id: chatThreadId,
-    chatThreadId: chatThreadId,
-    userId: await userHashedId(),
-    tenantId: await getTenantId(),
+    ...chatThread,
     promptButton: prompt,
   });
   if (updatedChatPrompts === undefined) {
     throw new Error("Prompt Button not selected");
   }
 };
-
 
 export const updateChatThreadTitle = async (
   chatThread: ChatThreadModel,
@@ -197,6 +233,9 @@ export const CreateChatThread = async () => {
     conversationStyle: ConversationStyle.Precise,
     conversationSensitivity: ConversationSensitivity.Official,
     type: CHAT_THREAD_ATTRIBUTE,
+    systemPrompt: "",
+    contextPrompt: "",
+    metaPrompt: "",
     chatOverFileName: "",
   };
 
@@ -277,7 +316,6 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
 
   return undefined;
 };
-
 
 export const UpdateChatThreadCreatedAt = async (threadId: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();

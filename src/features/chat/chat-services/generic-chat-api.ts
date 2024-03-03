@@ -51,7 +51,6 @@ export const GenericChatAPI = async (apiName: string, props: GenericChatAPIProps
 
     return content;
   } catch (e) {
-    console.log(`An error occurred: ${(e as Error).message}`);
     await logAPIUsage("GenericChatAPI", {messages: props.messages}, { error: (e as Error).message });
     throw e;
   }
