@@ -7,7 +7,7 @@ import { GenericChatAPI } from "./generic-chat-api";
 async function generateChatName(chatMessage: string): Promise<string> {
     const apiName = "generateChatName";
     try {
-        let name = await GenericChatAPI(apiName, {
+        const name = await GenericChatAPI(apiName, {
             messages: [{
                 role: "system",
                 content: `- create a succinct title, limited to five words and 20 characters, for the following chat """${chatMessage}""" conversation with a generative AI assistant:
@@ -17,6 +17,12 @@ async function generateChatName(chatMessage: string): Promise<string> {
             }],
         });
         
+        if (name) {
+            return name.replace(/^"+|"+$/g, '');
+        } else {
+            console.log('Error: Unexpected response structure from OpenAI API.');
+        }
+
         return name || 'New Chat by Error';
     } catch (e) {
         console.error("Error generating chat name:", e);
