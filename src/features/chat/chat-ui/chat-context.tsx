@@ -9,7 +9,7 @@ import { transformCosmosToAIModel } from "../chat-services/utils";
 import { FileState, useFileState } from "./chat-file/use-file-state";
 import { SpeechToTextProps, useSpeechToText } from "./chat-speech/use-speech-to-text";
 import { TextToSpeechProps, useTextToSpeech } from "./chat-speech/use-text-to-speech";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 interface ChatContextProps extends UseChatHelpers {
   id: string;
@@ -37,7 +37,7 @@ interface Prop {
 
 export const ChatProvider: FC<Prop> = (props) => {
   const { showError } = useGlobalMessageContext();
-
+  const Router = useRouter();
   const speechSynthesizer = useTextToSpeech();
   const speechRecognizer = useSpeechToText({
     onSpeech(value) {
@@ -71,6 +71,7 @@ export const ChatProvider: FC<Prop> = (props) => {
         textToSpeech(lastMessage.content);
         resetMicrophoneUsed();
       }
+      Router.refresh();
     },
   });
 
@@ -130,6 +131,5 @@ export const useChatContext = () => {
   if (!context) {
     throw new Error("ChatContext is null");
   }
-
   return context;
 };

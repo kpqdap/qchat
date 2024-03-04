@@ -9,6 +9,7 @@ import { CosmosDBContainer } from "../../common/cosmos";
 import { CHAT_THREAD_ATTRIBUTE, ChatMessageModel, ChatThreadModel, ChatType, ChatUtilities, ConversationSensitivity, ConversationStyle, PromptGPTProps } from "./models";
 import { FindAllChatDocuments } from "./chat-document-service";
 import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store";
+import { chatAPIEntry } from "./chat-api-entry";
 
 function threeMonthsAgo(): string {
   const date = new Date();
@@ -324,6 +325,11 @@ export const UpdateChatThreadCreatedAt = async (threadId: string) => {
   if (threads.length !== 0) {
     const threadToUpdate = threads[0];
     threadToUpdate.createdAt = new Date();
+    threadToUpdate.chatType = ChatType.Simple;
+    threadToUpdate.conversationStyle = ConversationStyle.Precise;
+    threadToUpdate.conversationSensitivity = ConversationSensitivity.Official;
+    threadToUpdate.chatOverFileName = "";
+    threadToUpdate.offenderId = "";
 
     await container.items.upsert(threadToUpdate);
     return threadToUpdate; 
