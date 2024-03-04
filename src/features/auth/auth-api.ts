@@ -20,6 +20,7 @@ export interface AuthToken extends JWT {
 
 interface ExtendedProfile extends Profile {
   employee_groups?: string[];
+  groups?: string[];
 }
 
 const validateEnv = () => {
@@ -81,7 +82,7 @@ const configureIdentityProvider = (): Provider[] => {
             name: profile.name,
             email: profile.email,
             upn: profile.upn,
-            tenantId: profile.employee_idp,
+            tenantId: profile.employee_idp == undefined ? profile.tid : profile.employee_idp,
             qchatAdmin: qchatAdmin,
             userId: profile.upn,
           };
@@ -184,7 +185,10 @@ export const options: NextAuthOptions = {
         };
         const userRecord: UserRecord = { ...userIdentity, ...userActivity };
         try {
-          const groupsArray = ExtendedProfile?.employee_groups as string[] | undefined;
+          let groupsArray = ExtendedProfile?.employee_groups as string[] | undefined;
+          if (process.env.NODE_ENV === "development") {
+            groupsArray = ExtendedProfile?.groups as string[] | undefined;
+          }
           const groupsString = groupsArray?.join(',');
           return await UserSignInHandler.handleSignIn(userRecord, groupsString);
         } catch (error) {
