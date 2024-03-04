@@ -175,7 +175,6 @@ export const embedDocuments = async (
       documents[index].embedding = embedding.embedding;
     });
   } catch (e) {
-    console.log(e);
     const error = e as any;
     throw new Error(`${e} with code ${error.status}`);
   }

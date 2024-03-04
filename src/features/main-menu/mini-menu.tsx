@@ -52,7 +52,7 @@ const menuItemClass = cn(
   
 export const MiniMenu: React.FC = () => {
     const { isMenuOpen, toggleMenu } = useMiniMenuContext();
-    const { data: session } = useSession({ required: false });
+    const { data: session, status } = useSession({ required: false });
     const { theme, setTheme } = useTheme();
 
     const menuItems = [

@@ -73,7 +73,6 @@ export const CreateUserFeedbackChatId = async (
       return itemToUpdate;
     }
   } catch (e) {
-    console.log("There was an error in saving user feedback", e);
   }
 };
 
@@ -134,11 +133,6 @@ export const newChatModel = (userId: string, tenantId: string): ChatMessageModel
     feedback: "",
     sentiment: ChatSentiment.Neutral,
     reason: "",
-    contextPrompt: "",
     contentSafetyWarning: "",
   };
 };
-
-function gethashedId(userId: string): string | void | PromiseLike<string | void | undefined> | undefined {
-  throw new Error("Function not implemented.");
-}

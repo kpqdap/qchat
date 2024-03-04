@@ -1,5 +1,4 @@
 "use client";
-
 import React, { FC, useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from "next/navigation";
 import { useGlobalMessageContext } from '@/features/global-message/global-message-context';
@@ -7,7 +6,7 @@ import { Button } from '@/features/ui/button';
 import { MenuItem } from '@/components/menu';
 import { FileText, MessageCircle, Trash, Pencil, AudioLines } from 'lucide-react';
 import { ChatThreadModel } from '../chat-services/models';
-import { RenameChatThreadByID } from '@/features/chat/chat-services/chat-thread-service';
+import { RenameChatThreadByID, SoftDeleteChatThreadByID } from '@/features/chat/chat-services/chat-thread-service';
 import Typography from "@/components/typography";
 
 interface Prop {
@@ -92,9 +91,17 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
 
 
 export const MenuItems: FC<Prop> = ({ menuItems }) => {
+  const { id } = useParams();
+  const router = useRouter();
   const { showError } = useGlobalMessageContext();
   const params = useParams();
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+
+  const sendData = async (threadID: string) => {
+    await SoftDeleteChatThreadByID(threadID);
+    router.refresh();
+    router.replace("/chat");
+  };
 
   const handleOpenModal = (chatThreadId: string) => {
     setSelectedThreadId(chatThreadId);
@@ -110,17 +117,17 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
         await RenameChatThreadByID(selectedThreadId, newName);
         window.location.reload();
       } catch (e) {
-        console.log(e);
         showError("" + e);
       } finally {
         handleCloseModal();
       }
-    }
+    };
+    router.refresh();
   };
 
   return (
     <>
-      {menuItems.map((thread, index) => (
+      {menuItems.map((thread) => (
         <MenuItem
           href={`/chat/${thread.id}`}
           isSelected={params.id === thread.id}
@@ -128,11 +135,11 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
           className="justify-between group hover:item relative"
         >
           {thread.chatType === "data" ? (
-            <FileText size={16} className={params.id === thread.id ? " text-brand" : ""} />
+            <FileText size={16} className={id === thread.id ? " text-brand" : ""} />
           ) : thread.chatType === "audio" ? (
-            <AudioLines size={16} className={params.id === thread.id ? " text-brand" : ""} />
+            <AudioLines size={16} className={id === thread.id ? " text-brand" : ""} />
           ) : (
-            <MessageCircle size={16} className={params.id === thread.id ? " text-brand" : ""} />
+            <MessageCircle size={16} className={id === thread.id ? " text-brand" : ""} />
           )}
           <span className="flex gap-2 items-center overflow-hidden flex-1">
             <span className="overflow-ellipsis truncate">{thread.name}</span>
@@ -156,6 +163,22 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
               focusAfterClose={null}
             />
           )}
+          <Button
+            className="invisible group-hover:visible"
+            size={"sm"}
+            variant="default"
+            onClick={async (e) => {
+              e.preventDefault();
+              const yesDelete = confirm(
+                "Are you sure you want to delete this chat?"
+              );
+              if (yesDelete) {
+                await sendData(thread.id);
+              }
+            }}
+          >
+          <Trash size={16} />
+          </Button>
         </MenuItem>
       ))}
     </>

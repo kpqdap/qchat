@@ -14,8 +14,8 @@ interface LinkItem {
 }
 
 export const NavBar: React.FC = () => {
-  const { data: session } = useSession();
-
+  const { data: session, status } = useSession();
+  if (status === "unauthenticated") return null;
   const links: LinkItem[] = [
     { name: 'Home', href: '/', icon: HomeIcon },
     { name: 'Settings', href: '/settings', icon: UserCog, condition: () => !!session },

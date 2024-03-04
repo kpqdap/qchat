@@ -17,6 +17,10 @@ const requireAuth: string[] = [
 const requireAdmin: string[] = ["/reporting", "/admin", "/settings", "/tenant"];
 
 export async function middleware(request: NextRequest) {
+    if (process.env.NODE_ENV === 'development') {
+        return NextResponse.next();
+    }
+
     const res = NextResponse.next();
     const pathname = request.nextUrl.pathname;
 

@@ -10,6 +10,7 @@ const Home: React.FC = () => {
   const handleRedirectHome = async () => {
     try {
       await router.push('/');
+      router.refresh();
     } catch (error) {
       console.error('Redirect failed:', error);
     }

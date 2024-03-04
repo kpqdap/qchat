@@ -4,65 +4,53 @@ export function getBooleanEnv(variable: string): boolean {
     return process.env[variable]?.toLowerCase() === 'true';
 }
 
-export async function translator(input: string) {
+export async function translator(input: string): Promise<string> {
+    if (!getBooleanEnv('NEXT_PUBLIC_FEATURE_TRANSLATOR') || typeof input !== 'string') {
+        return input;
+    }
 
-    if (getBooleanEnv('NEXT_PUBLIC_FEATURE_TRANSLATOR')) {
-        if (typeof input === 'string') {
-            const normalizedInput = input.toLowerCase();
-            const translatedText = await translateFunction([{ text: normalizedInput }], "en-GB", "en-US");
-            const revertedText = revertCase(input, translatedText[0]);
-            return revertedText;
-        } else {
-            console.error("Invalid input type:", input);
-            return input ?? null;
+    const normalizedInput = input.toLowerCase();
+
+    try {
+        const translatedTexts = await translateFunction([{ text: normalizedInput }], "en-GB", "en-US");
+        if (translatedTexts.length > 0) {
+            return revertCase(input, translatedTexts[0]);
         }
+    } catch (error) {
     }
-    else {
-        return input ?? null;
-    }
+
+    return input;
 }
 
-async function translateFunction(inputText: { text: string }[], translatedTo: string, translatedFrom: string) {
-
+async function translateFunction(inputText: { text: string }[], translatedTo: string, translatedFrom: string): Promise<string[]> {
     const apiKey = process.env.AZURE_TRANSLATOR_KEY;
     const endpoint = process.env.AZURE_TRANSLATOR_URL;
     const region = process.env.AZURE_SPEECH_REGION;
 
-    const translateCredential = {
-        key: apiKey,
-        region,
-    };
+    if (!apiKey || !endpoint || !region) {
+        throw new Error('Missing configuration for Azure Translator.');
+    }
+
+    const translateCredential = { key: apiKey, region };
     const translationClient = createClient(endpoint, translateCredential);
 
     const translateResponse = await translationClient.path("/translate").post({
         body: inputText,
-        queryParameters: {
-            to: translatedTo,
-            from: translatedFrom,
-        },
-        headers: {
-            "api-key": apiKey,
-        }
+        queryParameters: { to: translatedTo, from: translatedFrom },
+        headers: { "api-key": apiKey }
     });
 
     const translations = translateResponse.body as TranslatedTextItemOutput[] | ErrorResponseOutput;
 
     if (Array.isArray(translations)) {
-        const translatedStrings = translations.map(translation => translation.translations[0].text);
-        return translatedStrings;
+        return translations.map(translation => translation.translations[0].text);
     } else {
-        console.error("Translation error:", translations);
-        return [];
+        throw new Error('Translation API returned an error response.');
     }
 }
 
 function revertCase(originalText: string, translatedText: string): string {
-    return originalText
-        .split('')
-        .map((originalChar, index) =>
-            originalChar === originalChar.toUpperCase()
-                ? translatedText[index].toUpperCase()
-                : translatedText[index]
-        )
-        .join('');
-}
+    return originalText.split('').map((char, index) => 
+        char.toUpperCase() === char ? translatedText.charAt(index)?.toUpperCase() : translatedText.charAt(index)
+    ).join('');
+};

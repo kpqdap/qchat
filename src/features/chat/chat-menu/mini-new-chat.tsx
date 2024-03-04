@@ -3,7 +3,7 @@
 import { Button } from "@/features/ui/button";
 import { MessageSquarePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
+import { CreateChatThread, FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 
 export const MiniNewChat = () => {
@@ -19,9 +19,18 @@ export const MiniNewChat = () => {
       if (existingThread) {
         await UpdateChatThreadCreatedAt(existingThread.id);
         router.push(`/chat/${existingThread.id}`);
+        router.refresh();
       } else {
-        router.push("/chat");
-      }
+        try {
+          const newChatThread = await CreateChatThread();
+          if (newChatThread) {
+            router.push(`/chat/${newChatThread.id}`);
+            router.refresh();
+          }
+        } catch (e) {
+          showError('Failed to start a new chat. Please try again later.');
+        }
+      };
     } catch (error) {
       showError('Failed to start a new chat. Please try again later.');
     }

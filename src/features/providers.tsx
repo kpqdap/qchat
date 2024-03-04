@@ -9,7 +9,7 @@ import { TooltipProvider } from "@/features/ui/tooltip-provider";
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <AppInsightsProvider>
-      <SessionProvider>
+      <SessionProvider refetchInterval={5 * 60} basePath="/api/auth">
         <GlobalMessageProvider>
           <MenuProvider>
             <MiniMenuProvider>

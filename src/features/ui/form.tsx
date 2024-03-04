@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import * as Form from '@radix-ui/react-form';
 
-// Define the form data type for type safety
 interface PromptFormData {
   fullName: string;
   jobTitle: string;
@@ -12,7 +11,6 @@ interface PromptFormData {
   additionalInfo: string;
 }
 
-// Define props for the FormField component
 type FormFieldProps = {
   label: string;
   name: keyof PromptFormData;
@@ -28,9 +26,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, name, type = 'text' }) => 
   </Form.Field>
 );
 
-// The main PromptForm component
 const PromptForm: React.FC = () => {
-  // State for managing form data
   const [formData, setFormData] = useState<PromptFormData>({
     fullName: '',
     jobTitle: '',
@@ -39,14 +35,10 @@ const PromptForm: React.FC = () => {
     additionalInfo: '',
   });
 
-  // Handle form submission
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formData);
-    // Handle form data, e.g., by sending it to an API
   };
 
-  // Update state based on input changes
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setFormData(prev => ({ ...prev, [name]: value }));

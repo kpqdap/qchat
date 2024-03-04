@@ -4,24 +4,12 @@ import { useGlobalMessageContext } from "@/features/global-message/global-messag
 import { Message } from "ai";
 import { UseChatHelpers, useChat } from "ai/react";
 import React, { FC, createContext, useContext, useState } from "react";
-import {
-  ChatMessageModel,
-  ChatThreadModel,
-  ChatType,
-  ConversationStyle,
-  ConversationSensitivity,
-  PromptGPTBody,
-} from "../chat-services/models";
+import { ChatMessageModel, ChatThreadModel, ChatType, ConversationStyle, ConversationSensitivity, PromptGPTBody } from "../chat-services/models";
 import { transformCosmosToAIModel } from "../chat-services/utils";
 import { FileState, useFileState } from "./chat-file/use-file-state";
-import {
-  SpeechToTextProps,
-  useSpeechToText,
-} from "./chat-speech/use-speech-to-text";
-import {
-  TextToSpeechProps,
-  useTextToSpeech,
-} from "./chat-speech/use-text-to-speech";
+import { SpeechToTextProps, useSpeechToText } from "./chat-speech/use-speech-to-text";
+import { TextToSpeechProps, useTextToSpeech } from "./chat-speech/use-text-to-speech";
+import { useRouter } from "next/navigation";
 
 interface ChatContextProps extends UseChatHelpers {
   id: string;
@@ -39,7 +27,6 @@ interface ChatContextProps extends UseChatHelpers {
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null);
-console.log("ChatContext", ChatContext);
 interface Prop {
   children: React.ReactNode;
   id: string;
@@ -50,7 +37,7 @@ interface Prop {
 
 export const ChatProvider: FC<Prop> = (props) => {
   const { showError } = useGlobalMessageContext();
-
+  const Router = useRouter();
   const speechSynthesizer = useTextToSpeech();
   const speechRecognizer = useSpeechToText({
     onSpeech(value) {
@@ -81,9 +68,10 @@ export const ChatProvider: FC<Prop> = (props) => {
     initialMessages: transformCosmosToAIModel(props.chats),
     onFinish: async (lastMessage: Message) => {
       if (isMicrophoneUsed) {
-        await textToSpeech(lastMessage.content);
+        textToSpeech(lastMessage.content);
         resetMicrophoneUsed();
       }
+      Router.refresh();
     },
   });
 
@@ -143,6 +131,5 @@ export const useChatContext = () => {
   if (!context) {
     throw new Error("ChatContext is null");
   }
-
   return context;
 };
