@@ -50,7 +50,9 @@ async function translateFunction(inputText: { text: string }[], translatedTo: st
 }
 
 function revertCase(originalText: string, translatedText: string): string {
-    return originalText.split('').map((char, index) => 
-        char.toUpperCase() === char ? translatedText.charAt(index)?.toUpperCase() : translatedText.charAt(index)
-    ).join('');
+    return originalText
+        .split('')
+        .map((originalText, index) =>
+            originalText.match(/[A-Z]/) ? translatedText.charAt(index).toUpperCase() : translatedText.charAt(index)
+        ).join('');
 };
