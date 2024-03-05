@@ -111,7 +111,6 @@ export const insertPromptAndResponse = async (
     chatThreadId: chatThreadId,
     role: ChatRole.Assistant,
   }, userId, tenantId);
-  return true;
 };
 
 export const newChatModel = (userId: string, tenantId: string): ChatMessageModel => { // Added parameters
