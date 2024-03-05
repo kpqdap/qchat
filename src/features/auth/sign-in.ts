@@ -2,7 +2,6 @@ import { CosmosDBUserContainer, UserRecord } from "../user-management/user-cosmo
 import { CosmosDBTenantContainerExtended } from "../tenant-management/tenant-groups";
 import { CosmosDBTenantContainer, TenantRecord } from "../tenant-management/tenant-cosmos";
 
-const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS.split(',').map(string => string.toLowerCase().trim());
 export class UserSignInHandler {
   static async handleSignIn(user: UserRecord, groupsString?: string): Promise<boolean> {
     const userContainer = new CosmosDBUserContainer();
@@ -12,6 +11,9 @@ export class UserSignInHandler {
     try {
       // Groups claim (Profile)
       const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : []
+
+      // Group Admins
+      const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(',').map(string => string.toLowerCase().trim());
 
       // Creates or updates the user
       const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
