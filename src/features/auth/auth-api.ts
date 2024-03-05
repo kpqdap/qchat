@@ -76,13 +76,16 @@ const configureIdentityProvider = (): Provider[] => {
         profile: (profile) => {
           const email = profile.email?.toLowerCase();
           const qchatAdmin = adminEmails.includes(email);
+          profile.tenantId = profile.employee_idp;
+          if (process.env.NODE_ENV === "development") {
+            profile.tenantId =  profile.tid;
+          }
           return {
             ...profile,
             id: profile.sub,
             name: profile.name,
             email: profile.email,
             upn: profile.upn,
-            tenantId: profile.employee_idp == undefined ? profile.tid : profile.employee_idp,
             qchatAdmin: qchatAdmin,
             userId: profile.upn,
           };
@@ -97,10 +100,10 @@ const configureIdentityProvider = (): Provider[] => {
         name: "QChatDevelopers",
         credentials: {
           username: { label: "Username", type: "text", placeholder: "Enter your username" },
-        },        
+        },
         async authorize(credentials: Record<string, any> | undefined, req): Promise<User> {
           const typedCredentials = credentials as Credentials;
-        
+
           const username = typedCredentials.username || "dev";
           const email = `${username}@localhost`;
           const qchatAdmin = adminEmails.includes(email.toLowerCase());
