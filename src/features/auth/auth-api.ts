@@ -74,17 +74,17 @@ const configureIdentityProvider = (): Provider[] => {
         },
         userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT,
         profile: (profile) => {
-          const email = profile.email?.toLowerCase();
+          const email = profile.email != undefined ? profile.email?.toLowerCase() : profile.upn.toLowerCase();
           const qchatAdmin = adminEmails.includes(email);
           profile.tenantId = profile.employee_idp;
           if (process.env.NODE_ENV === "development") {
-            profile.tenantId =  profile.tid;
+            profile.tenantId = profile.tid;
           }
           return {
             ...profile,
             id: profile.sub,
             name: profile.name,
-            email: profile.email,
+            email: profile.email ?? profile.upn,
             upn: profile.upn,
             qchatAdmin: qchatAdmin,
             userId: profile.upn,
@@ -171,7 +171,7 @@ export const options: NextAuthOptions = {
         const userIdentity: UserIdentity = {
           id: hashValue(user.upn),
           tenantId: user.tenantId,
-          email: user.email ?? '',
+          email: user.email ?? user.upn,
           name: user.name ?? '',
           upn: user.upn,
           userId: user.upn,
