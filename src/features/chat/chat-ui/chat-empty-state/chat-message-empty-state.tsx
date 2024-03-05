@@ -15,26 +15,27 @@ interface Prop { }
 
 export const ChatMessageEmptyState: FC<Prop> = (props) => {
 
-  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
+  const { setInput, handleSubmit, isLoading, input, chatBody, id } = useChatContext();
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
 
-  async function callUpsertPromptButton(prompt: string) {
-    const chatThreadModel = await CreateChatThread();
-    if (chatThreadModel) {
-        await UpsertPromptButton(prompt, chatThreadModel);
-    } else {
-    }
-  }
+  // async function callUpsertPromptButton(prompt: string) {
+  //   // const chatThreadModel = await CreateChatThread();
+  //   if (id) {
+  //       await UpsertPromptButton(prompt, id);
+  //   } else {
+  //   }
+  // }
+  //this needs to patch the prompt in as an update - right now its creating a new chat thread
 
-  const handlePromptSelected = (prompt: string) => {
-    setSelectedPrompt(prompt);
+  // const handlePromptSelected = (prompt: string) => {
+  //   setSelectedPrompt(prompt);
 
-    try {
-      setInput(prompt);
-      callUpsertPromptButton(prompt);
-    } catch (error) {
-    }
-  };
+  //   try {
+  //     setInput(prompt);
+  //     callUpsertPromptButton(prompt);
+  //   } catch (error) {
+  //   }
+  // };
 
   const { fileState } = useChatContext();
   const { showFileUpload } = fileState;
@@ -67,7 +68,7 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
             <p className="text-sm text-text">
               Try a suggested starter prompt...
             </p>
-            <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
+            {/* <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} /> */}
           </div>
         )}
       </Card>
