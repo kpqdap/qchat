@@ -15,7 +15,7 @@ interface Prop { }
 
 export const ChatMessageEmptyState: FC<Prop> = (props) => {
 
-  const { setInput, handleSubmit, isLoading, input, chatBody, id } = useChatContext();
+  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext();
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
 
   async function callUpsertPromptButton(prompt: string) {
