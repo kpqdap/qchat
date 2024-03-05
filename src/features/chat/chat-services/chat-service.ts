@@ -79,7 +79,6 @@ export const CreateUserFeedbackChatId = async (
 export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, tenantId: string) => {
   const modelToSave: ChatMessageModel = {
     ...chatModel,
-    id: uniqueId(),
     createdAt: new Date(),
     type: MESSAGE_ATTRIBUTE,
     isDeleted: false,
@@ -112,6 +111,7 @@ export const insertPromptAndResponse = async (
     chatThreadId: chatThreadId,
     role: ChatRole.Assistant,
   }, userId, tenantId);
+  return true;
 };
 
 export const newChatModel = (userId: string, tenantId: string): ChatMessageModel => { // Added parameters
