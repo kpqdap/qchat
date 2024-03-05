@@ -18,24 +18,23 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
   const { setInput, handleSubmit, isLoading, input, chatBody, id } = useChatContext();
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined);
 
-  // async function callUpsertPromptButton(prompt: string) {
-  //   // const chatThreadModel = await CreateChatThread();
-  //   if (id) {
-  //       await UpsertPromptButton(prompt, id);
-  //   } else {
-  //   }
-  // }
-  //this needs to patch the prompt in as an update - right now its creating a new chat thread
+  async function callUpsertPromptButton(prompt: string) {
+    const chatThreadModel = await CreateChatThread();
+    if (chatThreadModel) {
+        await UpsertPromptButton(prompt, chatThreadModel);
+    } else {
+    }
+  }
 
-  // const handlePromptSelected = (prompt: string) => {
-  //   setSelectedPrompt(prompt);
+  const handlePromptSelected = (prompt: string) => {
+    setSelectedPrompt(prompt);
 
-  //   try {
-  //     setInput(prompt);
-  //     callUpsertPromptButton(prompt);
-  //   } catch (error) {
-  //   }
-  // };
+    try {
+      setInput(prompt);
+      callUpsertPromptButton(prompt);
+    } catch (error) {
+    }
+  };
 
   const { fileState } = useChatContext();
   const { showFileUpload } = fileState;
@@ -63,14 +62,15 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
           <ChatTypeSelector disable={false} />
         </div>
         {showFileUpload === "data" || showFileUpload === "audio" ? <ChatFileUI /> : (
-          <div className="flex flex-col gap-1">
-            <br />
-            <p className="text-sm text-text">
-              Try a suggested starter prompt...
-            </p>
-            {/* <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} /> */}
-          </div>
+        <div className="flex flex-col gap-1"></div>
         )}
+        <div className="flex flex-col gap-1">
+          <br />
+          <p className="text-sm text-text">
+            Try a suggested starter prompt...
+          </p>
+          <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
+        </div>
       </Card>
     </div>
   );
