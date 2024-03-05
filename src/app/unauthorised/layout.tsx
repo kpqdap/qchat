@@ -12,7 +12,7 @@ export default async function RootLayout({
 }) {
   return (
     <>
-      <div className="flex-1">{children}</div>
+      <div className="flex h-full w-full items-center justify-center bg-altBackground">{children}</div>
     </>
   );
 }

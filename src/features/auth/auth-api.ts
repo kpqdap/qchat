@@ -20,6 +20,7 @@ export interface AuthToken extends JWT {
 
 interface ExtendedProfile extends Profile {
   employee_groups?: string[];
+  groups?: string[];
 }
 
 const validateEnv = () => {
@@ -73,15 +74,18 @@ const configureIdentityProvider = (): Provider[] => {
         },
         userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT,
         profile: (profile) => {
-          const email = profile.email?.toLowerCase();
+          const email = profile.email != undefined ? profile.email?.toLowerCase() : profile.upn.toLowerCase();
           const qchatAdmin = adminEmails.includes(email);
+          profile.tenantId = profile.employee_idp;
+          if (process.env.NODE_ENV === "development") {
+            profile.tenantId = profile.tid;
+          }
           return {
             ...profile,
             id: profile.sub,
             name: profile.name,
-            email: profile.email,
+            email: profile.email ?? profile.upn,
             upn: profile.upn,
-            tenantId: profile.employee_idp,
             qchatAdmin: qchatAdmin,
             userId: profile.upn,
           };
@@ -96,10 +100,10 @@ const configureIdentityProvider = (): Provider[] => {
         name: "QChatDevelopers",
         credentials: {
           username: { label: "Username", type: "text", placeholder: "Enter your username" },
-        },        
+        },
         async authorize(credentials: Record<string, any> | undefined, req): Promise<User> {
           const typedCredentials = credentials as Credentials;
-        
+
           const username = typedCredentials.username || "dev";
           const email = `${username}@localhost`;
           const qchatAdmin = adminEmails.includes(email.toLowerCase());
@@ -138,7 +142,8 @@ async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to refresh access token. Status: ${response.status}`);
+      console.log(`Failed to refresh access token. Status: ${response.status}. \n Response: ${await response.json()}`);
+      return token;
     }
 
     const refreshedTokens = await response.json();
@@ -151,7 +156,6 @@ async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
       refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
     };
   } catch (error) {
-    console.log("RefreshAccessTokenError", error);
     return { ...token, error: "RefreshAccessTokenError" };
   }
 };
@@ -167,7 +171,7 @@ export const options: NextAuthOptions = {
         const userIdentity: UserIdentity = {
           id: hashValue(user.upn),
           tenantId: user.tenantId,
-          email: user.email ?? '',
+          email: user.email ?? user.upn,
           name: user.name ?? '',
           upn: user.upn,
           userId: user.upn,
@@ -183,16 +187,16 @@ export const options: NextAuthOptions = {
         };
         const userRecord: UserRecord = { ...userIdentity, ...userActivity };
         try {
-          const groupsArray = ExtendedProfile?.employee_groups as string[] | undefined;
+          let groupsArray = ExtendedProfile?.employee_groups as string[] | undefined;
+          if (process.env.NODE_ENV === "development") {
+            groupsArray = ExtendedProfile?.groups as string[] | undefined;
+          }
           const groupsString = groupsArray?.join(',');
-          await UserSignInHandler.handleSignIn(userRecord, groupsString);
-          return true;
+          return await UserSignInHandler.handleSignIn(userRecord, groupsString);
         } catch (error) {
-          console.log("Error in signIn callback:", error);
           return false;
         }
       } else {
-        console.log("TenantId or upn is missing. Sign-in aborted.", user.tenantId, user.upn);
         return false;
       }
     },
@@ -202,22 +206,18 @@ export const options: NextAuthOptions = {
         authToken.qchatAdmin = user.qchatAdmin ?? false;
         authToken.tenantId = user.tenantId ?? '';
         authToken.upn = user.upn ?? '';
-
-      }
+      };
       if (account && account.access_token && account.refresh_token) {
         const expiresIn = Number(account.expires_in ?? 0);
         const refreshExpiresIn = Number(account.refresh_expires_in ?? 0);
-
         authToken.accessToken = account.access_token;
         authToken.refreshToken = account.refresh_token;
         authToken.expiresIn = Date.now() + expiresIn * 1000;
         authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000;
-      }
-
+      };
       if (authToken.refreshToken && typeof authToken.expiresIn === 'number' && Date.now() > authToken.expiresIn) {
         authToken = await refreshAccessToken(authToken);
-      }
-
+      };
       return authToken;
     },
     async session({ session, token }) {
@@ -226,9 +226,7 @@ export const options: NextAuthOptions = {
       session.user.tenantId = authToken.tenantId ? String(authToken.tenantId) : '';
       session.user.upn = authToken.upn ? String(authToken.upn) : '';
       return session;
-    }
-    
-    
+    },
   },
   session: {
     strategy: "jwt",

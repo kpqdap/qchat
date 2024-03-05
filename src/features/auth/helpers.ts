@@ -7,7 +7,6 @@ export const userSession = async (): Promise<UserModel | null> => {
   if (session && session.user) {
     return session.user as UserModel;
   }
-
   return null;
 };
 
@@ -16,7 +15,6 @@ export const userHashedId = async (): Promise<string> => {
   if (user) {
     return hashValue(user.upn);
   }
-
   throw new Error("User not found");
 };
 
@@ -25,8 +23,15 @@ export const getTenantId = async (): Promise<string> => {
   if (user) {
     return user.tenantId;
   }
-
   throw new Error("Tenant not found");
+};
+
+export const getContextPrompt = async (): Promise<string> => {
+  const user = await userSession();
+  if (user) {
+    return user.contextPrompt || "";
+  }
+  throw new Error("Context Prompt not found");
 };
 
 export type UserModel = {
@@ -37,6 +42,7 @@ export type UserModel = {
   tenantId: string;
   qchatAdmin: boolean;
   userId: string;
+  contextPrompt?: string;
 };
 
 export const hashValue = (value: string): string => {

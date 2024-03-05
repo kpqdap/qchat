@@ -3,7 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function ThemeSwitch() {
   const { setTheme, resolvedTheme } = useTheme();
@@ -26,11 +26,11 @@ export function ThemeSwitch() {
 
   return (
     <Tabs defaultValue={resolvedTheme} aria-label="Theme Switch">
-      <TabsList className="flex flex-row items-center justify-center gap-1">
+      <TabsList className="flex flex-row items-center justify-center gap-1 h-10">
         <TabsTrigger
           value="dark"
           onClick={() => handleTabChange("dark")}
-          className="h-[40px] w-[40px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
+          className="h-[35px] w-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
           aria-label="Switch to dark mode"
         >
           <Moon size={18} />
@@ -38,7 +38,7 @@ export function ThemeSwitch() {
         <TabsTrigger
           value="light"
           onClick={() => handleTabChange("light")}
-          className="h-[40px] w-[40px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
+          className="h-[35px] w-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
           aria-label="Switch to light mode"
         >
           <Sun size={18} />

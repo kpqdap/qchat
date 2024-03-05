@@ -5,17 +5,18 @@ import { useChatContext } from "@/features/chat/chat-ui/chat-context";
 import { ChatRole, ChatSentiment } from "@/features/chat/chat-services/models";
 import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service";
 import Typography from "../typography";
-import Modal from "../ui/modal";
+import Modal from "../../features/ui/modal";
 import { Markdown } from "../markdown/markdown";
-import AssistantButtons from "../ui/assistant-buttons";
+import AssistantButtons from "../../features/ui/assistant-buttons";
 
 interface ChatRowProps {
   chatMessageId: string;
   name: string;
-  profilePicture: string;
   message: string;
   type: ChatRole;
   chatThreads: string;
+  contentSafetyWarning?: string;
+  sentiment?: ChatSentiment;
 }
 
 export const ChatRow: FC<ChatRowProps> = (props) => {
@@ -83,6 +84,12 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     }
   };
 
+  const safetyWarning = props.contentSafetyWarning ? (
+    <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-primary text-sm md:text-md md:text-base bg-alert rounded-md text-center" tabIndex={0} aria-label="Content Safety Warning">
+      {props.contentSafetyWarning}
+    </div>
+  ) : null;
+
   return (
     <article className="container mx-auto py-1 flex flex-col pb-4">
       <section className="bg-background rounded-md flex-col overflow-hidden p-4 gap-4">
@@ -100,6 +107,7 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
         <div className="prose prose-slate dark:prose-invert break-words prose-p:leading-relaxed prose-pre:p-0 max-w-none text-text text-sm md:text-md md:text-base" tabIndex={0}>
           <Markdown content={props.message} />
         </div>
+        {safetyWarning}
         <div className="sr-only" aria-live="assertive">
           {feedbackMessage}
         </div>
@@ -117,5 +125,4 @@ export const ChatRow: FC<ChatRowProps> = (props) => {
     </article>
   );
 };
-
 export default ChatRow;

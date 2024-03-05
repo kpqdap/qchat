@@ -4,17 +4,15 @@ import React from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { LogIn, LogOut } from 'lucide-react';
 import Typography from "@/components/typography";
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
+
+const signInProvider = process.env.NODE_ENV === 'development' ? 'QChatDevelopers' : 'azure-ad';
 
 export const UserComponent: React.FC = () => {
     const { data: session, status } = useSession({ required: false });
-
-    const signInProvider = process.env.NODE_ENV === 'development' ? 'QChatDevelopers' : 'azure-ad';
-
     if (status === "loading") {
         return <div>Loading...</div>;
     }
-
     return (
         <div>
             {session ? (

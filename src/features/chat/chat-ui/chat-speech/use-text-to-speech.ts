@@ -65,7 +65,6 @@ export const useTextToSpeech = (): TextToSpeechProps => {
         synthesizer.close();
       },
       function (err) {
-        console.log("err - " + err);
         synthesizer.close();
       }
     );

@@ -7,7 +7,7 @@ export const ThemeProvider = ({ children, ...props }: { children: ReactNode }) =
   return (
     <NextThemesProvider 
       attribute="class"
-      defaultTheme="system" 
+      defaultTheme="light" 
       enableSystem={true}
       {...props}
     >

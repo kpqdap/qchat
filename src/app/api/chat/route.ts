@@ -16,25 +16,6 @@ export async function POST(req: Request) {
        await delay(retryDelay);
      }
    }
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const response = await chatAPIEntry(body);
-      return response;
-      // return new Response(JSON.stringify(response), {
-      //   status: 200,
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-    } catch (error: any) { 
-      if (attempt === maxRetries || !error.status || error.status !== 504) {
-        return new Response('Internal Server Error', { status: 500 });
-      }
-      await delay(retryDelay);
-    }
-  }
-
    return new Response('Gateway Timeout Error after retries', { status: 504 });
- }
+ };
  

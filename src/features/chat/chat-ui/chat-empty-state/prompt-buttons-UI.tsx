@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { PromptButtons } from '../../chat-services/prompt-buttons';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
 
 interface Prop {
   onPromptSelected: (prompt: string) => void;
-  selectedPrompt: string | undefined;
+  selectedPrompt?: string;
 }
 
 export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt }) => {
@@ -15,10 +15,8 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt 
         const data = await PromptButtons();
         setPrompts(data);
       } catch (error) {
-        console.log('Error fetching prompts from backend:', error);
       }
     };
-
     fetchPrompts();
   }, []);
 

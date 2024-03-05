@@ -1,5 +1,5 @@
 import { Markdown } from "@/components/markdown/markdown";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { VersionDisplay } from "@/features/change-log/version-display";
 import { promises as fs } from "fs";
 import { Suspense } from "react";

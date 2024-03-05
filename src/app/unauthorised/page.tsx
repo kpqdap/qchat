@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
@@ -10,6 +10,7 @@ const Home: React.FC = () => {
   const handleRedirectHome = async () => {
     try {
       await router.push('/');
+      router.refresh();
     } catch (error) {
       console.error('Redirect failed:', error);
     }

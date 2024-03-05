@@ -1,16 +1,22 @@
 import { CosmosDBUserContainer, UserRecord } from "../user-management/user-cosmos";
 import { CosmosDBTenantContainerExtended } from "../tenant-management/tenant-groups";
+import { CosmosDBTenantContainer, TenantRecord } from "../tenant-management/tenant-cosmos";
 
 export class UserSignInHandler {
   static async handleSignIn(user: UserRecord, groupsString?: string): Promise<boolean> {
     const userContainer = new CosmosDBUserContainer();
     const tenantContainerExtended = new CosmosDBTenantContainerExtended();
+    const tenantContainer = new CosmosDBTenantContainer();
 
     try {
+      // Groups claim (Profile)
+      const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : []
+
+      // Group Admins
+      const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(',').map(string => string.toLowerCase().trim());
+
+      // Creates or updates the user
       const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
-
-      const userGroups = groupsString ? groupsString.split(',').map(group => group.trim()) : [];
-
       if (!existingUser) {
         await userContainer.createUser({
           ...user,
@@ -21,39 +27,52 @@ export class UserSignInHandler {
         });
       } else {
         const currentTime = new Date();
-        const updatedUser = {
+        await userContainer.updateUser({
           ...existingUser,
           last_login: currentTime,
           groups: userGroups,
+        }, user.tenantId, user.userId);
+      }
+
+      // Validate if the tenant exists
+      const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
+      if (!tenant) {
+        //Create tenant with group login required
+        const TenantRecord: TenantRecord = {
+          tenantId: user.tenantId,
+          primaryDomain: user.upn?.split('@')[1],
+          requiresGroupLogin: true,
+          id: user.tenantId,
+          email: user.upn,
+          supportEmail: "support@" + user.upn?.split('@')[1],
+          dateCreated: new Date(),
+          dateUpdated: null,
+          dateOnBoarded: null,
+          dateOffBoarded: null,
+          modifiedBy: null,
+          createdBy: user.upn,
+          departmentName: null,
+          groups: [],
+          administrators: groupAdmins, //currently on groupAdmins, to be managed by tenant admins ()
+          features: null,
+          serviceTier: null,
         };
 
-        await userContainer.updateUser(updatedUser, user.tenantId, user.userId);
+        await tenantContainer.createTenant(TenantRecord);
+
+        return false;
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        return true;
-      }
-
-      let tenant = await tenantContainerExtended.getTenantById(user.tenantId);
-      if (!tenant) {
-        if (userGroups.length > 0) {
-          const accessGroups = process.env.ACCESS_GROUPS ? process.env.ACCESS_GROUPS.split(',') : [];
-          const isUserGroupApproved = userGroups.some(userGroup => accessGroups.includes(userGroup));
-          if (!isUserGroupApproved) {
-          }
-        }
-      } else if (tenant.requiresGroupLogin) {
-        if (userGroups.length === 0) {
-        }
-
-        const groupsApproved = await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "");
-        if (!groupsApproved) {
+      // Validate if the group is required and exists on tenant 
+      if (tenant.requiresGroupLogin) {
+        if (userGroups.length === 0 || !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))) {
+          return false;
         }
       }
 
       return true;
     } catch (error) {
-      console.log("Error during sign-in process:", error);
+      console.error("Error handling sign-in:", error);
       return false;
     }
   }

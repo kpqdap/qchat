@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/button";
 import { MessageSquarePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CreateChatThread } from "../chat-services/chat-thread-service";
+import { CreateChatThread, FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
 
 export const NewChat = () => {
@@ -11,13 +11,34 @@ export const NewChat = () => {
   const { showError } = useGlobalMessageContext();
 
   const startNewChat = async () => {
+    const title = "New Chat";
+
     try {
-      const newChatThread = await CreateChatThread();
-      if (newChatThread) {
-        router.push("/chat/" + newChatThread.id);
-      }
-    } catch (e) {
+      const existingThread = await FindChatThreadByTitleAndEmpty(title);
+      
+      if (existingThread) {
+        await UpdateChatThreadCreatedAt(existingThread.id);
+        router.push(`/chat/${existingThread.id}`);
+        router.refresh();
+      } else {
+        try {
+          const newChatThread = await CreateChatThread();
+          if (newChatThread) {
+            router.push(`/chat/${newChatThread.id}`);
+            router.refresh();
+          }
+        } catch (e) {
+          showError('Failed to start a new chat. Please try again later.');
+        }
+      };
+    } catch (error) {
       showError('Failed to start a new chat. Please try again later.');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      startNewChat();
     }
   };
 
@@ -25,11 +46,9 @@ export const NewChat = () => {
     <Button
       className="gap-2 rounded-md w-[40px] h-[40px] p-1"
       variant="default"
-      onClick={() => startNewChat()}
+      onClick={startNewChat}
       aria-label="Start a new chat"
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && startNewChat()}
+      onKeyDown={handleKeyDown}
     >
       <MessageSquarePlus size={40} strokeWidth={1.2} />
     </Button>

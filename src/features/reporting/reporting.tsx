@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/features/ui/button";
+import { Card } from "@/features/ui/card";
 import {
   Table,
   TableBody,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/features/ui/table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { FindAllChatThreadsForReporting } from "./reporting-service";
@@ -34,24 +34,23 @@ export const Reporting = async (props: ReportingProp) => {
   const hasMoreResults = chatThreads && chatThreads.length === pageSize;
 
   return (
-    <Card className="h-full flex pt-8 overflow-y-auto">
-      <div className="container mx-auto max-w-5xl space-y-8">
+    <Card className="h-full w-full flex pt-8 overflow-y-auto">
+      <div className="container mx-auto w-full h-full space-y-8">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Chat Reporting</h2>
-          <p className="text-muted-foreground">History for this month - all users</p>
+          <p className="text-muted-foreground">History for this week - all users in your tenant</p>
         </div>
         <div className="flex items-center space-x-2">
           <Card className="flex-1">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Chat Name</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead>Chat Title</TableHead>
+                  <TableHead>User Name</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Style</TableHead>
                   <TableHead>Sensitivity</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>Created Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -64,12 +63,20 @@ export const Reporting = async (props: ReportingProp) => {
                         </Link>
                       </TableCell>
                       <TableCell>{chatThread.useName}</TableCell>
-                      <TableCell>{chatThread.chatCategory}</TableCell>
                       <TableCell>{chatThread.chatType}</TableCell>
                       <TableCell>{chatThread.conversationStyle}</TableCell>
                       <TableCell>{chatThread.conversationSensitivity}</TableCell>
                       <TableCell>
-                        {new Date(chatThread.createdAt).toLocaleDateString("en-AU")}
+                      {
+                        new Date(chatThread.createdAt).toLocaleString("en-AU", {
+                          minute: '2-digit',
+                          hour: '2-digit',
+                          hour12: false,
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric"
+                        })
+                      }
                       </TableCell>
                     </TableRow>
                   ))}

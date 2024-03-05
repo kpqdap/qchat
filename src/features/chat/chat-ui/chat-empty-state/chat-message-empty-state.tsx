@@ -1,11 +1,11 @@
-import { FC, FormEvent, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { useChatContext } from "../chat-context";
 import { ChatFileUI } from "../chat-file/chat-file-ui";
 import { ChatStyleSelector } from "./chat-style-selector";
 import { ChatSensitivitySelector } from "./chat-sensitivity-selector";
 import { ChatTypeSelector } from "./chat-type-selector";
 import { PromptButton } from "./prompt-buttons-UI";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import Typography from "@/components/typography";
 import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service";
 import { EasterEgg } from "./chat-easter-egg";
@@ -21,10 +21,8 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
   async function callUpsertPromptButton(prompt: string) {
     const chatThreadModel = await CreateChatThread();
     if (chatThreadModel) {
-      const id = chatThreadModel.chatThreadId;
-      UpsertPromptButton(prompt, id);
+        await UpsertPromptButton(prompt, chatThreadModel);
     } else {
-      console.log('Failed to create chat thread');
     }
   }
 
@@ -35,7 +33,6 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
       setInput(prompt);
       callUpsertPromptButton(prompt);
     } catch (error) {
-      console.log('An error occurred:', error);
     }
   };
 
@@ -65,14 +62,15 @@ export const ChatMessageEmptyState: FC<Prop> = (props) => {
           <ChatTypeSelector disable={false} />
         </div>
         {showFileUpload === "data" || showFileUpload === "audio" ? <ChatFileUI /> : (
-          <div className="flex flex-col gap-1">
-            <br />
-            <p className="text-sm text-text">
-              Try a suggested starter prompt...
-            </p>
-            <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
-          </div>
+        <div className="flex flex-col gap-1"></div>
         )}
+        <div className="flex flex-col gap-1">
+          <br />
+          <p className="text-sm text-text">
+            Try a suggested starter prompt...
+          </p>
+          <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={selectedPrompt} />
+        </div>
       </Card>
     </div>
   );

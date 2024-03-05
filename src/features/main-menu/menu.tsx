@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/ui/button";
 import { LayoutDashboard, PanelLeftClose, PanelRightClose, Lightbulb, Home } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "../theme/theme-toggle";

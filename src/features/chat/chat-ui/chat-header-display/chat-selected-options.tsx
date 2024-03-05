@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useChatContext } from '../chat-context';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/features/ui/tabs';
 import {
   getSensitivityIcon,
   getStyleIcon,

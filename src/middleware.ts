@@ -6,15 +6,21 @@ const requireAuth: string[] = [
   "/chat",
   "/api",
   "/reporting",
-  "/my-settings",
+  "/settings",
   "/tenant",
   "/admin",
   "/prompt-guide",
   "/what's-new",
+  "/persona",
+  "/prompt"
 ];
-const requireAdmin: string[] = ["/reporting", "/admin"];
+const requireAdmin: string[] = ["/reporting", "/admin", "/settings", "/tenant"];
 
 export async function middleware(request: NextRequest) {
+    if (process.env.NODE_ENV === 'development') {
+        return NextResponse.next();
+    }
+
     const res = NextResponse.next();
     const pathname = request.nextUrl.pathname;
 
@@ -47,13 +53,17 @@ async function additionalAdminCheck(token: AuthToken): Promise<boolean> {
 
 export const config = {
   matcher: [
-    "/chat/:path*",
-    "/reporting/:path*",
-    "/api/chat/:path*",
-    "/my-settings/:path*",
-    "/tenant/:path*",
     "/admin/:path*",
+    "/api/chat/:path*",
+    "/api/images/:path*",
+    "/chat/:path*",
+    "/persona/:path*",
     "/prompt-guide/:path*",
+    "/prompt/:path*",
+    "/reporting/:path*",
+    "/settings/:path*",
+    "/tenant/:path*",
+    "/unauthorised/:path*",
     "/what's-new/:path*",
   ],
 };

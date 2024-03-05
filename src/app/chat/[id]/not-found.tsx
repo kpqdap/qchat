@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card } from "@/features/ui/card";
 import { NewChat } from "@/features/chat/chat-menu/new-chat";
 
 export default async function NotFound() {

@@ -8,14 +8,14 @@ import { ChatMessageModel, MESSAGE_ATTRIBUTE, ChatSentiment, ChatRole } from "./
 import { getTenantId, userHashedId } from "@/features/auth/helpers";
 
 
-export const FindAllChats = async (threadID: string) => {
+export const FindAllChats = async (chatThreadId: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
 
   const querySpec: SqlQuerySpec = {
-    query: "SELECT * FROM root r WHERE r.type=@type AND r.threadId=@threadId AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
+    query: "SELECT * FROM root r WHERE r.type=@type AND r.chatThreadId=@chatThreadId AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
     parameters: [
       { name: "@type", value: MESSAGE_ATTRIBUTE },
-      { name: "@threadId", value: threadID },
+      { name: "@chatThreadId", value: chatThreadId },
       { name: "@isDeleted", value: false },
       { name: "@userId", value: await userHashedId(),},
       { name: "@tenantId", value: await getTenantId(), },
@@ -29,14 +29,14 @@ export const FindAllChats = async (threadID: string) => {
   return resources;
 };
 
-export const FindChatMessageByID = async (id: string, threadID: string) => {
+export const FindChatMessageByID = async (id: string, chatThreadId: string) => {
   const container = await CosmosDBContainer.getInstance().getContainer();
 
   const querySpec: SqlQuerySpec = {
-    query: "SELECT * FROM root r WHERE r.type=@type AND r.threadId=@threadId AND r.id=@id AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
+    query: "SELECT * FROM root r WHERE r.type=@type AND r.chatThreadId=@chatThreadId AND r.id=@id AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
     parameters: [
       { name: "@type", value: MESSAGE_ATTRIBUTE },
-      { name: "@threadId", value: threadID },
+      { name: "@chatThreadId", value: chatThreadId },
       { name: "@id", value: id },
       { name: "@isDeleted", value: false },
       { name: "@userId", value: await userHashedId() },
@@ -56,11 +56,11 @@ export const CreateUserFeedbackChatId = async (
   feedback: string,
   sentiment: ChatSentiment,
   reason: string,
-  threadID: string
+  chatThreadId: string
 ) => {
   try {
     const container = await CosmosDBContainer.getInstance().getContainer();
-    const chatMessageModel = await FindChatMessageByID(chatMessageId, threadID);
+    const chatMessageModel = await FindChatMessageByID(chatMessageId, chatThreadId);
 
     if (chatMessageModel.length !== 0) {
       const message = chatMessageModel[0];
@@ -73,14 +73,12 @@ export const CreateUserFeedbackChatId = async (
       return itemToUpdate;
     }
   } catch (e) {
-    console.log("There was an error in saving user feedback", e);
   }
 };
 
 export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, tenantId: string) => {
   const modelToSave: ChatMessageModel = {
     ...chatModel,
-    id: uniqueId(),
     createdAt: new Date(),
     type: MESSAGE_ATTRIBUTE,
     isDeleted: false,
@@ -95,7 +93,7 @@ export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, te
 };
 
 export const insertPromptAndResponse = async (
-  threadID: string,
+  chatThreadId: string,
   userQuestion: string,
   assistantResponse: string,
   userId: string,
@@ -104,13 +102,13 @@ export const insertPromptAndResponse = async (
   await UpsertChat({
     ...newChatModel(userId, tenantId),
     content: userQuestion,
-    threadId: threadID,
+    chatThreadId: chatThreadId,
     role: ChatRole.User,
   }, userId, tenantId);
   await UpsertChat({
     ...newChatModel(userId, tenantId),
     content: assistantResponse,
-    threadId: threadID,
+    chatThreadId: chatThreadId,
     role: ChatRole.Assistant,
   }, userId, tenantId);
 };
@@ -118,7 +116,7 @@ export const insertPromptAndResponse = async (
 export const newChatModel = (userId: string, tenantId: string): ChatMessageModel => { // Added parameters
   return {
     content: "",
-    threadId: "",
+    chatThreadId: "",
     role: ChatRole.User,
     tenantId: tenantId,
     userId: userId,
@@ -134,11 +132,6 @@ export const newChatModel = (userId: string, tenantId: string): ChatMessageModel
     feedback: "",
     sentiment: ChatSentiment.Neutral,
     reason: "",
-    contextPrompt: "",
     contentSafetyWarning: "",
   };
 };
-
-function gethashedId(userId: string): string | void | PromiseLike<string | void | undefined> | undefined {
-  throw new Error("Function not implemented.");
-}

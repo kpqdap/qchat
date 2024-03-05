@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as Label from '@radix-ui/react-label';
 import { AssociateOffenderWithChatThread } from '../../chat-services/chat-thread-service';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/features/ui/button';
 
 interface OffenderTranscriptFormProps {
     chatThreadId: string;
@@ -23,7 +23,6 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
         setMessage(`Offender ID ${offenderId} saved.`);
         setIsIdSaved(true); // Set isIdSaved to true upon successful save
       } catch (error) {
-        console.log(error);
         setMessage('Failed to save offender ID.');
         setIsIdSaved(false); // Ensure isIdSaved is false if saving fails
       } finally {

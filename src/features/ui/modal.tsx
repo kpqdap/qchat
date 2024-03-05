@@ -10,7 +10,7 @@ interface ModalProps {
     chatThreadId: string;
     open: boolean;
     onClose: () => void;
-    onSubmit: (chatMessageId: string, feedback: string, reason: string, threadId: string) => void;
+    onSubmit: (chatMessageId: string, feedback: string, reason: string, chatThreadId: string) => void;
 }
 
 export default function Modal(props: ModalProps): ReturnType<FC> {

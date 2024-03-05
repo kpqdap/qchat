@@ -4,12 +4,12 @@ import { SessionProvider } from "next-auth/react";
 import { GlobalMessageProvider } from "./global-message/global-message-context";
 import { MenuProvider } from "./main-menu/menu-context";
 import { MiniMenuProvider } from "./main-menu/mini-menu-context";
-import { TooltipProvider } from "@/components/ui/tooltip-provider";
+import { TooltipProvider } from "@/features/ui/tooltip-provider";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <AppInsightsProvider>
-      <SessionProvider>
+      <SessionProvider refetchInterval={5 * 60} basePath="/api/auth">
         <GlobalMessageProvider>
           <MenuProvider>
             <MiniMenuProvider>
