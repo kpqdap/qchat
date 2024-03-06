@@ -16,29 +16,18 @@ export class UserSignInHandler {
       const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(',').map(string => string.toLowerCase().trim());
 
       // Creates or updates the user
-      const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
+      let existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? '');
       if (!existingUser) {
-        await userContainer.createUser({
-          ...user,
-          first_login: new Date(),
-          accepted_terms: false,
-          accepted_terms_date: "",
-          groups: userGroups,
-        });
+        existingUser = await createUser(userContainer, user, userGroups);
       } else {
-        const currentTime = new Date();
-        await userContainer.updateUser({
-          ...existingUser,
-          last_login: currentTime,
-          groups: userGroups,
-        }, user.tenantId, user.userId);
+        await updateUser(userContainer, existingUser, user, userGroups);
       }
 
       // Validate if the tenant exists
       const tenant = await tenantContainerExtended.getTenantById(user.tenantId);
       if (!tenant) {
         //Create tenant with group login required
-        const TenantRecord: TenantRecord = {
+        const tenantRecord: TenantRecord = {
           tenantId: user.tenantId,
           primaryDomain: user.upn?.split('@')[1],
           requiresGroupLogin: true,
@@ -58,7 +47,10 @@ export class UserSignInHandler {
           serviceTier: null,
         };
 
-        await tenantContainer.createTenant(TenantRecord);
+        await tenantContainer.createTenant(tenantRecord);
+
+        // Update user as failed login
+        await updateUser(userContainer, await updateFailedLogin(existingUser), user, userGroups);
 
         return false;
       }
@@ -66,6 +58,9 @@ export class UserSignInHandler {
       // Validate if the group is required and exists on tenant 
       if (tenant.requiresGroupLogin) {
         if (userGroups.length === 0 || !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))) {
+          // Update user as failed login
+          await updateUser(userContainer, await updateFailedLogin(existingUser), user, userGroups);
+
           return false;
         }
       }
@@ -77,3 +72,50 @@ export class UserSignInHandler {
     }
   }
 };
+
+// Create New User
+async function createUser(userContainer: CosmosDBUserContainer, user: UserRecord, userGroups: string[]): Promise<UserRecord> {
+  try {
+    await userContainer.createUser({
+      ...user,
+      first_login: new Date(),
+      accepted_terms: false,
+      accepted_terms_date: "",
+      groups: userGroups,
+    });
+
+    return user;
+  }
+  catch (e) {
+    console.log("Failed to create User.")
+    return user;
+  }
+}
+
+// Update existing user
+async function updateUser(userContainer: CosmosDBUserContainer, existingUser: UserRecord, user: UserRecord, userGroups: string[]): Promise<void> {
+  try {
+    const currentTime = new Date();
+    await userContainer.updateUser({
+      ...existingUser,
+      last_login: currentTime,
+      groups: userGroups,
+    }, user.tenantId, user.userId);
+  }
+  catch (e) {
+    console.log("Failed to update User.")
+  }
+}
+
+// Update failed login
+async function updateFailedLogin(existingUser: UserRecord): Promise<UserRecord> {
+  try {
+    existingUser.failed_login_attempts++
+    existingUser.last_failed_login = new Date();
+    return existingUser;
+  }
+  catch (e) {
+    console.log("Failed to update User Login")
+    return existingUser;
+  }
+}
