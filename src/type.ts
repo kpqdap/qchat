@@ -49,15 +49,15 @@ const azureEnvVars = [
   "QGAIP_APIM_HEALTHCHECK_URI",
   "QGAIP_QCHAT_APP_URI",
   "QGAIP_QCHAT_FQDN_URI",
-  "SYSTEM_PROMPT"
-] as const;
+  "SYSTEM_PROMPT",
+] as const
 
-type RequiredServerEnvKeys = (typeof azureEnvVars)[number];
+type RequiredServerEnvKeys = (typeof azureEnvVars)[number]
 
 declare global {
   namespace NodeJS {
-    interface ProcessEnv extends Record<RequiredServerEnvKeys, string> { }
+    interface ProcessEnv extends Record<RequiredServerEnvKeys, string> {}
   }
 }
 
-export { };
+export {}

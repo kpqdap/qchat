@@ -1,42 +1,40 @@
-import React, { useState } from 'react';
-import * as Label from '@radix-ui/react-label';
-import { AssociateOffenderWithChatThread } from '../../chat-services/chat-thread-service';
-import { Button } from '@/features/ui/button';
+import React, { useState } from "react"
+import * as Label from "@radix-ui/react-label"
+import { AssociateOffenderWithChatThread } from "../../chat-services/chat-thread-service"
+import { Button } from "@/features/ui/button"
 
 interface OffenderTranscriptFormProps {
-    chatThreadId: string;
+  chatThreadId: string
 }
 
 export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormProps) => {
-  const [offenderId, setOffenderId] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [isIdSaved, setIsIdSaved] = useState(false); // New state to track if ID is saved
-  const [message, setMessage] = useState('');
+  const [offenderId, setOffenderId] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [isIdSaved, setIsIdSaved] = useState(false) // New state to track if ID is saved
+  const [message, setMessage] = useState("")
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
-    setSubmitting(true);
-    setMessage('');
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault()
+    setSubmitting(true)
+    setMessage("")
 
     try {
-        await AssociateOffenderWithChatThread(chatThreadId, offenderId);
-        setMessage(`Offender ID ${offenderId} saved.`);
-        setIsIdSaved(true); // Set isIdSaved to true upon successful save
-      } catch (error) {
-        setMessage('Failed to save offender ID.');
-        setIsIdSaved(false); // Ensure isIdSaved is false if saving fails
-      } finally {
-        setSubmitting(false);
-      }
-    };
+      await AssociateOffenderWithChatThread(chatThreadId, offenderId)
+      setMessage(`Offender ID ${offenderId} saved.`)
+      setIsIdSaved(true) // Set isIdSaved to true upon successful save
+    } catch (error) {
+      setMessage("Failed to save offender ID.")
+      setIsIdSaved(false) // Ensure isIdSaved is false if saving fails
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="bg-background p-5">
       {isIdSaved ? (
         // Display the saved offender ID if it's saved
-        <div className="text-sm text-muted-foreground">
-          Offender ID {offenderId} saved.
-        </div>
+        <div className="text-sm text-muted-foreground">Offender ID {offenderId} saved.</div>
       ) : (
         // Render the form to input and submit an offender ID if not saved
         <form onSubmit={handleSubmit}>
@@ -55,15 +53,19 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
               required
               autoComplete="off"
               value={offenderId}
-              onChange={(e) => setOffenderId(e.target.value)}
+              onChange={e => setOffenderId(e.target.value)}
             />
-            <Button variant="default" type="submit" disabled={submitting} >
-              {submitting ? 'Submitting...' : 'Submit'}
+            <Button variant="default" type="submit" disabled={submitting}>
+              {submitting ? "Submitting..." : "Submit"}
             </Button>
           </div>
-          {message && <div aria-live="polite" className="text-sm text-muted-foreground">{message}</div>}
+          {message && (
+            <div aria-live="polite" className="text-sm text-muted-foreground">
+              {message}
+            </div>
+          )}
         </form>
       )}
     </div>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-"use server";
+"use server"
 
 export const GetSpeechToken = async () => {
   if (
@@ -12,20 +12,17 @@ export const GetSpeechToken = async () => {
       token: "",
       region: "",
       sttUrl: "",
-      apimKey: ""
-    };
+      apimKey: "",
+    }
   }
 
-  const response = await fetch(
-    `${process.env.AZURE_SPEECH_URL}/sts/v1.0/issueToken`,
-    {
-      method: "POST",
-      headers: {
-        "api-key": process.env.AZURE_SPEECH_KEY!,
-      },
-      cache: "no-store",
-    }
-  );
+  const response = await fetch(`${process.env.AZURE_SPEECH_URL}/sts/v1.0/issueToken`, {
+    method: "POST",
+    headers: {
+      "api-key": process.env.AZURE_SPEECH_KEY!,
+    },
+    cache: "no-store",
+  })
 
   return {
     error: response.status !== 200,
@@ -33,6 +30,6 @@ export const GetSpeechToken = async () => {
     token: await response.text(),
     region: process.env.AZURE_SPEECH_REGION,
     sttUrl: process.env.AZURE_SPEECH_STT_URL,
-    apimKey: process.env.AZURE_SPEECH_KEY
-  };
-};
+    apimKey: process.env.AZURE_SPEECH_KEY,
+  }
+}

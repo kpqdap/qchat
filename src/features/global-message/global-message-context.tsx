@@ -1,24 +1,20 @@
-import { toast } from "@/features/ui/use-toast";
-import { ToastAction } from "@radix-ui/react-toast";
-import { createContext, useContext } from "react";
+import { toast } from "@/features/ui/use-toast"
+import { ToastAction } from "@radix-ui/react-toast"
+import { createContext, useContext } from "react"
 
 interface GlobalMessageProps {
-  showError: (error: string, reload?: () => void) => void;
-  showSuccess: (message: MessageProp) => void;
+  showError: (error: string, reload?: () => void) => void
+  showSuccess: (message: MessageProp) => void
 }
 
-const GlobalMessageContext = createContext<GlobalMessageProps | null>(null);
+const GlobalMessageContext = createContext<GlobalMessageProps | null>(null)
 
 interface MessageProp {
-  title: string;
-  description: string;
+  title: string
+  description: string
 }
 
-export const GlobalMessageProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const GlobalMessageProvider = ({ children }: { children: React.ReactNode }) => {
   const showError = (error: string, reload?: () => void) => {
     toast({
       variant: "destructive",
@@ -27,18 +23,18 @@ export const GlobalMessageProvider = ({
         <ToastAction
           altText="Try again"
           onClick={() => {
-            reload();
+            reload()
           }}
         >
           Try again
         </ToastAction>
       ) : undefined,
-    });
-  };
+    })
+  }
 
   const showSuccess = (message: MessageProp) => {
-    toast(message);
-  };
+    toast(message)
+  }
 
   return (
     <GlobalMessageContext.Provider
@@ -49,14 +45,14 @@ export const GlobalMessageProvider = ({
     >
       {children}
     </GlobalMessageContext.Provider>
-  );
-};
+  )
+}
 
 export const useGlobalMessageContext = () => {
-  const context = useContext(GlobalMessageContext);
+  const context = useContext(GlobalMessageContext)
   if (!context) {
-    throw new Error("GlobalErrorContext is null");
+    throw new Error("GlobalErrorContext is null")
   }
 
-  return context;
-};
+  return context
+}

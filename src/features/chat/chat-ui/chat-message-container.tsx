@@ -1,35 +1,34 @@
-import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import ChatLoading from "@/components/chat/chat-loading";
-import ChatRow from "@/components/chat/chat-row";
-import { useSession } from "next-auth/react";
-import { useChatContext } from "./chat-context";
-import { ChatHeader } from "./chat-header";
-import { ChatRole } from "../chat-services/models";
-import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor";
-import { AI_NAME } from "@/features/theme/customise";
+import { useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
+import ChatLoading from "@/components/chat/chat-loading"
+import ChatRow from "@/components/chat/chat-row"
+import { useSession } from "next-auth/react"
+import { useChatContext } from "./chat-context"
+import { ChatHeader } from "./chat-header"
+import { ChatRole } from "../chat-services/models"
+import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor"
+import { AI_NAME } from "@/features/theme/customise"
 
 interface Props {
-  chatId: string;
-  sentiment?: string;
-  chatThreadId: string;
-  contentSafetyWarning?: string;
-};
+  chatId: string
+  sentiment?: string
+  chatThreadId: string
+  contentSafetyWarning?: string
+}
 
 export const ChatMessageContainer: React.FC<Props> = ({ chatId, chatThreadId, sentiment, contentSafetyWarning }) => {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const { messages, isLoading } = useChatContext();
+  const { data: session } = useSession()
+  const router = useRouter()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { messages, isLoading } = useChatContext()
 
-  useChatScrollAnchor(messages, scrollRef);
+  useChatScrollAnchor(messages, scrollRef)
 
   useEffect(() => {
-    
     if (!isLoading) {
-      router.refresh();
+      router.refresh()
     }
-  }, [isLoading, router]);
+  }, [isLoading, router])
 
   return (
     <div className="h-full overflow-y-auto bg-altBackground" ref={scrollRef}>
@@ -51,5 +50,5 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatId, chatThreadId, se
         {isLoading && <ChatLoading />}
       </div>
     </div>
-  );
-};
+  )
+}

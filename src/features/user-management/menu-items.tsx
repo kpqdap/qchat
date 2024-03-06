@@ -1,6 +1,6 @@
-import React from 'react';
-import { Menu, MenuContent, MenuHeader, MenuItem } from "@/components/menu";
-import { FileText, MessageCircle, Settings, HelpCircle } from 'lucide-react';
+import React from "react"
+import { Menu, MenuContent, MenuHeader, MenuItem } from "@/components/menu"
+import { FileText, MessageCircle, Settings, HelpCircle } from "lucide-react"
 
 export const UserSettings = () => {
   return (
@@ -18,5 +18,5 @@ export const UserSettings = () => {
         <HelpCircle size={16} /> <span>Help & Support</span>
       </MenuItem>
     </>
-  );
-};
+  )
+}

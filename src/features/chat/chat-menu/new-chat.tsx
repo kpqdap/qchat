@@ -1,46 +1,50 @@
-"use client";
+"use client"
 
-import { Button } from "@/features/ui/button";
-import { MessageSquarePlus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { CreateChatThread, FindChatThreadByTitleAndEmpty, UpdateChatThreadCreatedAt } from "../chat-services/chat-thread-service";
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
+import { Button } from "@/features/ui/button"
+import { MessageSquarePlus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import {
+  CreateChatThread,
+  FindChatThreadByTitleAndEmpty,
+  UpdateChatThreadCreatedAt,
+} from "../chat-services/chat-thread-service"
+import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
 
 export const NewChat = () => {
-  const router = useRouter();
-  const { showError } = useGlobalMessageContext();
+  const router = useRouter()
+  const { showError } = useGlobalMessageContext()
 
   const startNewChat = async () => {
-    const title = "New Chat";
+    const title = "New Chat"
 
     try {
-      const existingThread = await FindChatThreadByTitleAndEmpty(title);
-      
+      const existingThread = await FindChatThreadByTitleAndEmpty(title)
+
       if (existingThread) {
-        await UpdateChatThreadCreatedAt(existingThread.id);
-        router.push(`/chat/${existingThread.id}`);
-        router.refresh();
+        await UpdateChatThreadCreatedAt(existingThread.id)
+        router.push(`/chat/${existingThread.id}`)
+        router.refresh()
       } else {
         try {
-          const newChatThread = await CreateChatThread();
+          const newChatThread = await CreateChatThread()
           if (newChatThread) {
-            router.push(`/chat/${newChatThread.id}`);
-            router.refresh();
+            router.push(`/chat/${newChatThread.id}`)
+            router.refresh()
           }
         } catch (e) {
-          showError('Failed to start a new chat. Please try again later.');
+          showError("Failed to start a new chat. Please try again later.")
         }
-      };
+      }
     } catch (error) {
-      showError('Failed to start a new chat. Please try again later.');
+      showError("Failed to start a new chat. Please try again later.")
     }
-  };
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      startNewChat();
+    if (e.key === "Enter") {
+      startNewChat()
     }
-  };
+  }
 
   return (
     <Button
@@ -52,5 +56,5 @@ export const NewChat = () => {
     >
       <MessageSquarePlus size={40} strokeWidth={1.2} />
     </Button>
-  );
-};
+  )
+}

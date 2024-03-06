@@ -1,19 +1,19 @@
-import ChatRow from "@/components/chat/chat-row";
-import { Card } from "@/features/ui/card";
-import { FC } from "react";
-import { AI_NAME } from "../theme/customise";
-import { FindAllChatsInThread, FindChatThreadByID } from "./history-service";
-import { ChatRole } from "../chat/chat-services/models";
+import ChatRow from "@/components/chat/chat-row"
+import { Card } from "@/features/ui/card"
+import { FC } from "react"
+import { AI_NAME } from "../theme/customise"
+import { FindAllChatsInThread, FindChatThreadByID } from "./history-service"
+import { ChatRole } from "../chat/chat-services/models"
 
 interface Props {
-  chatId: string;
-  chatThreadId: string;
+  chatId: string
+  chatThreadId: string
 }
 
-export const ChatReportingUI: FC<Props> = async (props) => {
-  const chatThreads = await FindChatThreadByID(props.chatId);
-  const chats = await FindAllChatsInThread(props.chatId);
-  const chatThread = chatThreads[0];
+export const ChatReportingUI: FC<Props> = async props => {
+  const chatThreads = await FindChatThreadByID(props.chatId)
+  const chats = await FindAllChatsInThread(props.chatId)
+  const chatThread = chatThreads[0]
 
   return (
     <Card className="h-full relative">
@@ -27,10 +27,11 @@ export const ChatReportingUI: FC<Props> = async (props) => {
               type={message.role}
               key={index}
               chatMessageId={chatThread.id}
-              chatThreads={props.chatId}            />
+              chatThreads={props.chatId}
+            />
           ))}
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}
