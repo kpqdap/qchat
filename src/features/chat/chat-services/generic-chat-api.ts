@@ -28,7 +28,7 @@ async function logAPIUsage<T>(apiName: string, apiParams: unknown, apiResult: T)
         total_tokens?: number
       }
     }
-  ).usage
+  )?.usage
   const logEntry: ItemDefinition = {
     id: uniqueId,
     apiName,
