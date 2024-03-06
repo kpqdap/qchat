@@ -59,7 +59,7 @@ export const ChatStyleSelector: FC<Prop> = props => {
           </div>
         </Tooltip.Trigger>
         <Tooltip.Content side="top" className="bg-primary-foreground p-2 rounded-md shadow-lg text-sm text-foreground">
-          <p>This controls the "temperature" of the model, with the values for each being 0.1, 0.5 and 1</p>
+          <p>This controls the &quot;temperature&quot; of the model, with the values for each being 0.1, 0.5 and 1</p>
           <p>
             <strong>Precise:</strong> Focused and detail-oriented conversations.
           </p>

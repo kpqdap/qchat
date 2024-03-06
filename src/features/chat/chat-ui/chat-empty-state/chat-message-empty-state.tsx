@@ -6,31 +6,31 @@ import { ChatSensitivitySelector } from "./chat-sensitivity-selector"
 import { ChatTypeSelector } from "./chat-type-selector"
 import { PromptButton } from "./prompt-buttons-UI"
 import { Card } from "@/features/ui/card"
-import Typography from "@/components/typography"
 import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service"
 import { EasterEgg } from "./chat-easter-egg"
 
 interface Prop {}
 
-export const ChatMessageEmptyState: FC<Prop> = props => {
-  const { setInput, handleSubmit, isLoading, input, chatBody } = useChatContext()
+export const ChatMessageEmptyState: FC<Prop> = () => {
+  const { setInput } = useChatContext()
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined)
 
-  async function callUpsertPromptButton(prompt: string) {
+  async function callUpsertPromptButton(prompt: string): Promise<void> {
     const chatThreadModel = await CreateChatThread()
     if (chatThreadModel) {
       await UpsertPromptButton(prompt, chatThreadModel)
-    } else {
     }
   }
 
-  const handlePromptSelected = (prompt: string) => {
+  const handlePromptSelected = async (prompt: string) => {
     setSelectedPrompt(prompt)
 
     try {
       setInput(prompt)
-      callUpsertPromptButton(prompt)
-    } catch (error) {}
+      await callUpsertPromptButton(prompt)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const { fileState } = useChatContext()

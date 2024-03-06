@@ -32,11 +32,12 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    if (requireAdmin.some(path => pathname.startsWith(path))) {
-      if (!token.qchatAdmin || !await additionalAdminCheck(token)) {
-        const url = new URL("/unauthorised", request.url)
-        return NextResponse.rewrite(url)
-      }
+    if (
+      requireAdmin.some(path => pathname.startsWith(path)) &&
+      (!token.qchatAdmin || !(await additionalAdminCheck(token)))
+    ) {
+      const url = new URL("/unauthorised", request.url)
+      return NextResponse.rewrite(url)
     }
   }
 

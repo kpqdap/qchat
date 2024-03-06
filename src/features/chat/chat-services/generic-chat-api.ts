@@ -4,6 +4,7 @@ import { OpenAIInstance } from "@/features/common/openai"
 import { CosmosDBContainer } from "@/features/common/cosmos"
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
 import { translator } from "./chat-translator-service"
+import { ItemDefinition } from "@azure/cosmos"
 
 export interface Message {
   role: "function" | "system" | "user" | "assistant"
@@ -14,13 +15,21 @@ interface GenericChatAPIProps {
   messages: Message[]
 }
 
-async function logAPIUsage(apiName: string, apiParams: any, apiResult: any): Promise<void> {
+async function logAPIUsage<T>(apiName: string, apiParams: unknown, apiResult: T): Promise<void> {
   const container = await CosmosDBContainer.getInstance().getContainer()
   const tenantId = await getTenantId()
   const userId = await userHashedId()
-  const { prompt_tokens, completion_tokens, total_tokens } = apiResult.usage
   const uniqueId = `api-${Date.now()}-${tenantId}-${userId}`
-  const logEntry = {
+  const usage = (
+    apiResult as {
+      usage?: {
+        completion_tokens?: number
+        prompt_tokens?: number
+        total_tokens?: number
+      }
+    }
+  ).usage
+  const logEntry: ItemDefinition = {
     id: uniqueId,
     apiName,
     tenantId,
@@ -28,9 +37,9 @@ async function logAPIUsage(apiName: string, apiParams: any, apiResult: any): Pro
     createdAt: new Date(),
     params: apiParams,
     result: apiResult,
-    promptTokens: prompt_tokens,
-    completionTokens: completion_tokens,
-    totalTokens: total_tokens,
+    promptTokens: usage?.prompt_tokens,
+    completionTokens: usage?.completion_tokens,
+    totalTokens: usage?.total_tokens,
     type: "CHAT_UTILITY",
   }
 

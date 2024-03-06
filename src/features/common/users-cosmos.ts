@@ -26,6 +26,7 @@ export const initUserPrefsContainer = async () => {
 
     return containerResponse.container
   } catch (error) {
+    console.log(error)
     throw error
   }
 }

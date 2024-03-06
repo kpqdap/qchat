@@ -80,8 +80,8 @@ const LoadFile = async (formData: FormData, chatType: string) => {
     } else {
       throw "No file provided."
     }
-  } catch (e) {
-    const error = e as any
+  } catch (e: unknown) {
+    const error = e as string | undefined
     throw new Error(error)
   }
 }

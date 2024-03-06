@@ -22,7 +22,7 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
       await AssociateOffenderWithChatThread(chatThreadId, offenderId)
       setMessage(`Offender ID ${offenderId} saved.`)
       setIsIdSaved(true) // Set isIdSaved to true upon successful save
-    } catch (error) {
+    } catch (_error) {
       setMessage("Failed to save offender ID.")
       setIsIdSaved(false) // Ensure isIdSaved is false if saving fails
     } finally {
@@ -40,7 +40,7 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
         <form onSubmit={handleSubmit}>
           <div className="flex flex-wrap items-center grid-cols-3 gap-[15px]">
             <Label.Root htmlFor="offenderID" className="leading-[35px] text-sm text-muted-foreground">
-              Offender's Identification Number:
+              Offender&apos;s Identification Number:
             </Label.Root>
             <input
               className="bg-inputBackground text-sm text-muted-foreground shadow-blackA6 inline-flex h-[35px] w-[200px] appearance-none items-center justify-center rounded-[4px] px-[10px] leading-none shadow-[0_0_0_1px] outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary selection:text-foreground selection:bg-accent"

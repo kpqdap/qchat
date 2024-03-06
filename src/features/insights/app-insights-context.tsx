@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react"
+import { createContext, useContext } from "react"
 import { ApplicationInsights } from "@microsoft/applicationinsights-web"
 import { ReactPlugin } from "@microsoft/applicationinsights-react-js"
 import { History } from "history"

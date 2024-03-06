@@ -18,7 +18,6 @@ import {
 } from "./models"
 import { FindAllChatDocuments } from "./chat-document-service"
 import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
-import { chatAPIEntry } from "./chat-api-entry"
 
 function threeMonthsAgo(): string {
   const date = new Date()
@@ -60,16 +59,12 @@ export const FindAllChatThreadForCurrentUser = async () => {
     ],
   }
 
-  try {
-    const { resources } = await container.items
-      .query<ChatThreadModel>(querySpec, {
-        partitionKey,
-      })
-      .fetchAll()
-    return resources
-  } catch (error) {
-    throw error
-  }
+  const { resources } = await container.items
+    .query<ChatThreadModel>(querySpec, {
+      partitionKey,
+    })
+    .fetchAll()
+  return resources
 }
 
 export const FindChatThreadByID = async (id: string) => {
@@ -92,17 +87,13 @@ export const FindChatThreadByID = async (id: string) => {
     ],
   }
 
-  try {
-    const { resources } = await container.items
-      .query<ChatThreadModel>(querySpec, {
-        partitionKey,
-      })
-      .fetchAll()
+  const { resources } = await container.items
+    .query<ChatThreadModel>(querySpec, {
+      partitionKey,
+    })
+    .fetchAll()
 
-    return resources
-  } catch (error) {
-    throw error
-  }
+  return resources
 }
 
 export const RenameChatThreadByID = async (chatThreadID: string, newTitle: string | Promise<string> | null) => {
@@ -199,7 +190,7 @@ export const updateChatThreadTitle = async (
   conversationStyle: ConversationStyle,
   conversationSensitivity: ConversationSensitivity,
   chatOverFileName: string,
-  userMessage: string
+  _userMessage: string
 ) => {
   if (messages.length === 0) {
     const updatedChatThread = await UpsertChatThread({

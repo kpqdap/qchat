@@ -2,7 +2,7 @@
 
 import { simpleSearch } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
 
-export const CitationAction = async (previousState: any, formData: FormData) => {
+export const CitationAction = async (_previousState: unknown, formData: FormData) => {
   const id = formData.get("id") as string
   const chatThreadId = formData.get("chatThreadId") as string
   const userId = formData.get("userId") as string

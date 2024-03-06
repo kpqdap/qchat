@@ -10,16 +10,14 @@ interface Prop {
 export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt }) => {
   const [prompts, setPrompts] = useState<string[]>([])
   useEffect(() => {
-    const fetchPrompts = async () => {
-      try {
-        const data = await PromptButtons()
-        setPrompts(data)
-      } catch (error) {}
-    }
+    const fetchPrompts = async (): Promise<string[]> => await PromptButtons()
+
     fetchPrompts()
+      .then(data => setPrompts(data))
+      .catch(_err => setPrompts([]))
   }, [])
 
-  const handlePromptClick = (prompt: string) => {
+  const handlePromptClick = (prompt: string): void => {
     onPromptSelected(prompt)
   }
 

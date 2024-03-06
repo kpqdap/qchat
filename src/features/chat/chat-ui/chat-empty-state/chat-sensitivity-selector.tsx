@@ -4,7 +4,6 @@ import * as Tooltip from "@radix-ui/react-tooltip"
 import { Tabs, TabsList, TabsTrigger } from "@/features/ui/tabs"
 import { Shield, ShieldAlert, ShieldX } from "lucide-react"
 import { FC } from "react"
-import { ConversationSensitivity } from "../../chat-services/models"
 import { useChatContext } from "../chat-context"
 
 interface Prop {

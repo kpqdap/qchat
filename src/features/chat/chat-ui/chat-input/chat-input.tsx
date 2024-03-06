@@ -10,7 +10,7 @@ import ChatInputMenu from "./chat-input-menu"
 
 interface Props {}
 
-const ChatInput: FC<Props> = props => {
+const ChatInput: FC<Props> = () => {
   const { setInput, handleSubmit, isLoading, input, chatBody, isModalOpen, messages } = useChatContext()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const isDataChat = useMemo(() => chatBody.chatType === "data" || chatBody.chatType === "audio", [chatBody.chatType])
@@ -40,7 +40,7 @@ const ChatInput: FC<Props> = props => {
     const userId = chatBody.userId
     const tenantId = chatBody.tenantId
     const chatThreadId = chatBody.id
-    convertMarkdownToWordDocument(messages, fileName, AI_NAME, userId, tenantId, chatThreadId)
+    await convertMarkdownToWordDocument(messages, fileName, AI_NAME, userId, tenantId, chatThreadId)
   }
 
   const submit = (e: FormEvent<HTMLFormElement>) => {

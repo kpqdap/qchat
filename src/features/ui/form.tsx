@@ -27,7 +27,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, name, type = "text" }) => 
 )
 
 const PromptForm: React.FC = () => {
-  const [formData, setFormData] = useState<PromptFormData>({
+  const [_formData, setFormData] = useState<PromptFormData>({
     fullName: "",
     jobTitle: "",
     teamOrBusinessUnit: "",

@@ -6,8 +6,8 @@ import { ChatRole, ChatUtilityModel } from "../chat/chat-services/models"
 export const SaveUtilityFunctionUsage = async (
   chatThreadId: string,
   utilityFunctionName: string,
-  utilityFunctionParams: any,
-  utilityFunctionResult: any
+  utilityFunctionParams: unknown,
+  utilityFunctionResult: unknown
 ) => {
   const container = await CosmosDBContainer.getInstance().getContainer()
   const tenantId = await getTenantId()

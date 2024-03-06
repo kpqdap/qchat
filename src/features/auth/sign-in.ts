@@ -56,16 +56,15 @@ export class UserSignInHandler {
       }
 
       // Validate if the group is required and exists on tenant
-      if (tenant.requiresGroupLogin) {
-        if (
-          userGroups.length === 0 ||
-          !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || ""))
-        ) {
-          // Update user as failed login
-          await updateUser(userContainer, await updateFailedLogin(existingUser), user, userGroups)
+      if (
+        tenant.requiresGroupLogin &&
+        (userGroups.length === 0 ||
+          !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "")))
+      ) {
+        // Update user as failed login
+        await updateUser(userContainer, await updateFailedLogin(existingUser), user, userGroups)
 
-          return false
-        }
+        return false
       }
 
       return true

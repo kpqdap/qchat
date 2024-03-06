@@ -43,7 +43,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     appInsights.trackPageView()
 
     return { appInsights, reactPlugin, browserHistory, clickPlugin }
-  } catch (error) {
+  } catch (_error) {
     return null
   }
 }

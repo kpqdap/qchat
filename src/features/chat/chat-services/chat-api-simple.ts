@@ -19,7 +19,7 @@ async function buildUserContextPrompt(): Promise<string> {
   return prompt
 }
 
-export const ChatAPISimple = async (props: PromptGPTProps): Promise<any> => {
+export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> => {
   const { lastHumanMessage, chatThread } = await initAndGuardChatSession(props)
   const openAI = OpenAIInstance()
   const userId = await userHashedId()
@@ -68,7 +68,7 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<any> => {
             role: "assistant",
           })
           await updateChatThreadIfUncategorised(chatThread, translatedCompletion)
-        } catch (translationError) {
+        } catch (_translationError) {
           await chatHistory.addMessage({
             content: completion,
             role: "assistant",

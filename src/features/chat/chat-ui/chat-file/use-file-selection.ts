@@ -12,10 +12,10 @@ export const useFileSelection = (props: Props) => {
 
   const { showError, showSuccess } = useGlobalMessageContext()
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
-    onFileChange(formData)
+    await onFileChange(formData)
   }
 
   const onFileChange = async (formData: FormData) => {

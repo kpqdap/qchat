@@ -5,7 +5,7 @@ import { MiniNewChat } from "../chat-menu/mini-new-chat"
 
 interface Prop {}
 
-export const ChatHeader: FC<Prop> = props => {
+export const ChatHeader: FC<Prop> = () => {
   const { chatBody } = useChatContext()
 
   return (

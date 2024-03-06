@@ -26,7 +26,7 @@ export type TenantRecord = {
   serviceTier: string | null | undefined
   history?: string[]
   requiresGroupLogin: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export class CosmosDBTenantContainer {
@@ -90,6 +90,7 @@ export class CosmosDBTenantContainer {
         requiresGroupLogin: tenant.requiresGroupLogin,
       })
     } catch (e) {
+      console.log(e)
       throw e
     }
   }
@@ -104,6 +105,7 @@ export class CosmosDBTenantContainer {
       const { resources } = await container.items.query<TenantRecord>(query).fetchAll()
       return resources[0]
     } catch (e) {
+      console.log(e)
       return undefined
     }
   }
@@ -149,6 +151,7 @@ export class CosmosDBTenantContainer {
 
       await container.items.upsert(updatedTenant)
     } catch (e) {
+      console.log(e)
       throw e
     }
   }

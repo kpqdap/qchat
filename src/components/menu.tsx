@@ -24,7 +24,7 @@ const MenuContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
 MenuContent.displayName = "MenuContent"
 
 interface MenuItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
-  href: UrlObject
+  href: UrlObject | string
   isSelected?: boolean
 }
 

@@ -23,19 +23,14 @@ export const MiniNewChat = () => {
       if (existingThread) {
         await UpdateChatThreadCreatedAt(existingThread.id)
         router.push(`/chat/${existingThread.id}`)
-        router.refresh()
       } else {
-        try {
-          const newChatThread = await CreateChatThread()
-          if (newChatThread) {
-            router.push(`/chat/${newChatThread.id}`)
-            router.refresh()
-          }
-        } catch (e) {
-          showError("Failed to start a new chat. Please try again later.")
+        const newChatThread = await CreateChatThread()
+        if (newChatThread) {
+          router.push(`/chat/${newChatThread.id}`)
         }
       }
-    } catch (error) {
+      router.refresh()
+    } catch (_error) {
       showError("Failed to start a new chat. Please try again later.")
     }
   }

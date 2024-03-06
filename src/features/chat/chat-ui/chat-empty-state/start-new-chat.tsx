@@ -1,10 +1,9 @@
 import Typography from "@/components/typography"
 import { Card } from "@/features/ui/card"
 import { AI_NAME } from "@/features/theme/customise"
-import { FC } from "react"
 import { NewChat } from "../../chat-menu/new-chat"
 
-export const StartNewChat: FC<{}> = () => {
+export const StartNewChat = (): JSX.Element => {
   return (
     <section
       className="grid grid-cols-3 w-full items-center container mx-auto max-w-3xl justify-center max:h-5/6 gap-9 bg-altBackground"

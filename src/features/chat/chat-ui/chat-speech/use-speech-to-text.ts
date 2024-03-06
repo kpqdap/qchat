@@ -49,11 +49,11 @@ export const useSpeechToText = (props: Props): SpeechToTextProps => {
 
     recognizerRef.current = recognizer
 
-    recognizer.recognizing = (s, e) => {
+    recognizer.recognizing = (_s, e) => {
       props.onSpeech(e.result.text)
     }
 
-    recognizer.canceled = (s, e) => {
+    recognizer.canceled = (_s, e) => {
       showError(e.errorDetails)
     }
 

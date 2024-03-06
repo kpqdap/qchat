@@ -55,6 +55,7 @@ export class CosmosDBContainer {
             .then(containerResponse => {
               resolve(containerResponse.container)
             })
+            .catch(err => reject(err))
         })
         .catch(err => {
           reject(err)

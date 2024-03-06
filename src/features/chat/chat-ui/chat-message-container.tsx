@@ -16,7 +16,7 @@ interface Props {
   contentSafetyWarning?: string
 }
 
-export const ChatMessageContainer: React.FC<Props> = ({ chatId, chatThreadId, sentiment, contentSafetyWarning }) => {
+export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId, contentSafetyWarning }) => {
   const { data: session } = useSession()
   const router = useRouter()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -39,7 +39,7 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatId, chatThreadId, se
         {messages.map((message, index) => (
           <ChatRow
             chatMessageId={message.id}
-            name={message.role === ChatRole.User ? session?.user?.name! : AI_NAME}
+            name={message.role === ChatRole.User ? session?.user?.name || "" : AI_NAME}
             message={message.content}
             type={message.role as ChatRole}
             key={index}

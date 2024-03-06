@@ -163,14 +163,10 @@ export const embedDocuments = async (documents: Array<AzureCogDocumentIndex>) =>
     embeddings.data.forEach((embedding, index) => {
       documents[index].embedding = embedding.embedding
     })
-  } catch (e) {
-    const error = e as any
+  } catch (e: unknown) {
+    const error = e as { status: number }
     throw new Error(`${e} with code ${error.status}`)
   }
-}
-
-const baseUrl = (): string => {
-  return `${process.env.QGAIP_APIM_BASE}/indexes`
 }
 
 const baseIndexUrl = (): string => {

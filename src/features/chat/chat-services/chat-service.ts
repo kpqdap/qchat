@@ -69,7 +69,9 @@ export const CreateUserFeedbackChatId = async (
       await container.items.upsert(itemToUpdate)
       return itemToUpdate
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, tenantId: string) => {

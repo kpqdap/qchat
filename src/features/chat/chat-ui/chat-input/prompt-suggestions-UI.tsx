@@ -11,12 +11,11 @@ export const PromptSuggestion: React.FC<PromptSuggestionProps> = ({ newInputValu
   const [suggestions, setSuggestions] = useState<string[]>([])
 
   useEffect(() => {
-    const fetchSuggestions = async () => {
-      const fetchedSuggestions = await getPromptSuggestions(newInputValue)
-      setSuggestions(fetchedSuggestions)
-    }
+    const fetchSuggestions = async (): Promise<string[]> => await getPromptSuggestions(newInputValue)
 
     fetchSuggestions()
+      .then(fetchedSuggestions => setSuggestions(fetchedSuggestions))
+      .catch(_err => setSuggestions([]))
   }, [newInputValue])
 
   const handleSuggestionClick = (suggestion: string) => {

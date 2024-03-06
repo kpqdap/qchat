@@ -1,5 +1,4 @@
 "use server"
-import { ApplicationInsights } from "@microsoft/applicationinsights-web"
 import "server-only"
 
 export async function arrayBufferToBase64(buffer: ArrayBuffer) {
@@ -45,27 +44,23 @@ export async function customBeginAnalyzeDocument(modelId: string, source: string
   const analyzeDocumentHeaders = diParam.diHeaders
   const analyzeDocumentBody = sourceType === "base64" ? { base64Source: source } : { urlSource: source }
 
-  try {
-    const response = await fetch(analyzeDocumentUrl, {
-      method: "POST",
-      headers: analyzeDocumentHeaders,
-      body: JSON.stringify(analyzeDocumentBody),
-    })
+  const response = await fetch(analyzeDocumentUrl, {
+    method: "POST",
+    headers: analyzeDocumentHeaders,
+    body: JSON.stringify(analyzeDocumentBody),
+  })
 
-    if (!response.ok) {
-      throw new Error("Failed to analyze document. " + response.statusText)
-    }
-
-    const resultId = response.headers.get("apim-request-id")
-
-    if (resultId != null) {
-      return await customGetAnalyzeResult(modelId, resultId)
-    }
-
-    throw new Error("Failed to get Result ID. Status: " + response.status)
-  } catch (e) {
-    throw e
+  if (!response.ok) {
+    throw new Error("Failed to analyze document. " + response.statusText)
   }
+
+  const resultId = response.headers.get("apim-request-id")
+
+  if (resultId != null) {
+    return await customGetAnalyzeResult(modelId, resultId)
+  }
+
+  throw new Error("Failed to get Result ID. Status: " + response.status)
 }
 
 async function customGetAnalyzeResult(modelId: string, resultId: string) {
@@ -100,7 +95,9 @@ async function customGetAnalyzeResult(modelId: string, resultId: string) {
     }
 
     return analyzedResult
-  } catch (e) {}
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 // const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) => {

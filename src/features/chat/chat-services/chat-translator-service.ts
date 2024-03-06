@@ -16,7 +16,9 @@ export async function translator(input: string): Promise<string> {
     if (translatedTexts.length > 0) {
       return revertCase(input, translatedTexts[0])
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 
   return input
 }

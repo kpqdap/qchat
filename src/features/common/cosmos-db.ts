@@ -47,7 +47,7 @@ export const createDatabaseAndContainersIfNotExists = async (tenantId: string): 
       usersContainer,
       historyContainer,
     }
-  } catch (error) {
+  } catch (_error) {
     return {
       database: null,
       usersContainer: null,

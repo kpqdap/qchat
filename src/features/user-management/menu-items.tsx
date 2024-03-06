@@ -1,5 +1,5 @@
 import React from "react"
-import { Menu, MenuContent, MenuHeader, MenuItem } from "@/components/menu"
+import { MenuItem } from "@/components/menu"
 import { FileText, MessageCircle, Settings, HelpCircle } from "lucide-react"
 
 export const UserSettings = () => {

@@ -23,10 +23,10 @@ export type UserActivity = {
   accepted_terms: boolean | null | undefined
   accepted_terms_date: string | null | undefined
   history?: string[]
-  [key: string]: any
   groups?: string[] | null | undefined
   failed_login_attempts: number
   last_failed_login: Date | null
+  [key: string]: unknown
 }
 
 export type UserRecord = UserIdentity & UserActivity
@@ -50,11 +50,6 @@ export class CosmosDBUserContainer {
 
   private async initDBContainer(): Promise<Container> {
     const database = this.client.database(this.databaseId)
-    const partitionKey = {
-      paths: ["/tenantId", "/userId"],
-      kind: PartitionKeyKind.MultiHash,
-      version: PartitionKeyDefinitionVersion.V2,
-    }
     const containerResponse = await database.containers.createIfNotExists({
       id: CONTAINER_NAME,
       partitionKey: {
@@ -147,6 +142,7 @@ export class CosmosDBUserContainer {
       const { resources } = await container.items.query<UserRecord>(query).fetchAll()
       return resources[0]
     } catch (e) {
+      console.log(e)
       return undefined
     }
   }
@@ -154,7 +150,7 @@ export class CosmosDBUserContainer {
   public async updateUser(user: UserRecord, tenantId: string, userId: string): Promise<void> {
     const keyUserId = user.userId
     const keyTenantId = user.tenantId
-    const partitionKey = {
+    const _partitionKey = {
       paths: ["/" + keyTenantId, "/" + keyUserId],
       kind: PartitionKeyKind.MultiHash,
       version: PartitionKeyDefinitionVersion.V2,

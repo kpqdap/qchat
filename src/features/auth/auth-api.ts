@@ -23,27 +23,6 @@ interface ExtendedProfile extends Profile {
   groups?: string[]
 }
 
-const validateEnv = () => {
-  const requiredEnvVars = [
-    "NEXTAUTH_SECRET",
-    "AZURE_AD_CLIENT_ID",
-    "AZURE_AD_CLIENT_SECRET",
-    "AZURE_AD_TENANT_ID",
-    "AZURE_AD_OPENID_CONFIGURATION",
-    "AZURE_AD_AUTHORIZATION_ENDPOINT",
-    "AZURE_AD_TOKEN_ENDPOINT",
-    "AZURE_AD_USERINFO_ENDPOINT",
-    "AZURE_AD_REDIRECT_URL",
-  ]
-
-  const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar])
-  if (missingEnvVars.length) {
-    throw new Error(`Missing required environment variables: ${missingEnvVars.join(", ")}`)
-  }
-}
-
-//validateEnv();
-
 const configureIdentityProvider = (): Provider[] => {
   const providers: Provider[] = []
   const adminEmails = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => email.toLowerCase().trim()) || []
@@ -101,7 +80,7 @@ const configureIdentityProvider = (): Provider[] => {
         credentials: {
           username: { label: "Username", type: "text", placeholder: "Enter your username" },
         },
-        async authorize(credentials: Record<string, any> | undefined, req): Promise<User> {
+        async authorize(credentials: Record<string, unknown> | undefined, _req): Promise<User> {
           const typedCredentials = credentials as Credentials
 
           const username = typedCredentials.username || "dev"
@@ -155,7 +134,7 @@ async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
       expiresIn: Date.now() + refreshedTokens.expires_in * 1000,
       refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
     }
-  } catch (error) {
+  } catch (_error) {
     return { ...token, error: "RefreshAccessTokenError" }
   }
 }
@@ -164,7 +143,7 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, profile }) {
       if (user?.tenantId && user?.upn) {
         const now = new Date()
         const ExtendedProfile = profile as ExtendedProfile
@@ -193,7 +172,7 @@ export const options: NextAuthOptions = {
           }
           const groupsString = groupsArray?.join(",")
           return await UserSignInHandler.handleSignIn(userRecord, groupsString)
-        } catch (error) {
+        } catch (_error) {
           return false
         }
       } else {

@@ -162,6 +162,7 @@ export const FindAllChatThreadsForReporting = async (pageSize = 10, pageNumber =
       .fetchNext()
     return { resources }
   } catch (error) {
+    console.log(error)
     return { resources: [] }
   }
 }
@@ -195,6 +196,7 @@ export const FindChatThreadByID = async (chatThreadId: string) => {
     const { resources } = await container.items.query<ChatThreadModel>(querySpec).fetchAll()
     return resources
   } catch (error) {
+    console.log(error)
     return []
   }
 }
@@ -225,6 +227,7 @@ export const FindAllChatsInThread = async (chatThreadId: string) => {
     const { resources } = await container.items.query<ChatMessageModel>(querySpec).fetchAll()
     return resources
   } catch (error) {
+    console.log(error)
     return []
   }
 }

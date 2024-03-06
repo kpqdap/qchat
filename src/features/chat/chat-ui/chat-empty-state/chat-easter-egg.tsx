@@ -8,14 +8,14 @@ export const EasterEgg = () => {
   const [isEasterEggDay, setIsEasterEggDay] = useState(false)
 
   useEffect(() => {
-    const checkEasterEggDay = async () => {
+    const checkEasterEggDay = async (): Promise<boolean> => {
       const session = await getSession()
-      const isEggDay =
-        session && session.user ? session.user.tenantId === "c8b3c81f-0928-458f-a835-a74452e3b706" : false
-      setIsEasterEggDay(isEggDay)
+      return session?.user?.tenantId === "c8b3c81f-0928-458f-a835-a74452e3b706"
     }
 
     checkEasterEggDay()
+      .then(isEggDay => setIsEasterEggDay(isEggDay))
+      .catch(_ => setIsEasterEggDay(false))
   }, [])
 
   const textColorClass = isEasterEggDay ? "text-altButton" : "text-altBackground"
