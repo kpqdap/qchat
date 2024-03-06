@@ -15,26 +15,35 @@ interface GenericChatAPIProps {
 }
 
 async function logAPIUsage(apiName: string, apiParams: any, apiResult: any): Promise<void> {
-    const container = await CosmosDBContainer.getInstance().getContainer();
-    const tenantId = await getTenantId();
-    const userId = await userHashedId();
-    const { prompt_tokens, completion_tokens, total_tokens } = apiResult.usage;
-    const uniqueId = `api-${Date.now()}-${tenantId}-${userId}`;
-    const logEntry = {
-        id: uniqueId,
-        apiName,
-        tenantId,
-        userId,
-        createdAt: new Date(),
-        params: apiParams,
-        result: apiResult,
-        promptTokens: prompt_tokens,
-        completionTokens: completion_tokens,
-        totalTokens: total_tokens,
-        type: "CHAT_UTILITY",
-    };
+  const container = await CosmosDBContainer.getInstance().getContainer();
+  const tenantId = await getTenantId();
+  const userId = await userHashedId();
 
-    await container.items.create(logEntry);
+  let prompt_tokens, completion_tokens, total_tokens;
+  
+  if(apiResult && apiResult.usage){
+      prompt_tokens = apiResult.usage.prompt_tokens;
+      completion_tokens = apiResult.usage.completion_tokens;
+      total_tokens = apiResult.usage.total_tokens;
+  }
+
+  const uniqueId = `api-${Date.now()}-${tenantId}-${userId}`;
+
+  const logEntry = {
+      id: uniqueId,
+      apiName,
+      tenantId,
+      userId,
+      createdAt: new Date(),
+      params: apiParams,
+      result: apiResult,
+      promptTokens: prompt_tokens,
+      completionTokens: completion_tokens,
+      totalTokens: total_tokens,
+      type: "CHAT_UTILITY",
+  };
+
+  await container.items.create(logEntry);
 }
 
 export const GenericChatAPI = async (apiName: string, props: GenericChatAPIProps): Promise<string | null> => {
