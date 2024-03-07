@@ -80,9 +80,12 @@ stages:
       steps:
         - script: |
             git config --global core.autocrlf input
-          displayName: 'Git config'
+          displayName: 'Configure Git to handle line endings'
+
         - checkout: self
-          clean: "true"
+          clean: true
+          persistCredentials: true
+          
         - task: Docker@2
           displayName: 'Build Docker Image for Analysis'
           inputs:
