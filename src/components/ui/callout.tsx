@@ -1,9 +1,9 @@
-import React from 'react';
-import Typography from '../typography';
+import React from "react"
+import Typography from "../typography"
 
 interface Props {
-  title: string;
-  description: string;
+  title: string
+  description: string
 }
 
 export const Callout = ({ title, description }: Props) => {
@@ -16,7 +16,7 @@ export const Callout = ({ title, description }: Props) => {
         {description}
       </Typography>
     </div>
-  );
-};
+  )
+}
 
-export default Callout;
+export default Callout

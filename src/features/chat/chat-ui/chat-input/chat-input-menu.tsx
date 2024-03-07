@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useRef } from "react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { Button } from "@/features/ui/button"
-import { Menu, Bird, File, Clipboard } from "lucide-react"
+import { Menu, File, Clipboard } from "lucide-react"
 import { Message } from "ai"
 import { toast } from "@/features/ui/use-toast"
 
@@ -12,7 +12,7 @@ interface ChatInputMenuProps {
   messageCopy: Message[]
 }
 
-const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit, setInput, messageCopy }) => {
+const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, messageCopy }) => {
   const firstMenuItemRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -34,7 +34,6 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
     const formattedMessages = messageCopy
       .map(message => {
         const author = message.role === "system" || message.role === "assistant" ? "AI" : "You"
-        // fix the author name on export and copy to clipboard
         return `${author}: ${message.content}`
       })
       .join("\n")
@@ -79,23 +78,21 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
             </div>
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="h-[1px] bg-secondary my-2" /> */}
-          <DropdownMenu.Item
-            asChild
-            onSelect={onDocExport}
-            className="DropdownMenuItem bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground rounded-md cursor-pointer"
-          >
-            <div tabIndex={0} style={{ display: "flex", alignItems: "center", padding: "5px" }}>
+          <DropdownMenu.Item asChild onSelect={onDocExport} className="dropdown-menu-item">
+            <div
+              tabIndex={0}
+              className="flex items-center p-2 cursor-pointer hover:bg-secondary hover:text-secondary-foreground rounded-md"
+            >
               <File size={20} className="mr-2" aria-hidden="true" />
               Export your Chat to File
             </div>
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="h-[1px] bg-secondary my-2" />
-          <DropdownMenu.Item
-            asChild
-            onSelect={copyToClipboard}
-            className="DropdownMenuItem bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground rounded-md cursor-pointer"
-          >
-            <div tabIndex={0} style={{ display: "flex", alignItems: "center", padding: "5px" }}>
+          <DropdownMenu.Item asChild onSelect={copyToClipboard} className="dropdown-menu-item">
+            <div
+              tabIndex={0}
+              className="flex items-center p-2 cursor-pointer hover:bg-secondary hover:text-secondary-foreground rounded-md"
+            >
               <Clipboard size={20} className="mr-2" aria-hidden="true" />
               Copy Chat to Clipboard
             </div>
