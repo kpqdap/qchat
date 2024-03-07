@@ -80,7 +80,7 @@ stages:
       steps:
         - script: |
             git config --global core.autocrlf input
-            displayName: 'Git config'
+          displayName: 'Git config'
         - checkout: self
           clean: "true"
         - task: Docker@2
