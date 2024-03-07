@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -7,6 +8,8 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -23,8 +26,9 @@
     "paths": {
       "@/*": ["./*"],
       "@/ui/*": ["./features/ui/*"]
-    }
+    },
+    "rootDir": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [".next/types/**/*.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
   "exclude": ["node_modules"]
 }

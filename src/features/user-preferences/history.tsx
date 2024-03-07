@@ -1,30 +1,27 @@
-import { Button } from "@/features/ui/button";
-import { Card } from "@/features/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/ui/table";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { FindAllChatThreadsForReporting } from "./history-service";
+import { Button } from "@/features/ui/button"
+import { Card } from "@/features/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/features/ui/table"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
+import { FindAllChatThreadsForReporting } from "./history-service"
 
 export type ReportingProp = {
   searchParams: {
-    pageSize?: number;
-    pageNumber?: number;
-  };
-};
+    pageSize?: number
+    pageNumber?: number
+  }
+}
 
 export const Reporting = async (props: ReportingProp) => {
-  let _pageNumber = Number(props.searchParams.pageNumber ?? 0);
-  let pageSize = Number(props.searchParams.pageSize ?? 10);
-  let pageNumber = _pageNumber < 0 ? 0 : _pageNumber;
-  let nextPage = Number(pageNumber) + 1;
-  let previousPage = Number(pageNumber) - 1;
+  const _pageNumber = Number(props.searchParams.pageNumber ?? 0)
+  const pageSize = Number(props.searchParams.pageSize ?? 10)
+  const pageNumber = _pageNumber < 0 ? 0 : _pageNumber
+  const nextPage = Number(pageNumber) + 1
+  const previousPage = Number(pageNumber) - 1
 
-  const { resources: chatThreads } = await FindAllChatThreadsForReporting(
-    pageSize,
-    pageNumber
-  );
+  const { resources: chatThreads } = await FindAllChatThreadsForReporting(pageSize, pageNumber)
 
-  const hasMoreResults = chatThreads && chatThreads.length === pageSize;
+  const hasMoreResults = chatThreads && chatThreads.length === pageSize
 
   return (
     <Card className="h-full flex pt-8 overflow-y-auto">
@@ -48,20 +45,16 @@ export const Reporting = async (props: ReportingProp) => {
               </TableHeader>
               <TableBody>
                 {chatThreads &&
-                  chatThreads.map((chatThread) => (
+                  chatThreads.map(chatThread => (
                     <TableRow key={chatThread.id}>
                       <TableCell className="font-medium">
-                        <Link href={"/reporting/" + chatThread.id}>
-                          {chatThread.name}
-                        </Link>
+                        <Link href={"/reporting/" + chatThread.id}>{chatThread.name}</Link>
                       </TableCell>
                       <TableCell>{chatThread.chatCategory}</TableCell>
                       <TableCell>{chatThread.chatType}</TableCell>
                       <TableCell>{chatThread.conversationStyle}</TableCell>
                       <TableCell>{chatThread.conversationSensitivity}</TableCell>
-                      <TableCell>
-                        {new Date(chatThread.createdAt).toLocaleDateString("en-AU")}
-                      </TableCell>
+                      <TableCell>{new Date(chatThread.createdAt).toLocaleDateString("en-AU")}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -96,5 +89,5 @@ export const Reporting = async (props: ReportingProp) => {
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}

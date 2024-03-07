@@ -1,23 +1,24 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import { Heart } from 'lucide-react';
-import { getSession } from 'next-auth/react';
+import React, { useState, useEffect } from "react"
+import { Heart } from "lucide-react"
+import { getSession } from "next-auth/react"
 
 export const EasterEgg = () => {
-  const [isEasterEggDay, setIsEasterEggDay] = useState(false);
+  const [isEasterEggDay, setIsEasterEggDay] = useState(false)
 
   useEffect(() => {
-    const checkEasterEggDay = async () => {
-      const session = await getSession();
-      const isEggDay = session && session.user ? session.user.tenantId === 'c8b3c81f-0928-458f-a835-a74452e3b706' : false;
-      setIsEasterEggDay(isEggDay);
-    };
+    const checkEasterEggDay = async (): Promise<boolean> => {
+      const session = await getSession()
+      return session?.user?.tenantId === "c8b3c81f-0928-458f-a835-a74452e3b706"
+    }
 
-    checkEasterEggDay();
-  }, []);
+    checkEasterEggDay()
+      .then(isEggDay => setIsEasterEggDay(isEggDay))
+      .catch(_ => setIsEasterEggDay(false))
+  }, [])
 
-  const textColorClass = isEasterEggDay ? "text-altButton" : "text-altBackground";
+  const textColorClass = isEasterEggDay ? "text-altButton" : "text-altBackground"
 
   return (
     <>
@@ -29,7 +30,7 @@ export const EasterEgg = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default EasterEgg;
+export default EasterEgg

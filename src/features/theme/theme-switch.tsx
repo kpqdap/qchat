@@ -1,27 +1,27 @@
-"use client";
+"use client"
 
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs"
 
 export function ThemeSwitch() {
-  const { setTheme, resolvedTheme } = useTheme();
-  const [isThemeLoading, setIsThemeLoading] = useState(true);
+  const { setTheme, resolvedTheme } = useTheme()
+  const [isThemeLoading, setIsThemeLoading] = useState(true)
 
   // Simplify handling by removing the defaultTab state.
   // You can directly use resolvedTheme for the Tabs defaultValue,
   // which reduces the need for extra state management.
   useEffect(() => {
-    setIsThemeLoading(!resolvedTheme); // Directly set loading state based on resolvedTheme presence.
-  }, [resolvedTheme]);
+    setIsThemeLoading(!resolvedTheme) // Directly set loading state based on resolvedTheme presence.
+  }, [resolvedTheme])
 
   const handleTabChange = (value: string) => {
-    setTheme(value);
-  };
+    setTheme(value)
+  }
 
   if (isThemeLoading) {
-    return <span>Loading theme...</span>; // Enhanced loading text for clarity.
+    return <span>Loading theme...</span> // Enhanced loading text for clarity.
   }
 
   return (
@@ -45,5 +45,5 @@ export function ThemeSwitch() {
         </TabsTrigger>
       </TabsList>
     </Tabs>
-  );
+  )
 }

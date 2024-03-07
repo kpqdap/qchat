@@ -1,17 +1,17 @@
-"use client";
+"use client"
 
-import React from "react";
-import { Button } from "./button";
-import { CheckIcon, ClipboardIcon, ThumbsUp, ThumbsDown } from "lucide-react";
-import { useWindowSize } from "./windowsize";
+import React from "react"
+import { Button } from "./button"
+import { CheckIcon, ClipboardIcon, ThumbsUp, ThumbsDown } from "lucide-react"
+import { useWindowSize } from "./windowsize"
 
 interface AssistantButtonsProps {
-  isIconChecked: boolean;
-  thumbsUpClicked: boolean;
-  thumbsDownClicked: boolean;
-  handleCopyButton: () => void;
-  handleThumbsUpClick: () => void;
-  handleThumbsDownClick: () => void;
+  isIconChecked: boolean
+  thumbsUpClicked: boolean
+  thumbsDownClicked: boolean
+  handleCopyButton: () => void
+  handleThumbsUpClick: () => void
+  handleThumbsDownClick: () => void
 }
 
 export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
@@ -20,18 +20,18 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
   thumbsDownClicked,
   handleCopyButton,
   handleThumbsUpClick,
-  handleThumbsDownClick
+  handleThumbsDownClick,
 }) => {
-  const { width } = useWindowSize();
-  let iconSize = 10;
-  let buttonClass = "h-9";
+  const { width } = useWindowSize()
+  let iconSize = 10
+  let buttonClass = "h-9"
 
   if (width < 768) {
-    buttonClass = "h-7";
+    buttonClass = "h-7"
   } else if (width >= 768 && width < 1024) {
-    iconSize = 12;
+    iconSize = 12
   } else if (width >= 1024) {
-    iconSize = 16;
+    iconSize = 16
   }
 
   return (
@@ -44,11 +44,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
         title="Copy text"
         onClick={handleCopyButton}
       >
-        {isIconChecked ? (
-          <CheckIcon size={iconSize} />
-        ) : (
-          <ClipboardIcon size={iconSize} />
-        )}
+        {isIconChecked ? <CheckIcon size={iconSize} /> : <ClipboardIcon size={iconSize} />}
       </Button>
 
       <Button
@@ -59,11 +55,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
         onClick={handleThumbsUpClick}
         aria-label="Provide positive feedback"
       >
-        {thumbsUpClicked ? (
-          <CheckIcon size={iconSize} />
-        ) : (
-          <ThumbsUp size={iconSize} />
-        )}
+        {thumbsUpClicked ? <CheckIcon size={iconSize} /> : <ThumbsUp size={iconSize} />}
       </Button>
 
       <Button
@@ -74,14 +66,10 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
         onClick={handleThumbsDownClick}
         aria-label="Provide negative feedback"
       >
-        {thumbsDownClicked ? (
-          <CheckIcon size={iconSize} />
-        ) : (
-          <ThumbsDown size={iconSize} />
-        )}
+        {thumbsDownClicked ? <CheckIcon size={iconSize} /> : <ThumbsDown size={iconSize} />}
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default AssistantButtons;
+export default AssistantButtons

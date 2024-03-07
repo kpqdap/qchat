@@ -1,13 +1,13 @@
 // Import statements for necessary dependencies
-import { SqlQuerySpec } from "@azure/cosmos";
+import { SqlQuerySpec } from "@azure/cosmos"
 import {
   CHAT_THREAD_ATTRIBUTE,
   ChatMessageModel,
   ChatThreadModel,
   MESSAGE_ATTRIBUTE,
-} from "../chat/chat-services/models";
-import { CosmosDBContainer } from "../common/cosmos";
-import { getTenantId } from "@/features/auth/helpers";
+} from "../chat/chat-services/models"
+import { CosmosDBContainer } from "../common/cosmos"
+import { getTenantId } from "@/features/auth/helpers"
 
 // export const FindAllChatThreadsForReporting = async (
 //   pageSize = 10,
@@ -22,18 +22,18 @@ import { getTenantId } from "@/features/auth/helpers";
 //     const sevenDaysAgoIso = sevenDaysAgo.toISOString();
 
 //     const querySpec: SqlQuerySpec = {
-//       // query: `SELECT 
-//       //           r.id, 
-//       //           r.name, 
-//       //           r.useName, 
-//       //           r.chatType, 
-//       //           r.conversationStyle, 
-//       //           r.conversationSensitivity, 
-//       //           r.createdAt 
+//       // query: `SELECT
+//       //           r.id,
+//       //           r.name,
+//       //           r.useName,
+//       //           r.chatType,
+//       //           r.conversationStyle,
+//       //           r.conversationSensitivity,
+//       //           r.createdAt
 //       query: `SELECT *
-//               FROM root r 
-//               WHERE r.type=@type AND r.tenantId=@tenantId AND r.createdAt >= @sevenDaysAgo 
-//               ORDER BY r.createdAt DESC 
+//               FROM root r
+//               WHERE r.type=@type AND r.tenantId=@tenantId AND r.createdAt >= @sevenDaysAgo
+//               ORDER BY r.createdAt DESC
 //               OFFSET ${pageNumber * pageSize} LIMIT ${pageSize}`,
 //       parameters: [
 //         {
@@ -119,24 +119,14 @@ import { getTenantId } from "@/features/auth/helpers";
 //   return resources;
 // };
 
-
-
-
-
-
-
-
-export const FindAllChatThreadsForReporting = async (
-  pageSize = 10,
-  pageNumber = 0
-) => {
+export const FindAllChatThreadsForReporting = async (pageSize = 10, pageNumber = 0) => {
   try {
-    const container = await CosmosDBContainer.getInstance().getContainer();
-    const tenantId = await getTenantId();
+    const container = await CosmosDBContainer.getInstance().getContainer()
+    const tenantId = await getTenantId()
 
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const sevenDaysAgoIso = sevenDaysAgo.toISOString();
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const sevenDaysAgoIso = sevenDaysAgo.toISOString()
 
     const querySpec: SqlQuerySpec = {
       query: `SELECT *
@@ -163,23 +153,24 @@ export const FindAllChatThreadsForReporting = async (
           value: false,
         },
       ],
-    };
+    }
 
     const { resources } = await container.items
       .query<ChatThreadModel>(querySpec, {
         maxItemCount: pageSize,
       })
-      .fetchNext();
-    return { resources };
+      .fetchNext()
+    return { resources }
   } catch (error) {
-    return { resources: [] };
+    console.log(error)
+    return { resources: [] }
   }
-};
+}
 
 export const FindChatThreadByID = async (chatThreadId: string) => {
   try {
-    const container = await CosmosDBContainer.getInstance().getContainer();
-    const tenantId = await getTenantId();
+    const container = await CosmosDBContainer.getInstance().getContainer()
+    const tenantId = await getTenantId()
 
     const querySpec: SqlQuerySpec = {
       query: "SELECT * FROM root r WHERE r.type=@type AND r.id=@id AND r.tenantId=@tenantId",
@@ -201,20 +192,19 @@ export const FindChatThreadByID = async (chatThreadId: string) => {
           value: false,
         },
       ],
-    };
-    const { resources } = await container.items
-      .query<ChatThreadModel>(querySpec)
-      .fetchAll();
-    return resources;
+    }
+    const { resources } = await container.items.query<ChatThreadModel>(querySpec).fetchAll()
+    return resources
   } catch (error) {
-    return [];
+    console.log(error)
+    return []
   }
-};
+}
 
 export const FindAllChatsInThread = async (chatThreadId: string) => {
   try {
-    const container = await CosmosDBContainer.getInstance().getContainer();
-    const tenantId = await getTenantId();
+    const container = await CosmosDBContainer.getInstance().getContainer()
+    const tenantId = await getTenantId()
 
     const querySpec: SqlQuerySpec = {
       query: "SELECT * FROM root r WHERE r.type=@type AND r.chatThreadId = @chatThreadId AND r.tenantId=@tenantId",
@@ -232,18 +222,15 @@ export const FindAllChatsInThread = async (chatThreadId: string) => {
           value: tenantId,
         },
       ],
-    };
+    }
 
-
-    const { resources } = await container.items
-      .query<ChatMessageModel>(querySpec)
-      .fetchAll();
-    return resources;
+    const { resources } = await container.items.query<ChatMessageModel>(querySpec).fetchAll()
+    return resources
   } catch (error) {
-    return [];
+    console.log(error)
+    return []
   }
-};
-
+}
 
 // export const FindAllChatsInThread = async (chatThreadId: string) => {
 //   try {

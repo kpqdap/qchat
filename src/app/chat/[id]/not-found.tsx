@@ -1,18 +1,16 @@
-import { Card } from "@/features/ui/card";
-import { NewChat } from "@/features/chat/chat-menu/new-chat";
+import { Card } from "@/features/ui/card"
+import { NewChat } from "@/features/chat/chat-menu/new-chat"
 
 export default async function NotFound() {
   return (
-    <Card className="col-span-5 h-full items-center gap-4 justify-center">
-      <div className="flex w-full items-center container mx-auto max-w-xl justify-center h-full gap-2">
-        <div className="gap-5 flex flex-col items-start flex-1">
+    <Card className="col-span-5 h-full items-center justify-center gap-4">
+      <div className="container mx-auto flex h-full w-full max-w-xl items-center justify-center gap-2">
+        <div className="flex flex-1 flex-col items-start gap-5">
           <h2 className="text-4xl font-bold"> Uh-oh! 404</h2>
-          <p className="text-sm text-muted-foreground">
-            How about we start a new chat?
-          </p>
+          <p className="text-sm text-muted-foreground">How about we start a new chat?</p>
           <NewChat />
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}

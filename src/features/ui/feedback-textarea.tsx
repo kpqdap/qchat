@@ -2,8 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-export interface FeedbackTextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+export interface FeedbackTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 const FeedbackTextarea = React.forwardRef<HTMLTextAreaElement, FeedbackTextareaProps>(
   ({ className, ...props }, ref) => {
