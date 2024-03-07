@@ -78,10 +78,11 @@ stages:
       pool:
         name: $(poolName)
       steps:
-        - checkout: self
-          clean: "true"
         - script: |
             git config --global core.autocrlf input
+            displayName: 'Git config'
+        - checkout: self
+          clean: "true"
         - task: Docker@2
           displayName: 'Build Docker Image for Analysis'
           inputs:
