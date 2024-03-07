@@ -80,6 +80,8 @@ stages:
       steps:
         - checkout: self
           clean: "true"
+        - script: |
+            git config --global core.autocrlf input
         - task: Docker@2
           displayName: 'Build Docker Image for Analysis'
           inputs:
