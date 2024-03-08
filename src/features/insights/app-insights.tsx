@@ -3,8 +3,6 @@ import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ClickAnalyticsPlugin } from '@microsoft/applicationinsights-clickanalytics-js';
 import { createBrowserHistory } from 'history';
 
-const appInsightsKey = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
-
 export interface IAppInsightsContext {
   appInsights: ApplicationInsights;
   reactPlugin: ReactPlugin;
@@ -22,7 +20,8 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     const browserHistory = createBrowserHistory();
     const reactPlugin = new ReactPlugin();
     const clickPlugin = new ClickAnalyticsPlugin();
-
+    const appInsightsKey = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING;
+    
     const connectionString = appInsightsKey;
     if (!connectionString) {
       throw new Error('Connection string for Application Insights is undefined or empty.');
