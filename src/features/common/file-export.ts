@@ -152,7 +152,7 @@ export const convertMarkdownToWordDocument = async (
   _userId: string,
   _tenantId: string,
   _chatThreadId: string
-) => {
+): Promise<void> => {
   const renderer = new CustomRenderer()
   marked.use({ renderer })
 
@@ -192,7 +192,7 @@ export const convertMarkdownToWordDocument = async (
     })
 }
 
-const processCitationsInText = (text: string) => {
+const processCitationsInText = (text: string): string => {
   const citationPattern = /{% citation[^\n]*/g
   const processedText = text.replace(citationPattern, "-- References were removed for privacy reasons --")
   return processedText

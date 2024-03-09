@@ -10,13 +10,10 @@ import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor"
 import { AI_NAME } from "@/features/theme/customise"
 
 interface Props {
-  chatId: string
-  sentiment?: string
   chatThreadId: string
-  contentSafetyWarning?: string
 }
 
-export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId, contentSafetyWarning }) => {
+export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId }) => {
   const { data: session } = useSession()
   const router = useRouter()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -43,8 +40,11 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId, contentSaf
             message={message.content}
             type={message.role as ChatRole}
             key={index}
-            chatThreads={chatThreadId}
-            contentSafetyWarning={contentSafetyWarning}
+            chatThreadId={chatThreadId}
+            contentSafetyWarning={undefined}
+            feedback={undefined}
+            sentiment={undefined}
+            reason={undefined}
           />
         ))}
         {isLoading && <ChatLoading />}

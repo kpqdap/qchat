@@ -8,6 +8,7 @@ import { ChatSentiment } from "@/features/chat/chat-services/models"
 
 interface ModalProps {
   chatThreadId: string
+  chatMessageId: string
   open: boolean
   onClose: () => void
   onSubmit: (chatMessageId: string, feedback: string, reason: string, chatThreadId: string) => void
@@ -30,14 +31,14 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
     setFeedback(textareaValue)
   }
 
-  const handleReasonChange = (reason: string) => {
+  const handleReasonChange = (reason: string): void => {
     setReason(reason)
   }
 
   async function handleSubmit(): Promise<void> {
-    props.onSubmit(props.chatThreadId, feedback, reason, props.chatThreadId)
+    props.onSubmit(props.chatMessageId, feedback, reason, props.chatThreadId)
     setFeedback("")
-    await CreateUserFeedbackChatId(props.chatThreadId, feedback, ChatSentiment.Negative, reason, props.chatThreadId)
+    await CreateUserFeedbackChatId(props.chatMessageId, feedback, ChatSentiment.Negative, reason, props.chatThreadId)
     props.onClose()
   }
 
