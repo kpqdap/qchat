@@ -30,7 +30,7 @@ export class CosmosDBChatMessageHistory {
     const container = await CosmosDBContainer.getInstance().getContainer()
     await container.delete()
   }
-  //
+
   async addMessage(message: ChatCompletionMessage, citations: string = ""): Promise<void> {
     try {
       const modelToSave: ChatMessageModel = {

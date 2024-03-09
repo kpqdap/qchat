@@ -83,6 +83,8 @@ export interface ChatThreadModel {
   contextPrompt?: string
   metaPrompt?: string
   contentSafetyWarning?: string
+  prompts?: string[]
+  selectedPrompt?: string
 }
 
 export interface PromptGPTBody {
@@ -129,12 +131,4 @@ export interface ServerActionResponse<T> {
   success: boolean
   error: string
   response: T
-}
-
-export interface ChatUtilities {
-  id: string
-  chatThreadId: string
-  userId: string
-  tenantId: string
-  promptButton: string
 }

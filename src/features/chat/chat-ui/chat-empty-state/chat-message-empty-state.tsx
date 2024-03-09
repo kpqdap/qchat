@@ -6,8 +6,9 @@ import { ChatSensitivitySelector } from "./chat-sensitivity-selector"
 import { ChatTypeSelector } from "./chat-type-selector"
 import { PromptButton } from "./prompt-buttons-UI"
 import { Card } from "@/features/ui/card"
-import { CreateChatThread, UpsertPromptButton } from "../../chat-services/chat-thread-service"
+// import { FindChatThreadByID, UpsertChatThread } from "../../chat-services/chat-thread-service"
 import { EasterEgg } from "./chat-easter-egg"
+// import { ChatThreadModel } from "../../chat-services/models"
 
 interface Prop {}
 
@@ -15,21 +16,13 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
   const { setInput } = useChatContext()
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined)
 
-  async function callUpsertPromptButton(prompt: string): Promise<void> {
-    const chatThreadModel = await CreateChatThread()
-    if (chatThreadModel) {
-      await UpsertPromptButton(prompt, chatThreadModel)
-    }
-  }
-
   const handlePromptSelected = async (prompt: string): Promise<void> => {
     setSelectedPrompt(prompt)
 
     try {
       setInput(prompt)
-      await callUpsertPromptButton(prompt)
     } catch (error) {
-      console.log(error)
+      console.log("Prompt button not selected", error)
     }
   }
 

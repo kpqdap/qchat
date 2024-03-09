@@ -13,7 +13,6 @@ import {
   ChatSentiment,
   ChatThreadModel,
   ChatType,
-  ChatUtilities,
   ConversationSensitivity,
   ConversationStyle,
   PromptGPTProps,
@@ -177,17 +176,6 @@ export const UpsertChatThread = async (chatThread: ChatThreadModel): Promise<Ite
   return updatedChatThread
 }
 
-export const UpsertPromptButton = async (prompt: string, chatThread: ChatThreadModel): Promise<void> => {
-  const container = await CosmosDBContainer.getInstance().getContainer()
-  const updatedChatPrompts = await container.items.upsert<ChatUtilities>({
-    ...chatThread,
-    promptButton: prompt,
-  })
-  if (updatedChatPrompts === undefined) {
-    throw new Error("Prompt Button not selected")
-  }
-}
-
 export const updateChatThreadTitle = async (
   chatThread: ChatThreadModel,
   messages: ChatMessageModel[],
@@ -238,6 +226,8 @@ export const CreateChatThread = async (): Promise<(ChatThreadModel & Resource) |
     contextPrompt: "",
     metaPrompt: "",
     chatOverFileName: "",
+    prompts: [],
+    selectedPrompt: "",
   }
 
   const container = await CosmosDBContainer.getInstance().getContainer()

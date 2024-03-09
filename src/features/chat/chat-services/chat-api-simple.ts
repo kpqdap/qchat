@@ -49,16 +49,24 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> =>
 
   const metaPrompt = systemPrompt + userContextPrompt
 
+  const messagesWithoutId: CosmosDBChatMessageHistory[] = [{ role: "system", content: metaPrompt }, ...topHistory].map(
+    message => {
+      const messageWithoutId = "id" in message ? { ...message, id: undefined } : message
+      return { ...messageWithoutId, content: messageWithoutId.content || "" }
+    }
+  )
+
   try {
     const response = await openAI.chat.completions.create({
-      messages: [{ role: "system", content: metaPrompt }, ...topHistory],
+      messages: messagesWithoutId,
       model: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
       stream: true,
     })
 
     const stream = OpenAIStream(response, {
       async onStart() {},
-      async onCompletion(completion) {
+      // async onToken(token: string) {},
+      async onCompletion(completion: string) {
         try {
           const translatedCompletion = await translator(completion)
           await chatHistory.addMessage({
