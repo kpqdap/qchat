@@ -112,6 +112,9 @@ export const ChatRow: FC<ChatRowProps> = props => {
           <Typography variant="h3" className="flex-1 capitalize text-heading" tabIndex={0}>
             {props.name}
           </Typography>
+          <Typography variant="h3" className="flex-1 capitalize text-heading" tabIndex={0}>
+            {props.chatMessageId}
+          </Typography>
           <Modal
             chatThreadId={props.chatThreadId}
             chatMessageId={props.chatMessageId}
