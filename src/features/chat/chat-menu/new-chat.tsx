@@ -21,12 +21,12 @@ export const NewChat = (): JSX.Element => {
       const existingThread = await FindChatThreadByTitleAndEmpty(title)
 
       if (existingThread) {
-        await UpdateChatThreadCreatedAt(existingThread.id)
-        router.push(`/chat/${existingThread.id}`)
+        await UpdateChatThreadCreatedAt(existingThread.chatThreadId)
+        router.push(`/chat/${existingThread.chatThreadId}`)
       } else {
         const newChatThread = await CreateChatThread()
-        if (newChatThread) {
-          router.push(`/chat/${newChatThread.id}`)
+        if (newChatThread && newChatThread.chatThreadId) {
+          router.push(`/chat/${newChatThread.chatThreadId}`)
         }
       }
     } catch (_error) {

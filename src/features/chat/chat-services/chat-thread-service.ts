@@ -328,11 +328,10 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
       },
     ],
   }
-
   const { resources } = await container.items.query<ChatThreadModel>(querySpec).fetchAll()
 
   for (const chatThread of resources) {
-    const messages = await FindAllChats(chatThread.id)
+    const messages = await FindAllChats(chatThread.chatThreadId)
 
     if (messages.length === 0) {
       return chatThread
@@ -342,9 +341,9 @@ export const FindChatThreadByTitleAndEmpty = async (title: string): Promise<Chat
   return undefined
 }
 
-export const UpdateChatThreadCreatedAt = async (threadId: string): Promise<ChatThreadModel> => {
+export const UpdateChatThreadCreatedAt = async (chatThreadId: string): Promise<ChatThreadModel> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
-  const threads = await FindChatThreadByID(threadId)
+  const threads = await FindChatThreadByID(chatThreadId)
 
   if (threads.length !== 0) {
     const threadToUpdate = threads[0]
