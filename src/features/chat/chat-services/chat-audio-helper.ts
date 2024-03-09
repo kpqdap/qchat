@@ -15,38 +15,29 @@ import { GetSpeechToken } from "../chat-ui/chat-speech/speech-service"
 import { AudioOutputFormatImpl } from "microsoft-cognitiveservices-speech-sdk/distrib/lib/src/sdk/Audio/AudioOutputFormat"
 import { FileAudioSource } from "microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.browser/FileAudioSource"
 
-export const speechToTextRecognizeOnce = async (formData: FormData) => {
+export const speechToTextRecognizeOnce = async (formData: FormData): Promise<string[]> => {
   const speechToken = await GetSpeechToken()
   const apimUrl = new URL(speechToken.sttUrl)
 
-  // Speech Configurations
   const speechConfig = SpeechConfig.fromEndpoint(apimUrl)
   speechConfig.speechRecognitionLanguage = "en-GB"
   speechConfig.authorizationToken = speechToken.token
 
-  /**Convert File to Buffer**/
   const file: File | null = formData.get("audio") as unknown as File
 
-  // Audio Configurations
   const audioConfig = await audioConfigFromFile(file)
   if (speechToken.error) throw speechToken.errorMessage
 
-  // Speech recognizer config
   const recognizer = new SpeechRecognizer(speechConfig, audioConfig)
 
-  // Final result
   const text = await startRecognition(recognizer)
   return text
 }
 
-/**
- * Starts speech recognition, and stops after the first utterance is recognized. The task returns the recognition text as result. Note: RecognizeOnceAsync() returns when the first utterance has been recognized, so it is suitable only for single shot recognition like command or query.
- */
 async function _recognizeOnceFromFile(recognizer: SpeechRecognizer): Promise<string> {
   try {
     let recognisedText = ""
 
-    // Call recognizeOnceAsync and wait for its completion
     const result = await new Promise<SpeechRecognitionResult>((resolve, reject) => {
       recognizer.recognizeOnceAsync(
         (res: SpeechRecognitionResult) => resolve(res),
@@ -57,21 +48,15 @@ async function _recognizeOnceFromFile(recognizer: SpeechRecognizer): Promise<str
     if (result) {
       switch (result.reason) {
         case ResultReason.RecognizedSpeech:
-          // console.log(`RECOGNIZED: Text=${result.text}`);
           recognisedText = result.text
           break
         case ResultReason.NoMatch:
-          console.log("NOMATCH: Speech could not be recognized.")
           break
         case ResultReason.Canceled:
           handleCanceledReason(result)
           break
       }
-    } else {
-      console.log("Recognition result is null or undefined.")
     }
-
-    // Close the recognizer
     recognizer.close()
 
     return recognisedText
@@ -144,7 +129,7 @@ const audioConfigFromFile = async (file: File): Promise<AudioConfig> => {
 /**
  * Initialise audio configurations from Stream
  */
-const _audioConfigFromStream = async (file: File) => {
+const _audioConfigFromStream = async (file: File): Promise<AudioConfig> => {
   try {
     // Get Default Format
     const audioFormat = AudioOutputFormatImpl.getDefaultInputFormat()

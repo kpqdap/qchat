@@ -14,7 +14,13 @@ import { speechToTextRecognizeOnce } from "./chat-audio-helper"
 
 const MAX_DOCUMENT_SIZE = process.env.MAX_DOCUMENT_SIZE as unknown as number
 
-export const UploadDocument = async (formData: FormData): Promise<ServerActionResponse<string[]>> => {
+export const UploadDocument = async (
+  formData: FormData
+): Promise<{
+  success: boolean
+  error: string
+  response: string[]
+}> => {
   try {
     await ensureSearchIsConfigured()
 
@@ -43,7 +49,12 @@ export const UploadDocument = async (formData: FormData): Promise<ServerActionRe
   }
 }
 
-const LoadFile = async (formData: FormData, chatType: string) => {
+const LoadFile = async (
+  formData: FormData,
+  chatType: string
+): Promise<{
+  docs: string[]
+}> => {
   try {
     const file: File | null = formData.get(chatType) as unknown as File
     if (file) {
@@ -140,7 +151,7 @@ export const IndexDocuments = async (
 //   return client;
 // };
 
-export const FindAllChatDocuments = async (chatThreadID: string) => {
+export const FindAllChatDocuments = async (chatThreadId: string): Promise<ChatDocumentModel[]> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
 
   const querySpec: SqlQuerySpec = {
@@ -153,7 +164,7 @@ export const FindAllChatDocuments = async (chatThreadID: string) => {
       },
       {
         name: "@chatThreadId",
-        value: chatThreadID,
+        value: chatThreadId,
       },
       {
         name: "@isDeleted",
@@ -169,7 +180,7 @@ export const FindAllChatDocuments = async (chatThreadID: string) => {
   return resources
 }
 
-export const UpsertChatDocument = async (fileName: string, chatThreadID: string) => {
+export const UpsertChatDocument = async (fileName: string, chatThreadID: string): Promise<ChatDocumentModel> => {
   const modelToSave: ChatDocumentModel = {
     chatThreadId: chatThreadID,
     id: uniqueId(),
@@ -183,9 +194,11 @@ export const UpsertChatDocument = async (fileName: string, chatThreadID: string)
 
   const container = await CosmosDBContainer.getInstance().getContainer()
   await container.items.upsert(modelToSave)
+
+  return Promise.resolve(modelToSave)
 }
 
-export const ensureSearchIsConfigured = async () => {
+export const ensureSearchIsConfigured = async (): Promise<boolean> => {
   const isSearchConfigured =
     isNotNullOrEmpty(process.env.AZURE_SEARCH_NAME) &&
     isNotNullOrEmpty(process.env.AZURE_SEARCH_API_KEY) &&
@@ -193,7 +206,8 @@ export const ensureSearchIsConfigured = async () => {
     isNotNullOrEmpty(process.env.AZURE_SEARCH_API_VERSION)
 
   if (!isSearchConfigured) {
-    throw new Error("Azure search environment variables are not configured.")
+    console.error("Azure search environment variables are not configured.")
+    return false
   }
 
   const isDocumentIntelligenceConfigured =
@@ -201,14 +215,15 @@ export const ensureSearchIsConfigured = async () => {
     isNotNullOrEmpty(process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY)
 
   if (!isDocumentIntelligenceConfigured) {
-    throw new Error("Azure document intelligence environment variables are not configured.")
+    console.error("Azure document intelligence environment variables are not configured.")
+    return false
   }
 
   const isEmbeddingsConfigured = isNotNullOrEmpty(process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME)
 
   if (!isEmbeddingsConfigured) {
-    throw new Error("Azure openai embedding variables are not configured.")
+    console.error("Azure OpenAI Embedding variables are not configured.")
+    return false
   }
-
-  //  await ensureIndexIsCreated();
+  return true
 }

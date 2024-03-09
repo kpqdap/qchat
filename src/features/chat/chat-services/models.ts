@@ -86,7 +86,7 @@ export interface ChatThreadModel {
 }
 
 export interface PromptGPTBody {
-  id: string
+  chatThreadId: string
   chatType: ChatType
   conversationStyle: ConversationStyle
   conversationSensitivity: ConversationSensitivity

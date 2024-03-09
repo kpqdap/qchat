@@ -1,4 +1,4 @@
-export async function GET(_req: Request) {
+export async function GET(_req: Request): Promise<Response> {
   try {
     const healthCheckUrl = process.env.QGAIP_APIM_HEALTHCHECK_URI
     if (!healthCheckUrl) {

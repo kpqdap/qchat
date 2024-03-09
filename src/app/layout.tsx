@@ -18,7 +18,7 @@ export const metadata = {
   description: AI_NAME,
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <html lang="en" className="h-full w-full overflow-hidden text-sm">
       <body className={cn(notoSans.className, "flex h-full w-full min-w-[400px] flex-col bg-background")}>

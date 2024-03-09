@@ -22,7 +22,7 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
     }
   }
 
-  const handlePromptSelected = async (prompt: string) => {
+  const handlePromptSelected = async (prompt: string): Promise<void> => {
     setSelectedPrompt(prompt)
 
     try {

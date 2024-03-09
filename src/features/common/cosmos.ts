@@ -1,29 +1,35 @@
 import { Container, CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos"
+import { handleCosmosError } from "./cosmos-error"
 
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev"
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_CONTAINER_NAME || "history"
 
-export const initDBContainer = async () => {
-  const endpoint = process.env.AZURE_COSMOSDB_URI
-  const key = process.env.AZURE_COSMOSDB_KEY
-  const defaultHeaders = { "api-key": process.env.AZURE_SEARCH_API_KEY }
+export const initDBContainer = async (): Promise<Container> => {
+  try {
+    const endpoint = process.env.AZURE_COSMOSDB_URI
+    const key = process.env.AZURE_COSMOSDB_KEY
+    const defaultHeaders = { "api-key": process.env.AZURE_SEARCH_API_KEY }
 
-  const client = new CosmosClient({ endpoint, key, defaultHeaders })
+    const client = new CosmosClient({ endpoint, key, defaultHeaders })
 
-  const databaseResponse = await client.databases.createIfNotExists({
-    id: DB_NAME,
-  })
+    const databaseResponse = await client.databases.createIfNotExists({
+      id: DB_NAME,
+    })
 
-  const containerResponse = await databaseResponse.database.containers.createIfNotExists({
-    id: CONTAINER_NAME,
-    partitionKey: {
-      paths: ["/tenantId", "/userId"],
-      kind: PartitionKeyKind.MultiHash,
-      version: PartitionKeyDefinitionVersion.V2,
-    },
-  })
+    const containerResponse = await databaseResponse.database.containers.createIfNotExists({
+      id: CONTAINER_NAME,
+      partitionKey: {
+        paths: ["/tenantId", "/userId"],
+        kind: PartitionKeyKind.MultiHash,
+        version: PartitionKeyDefinitionVersion.V2,
+      },
+    })
 
-  return containerResponse.container
+    return containerResponse.container
+  } catch (error) {
+    handleCosmosError(error as Error & { code?: number })
+    throw error
+  }
 }
 
 export class CosmosDBContainer {
@@ -31,36 +37,33 @@ export class CosmosDBContainer {
   private container: Promise<Container>
 
   private constructor() {
-    const endpoint = process.env.AZURE_COSMOSDB_URI
-    const key = process.env.AZURE_COSMOSDB_KEY
-    const defaultHeaders = { "api-key": process.env.AZURE_SEARCH_API_KEY }
+    this.container = (async (): Promise<Container> => {
+      try {
+        const endpoint = process.env.AZURE_COSMOSDB_URI
+        const key = process.env.AZURE_COSMOSDB_KEY
+        const defaultHeaders = { "api-key": process.env.AZURE_SEARCH_API_KEY }
 
-    const client = new CosmosClient({ endpoint, key, defaultHeaders })
+        const client = new CosmosClient({ endpoint, key, defaultHeaders })
 
-    this.container = new Promise((resolve, reject) => {
-      client.databases
-        .createIfNotExists({
+        const databaseResponse = await client.databases.createIfNotExists({
           id: DB_NAME,
         })
-        .then(databaseResponse => {
-          databaseResponse.database.containers
-            .createIfNotExists({
-              id: CONTAINER_NAME,
-              partitionKey: {
-                paths: ["/tenantId", "/userId"],
-                kind: PartitionKeyKind.MultiHash,
-                version: PartitionKeyDefinitionVersion.V2,
-              },
-            })
-            .then(containerResponse => {
-              resolve(containerResponse.container)
-            })
-            .catch(err => reject(err))
+
+        const containerResponse = await databaseResponse.database.containers.createIfNotExists({
+          id: CONTAINER_NAME,
+          partitionKey: {
+            paths: ["/tenantId", "/userId"],
+            kind: PartitionKeyKind.MultiHash,
+            version: PartitionKeyDefinitionVersion.V2,
+          },
         })
-        .catch(err => {
-          reject(err)
-        })
-    })
+
+        return containerResponse.container
+      } catch (error) {
+        handleCosmosError(error as Error & { code?: number })
+        throw error
+      }
+    })()
   }
 
   public static getInstance(): CosmosDBContainer {
@@ -72,6 +75,6 @@ export class CosmosDBContainer {
   }
 
   public async getContainer(): Promise<Container> {
-    return await this.container
+    return this.container
   }
 }
