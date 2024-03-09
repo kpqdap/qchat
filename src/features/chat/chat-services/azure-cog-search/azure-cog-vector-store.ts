@@ -1,3 +1,6 @@
+interface FetcherResponse {
+  [key: string]: unknown
+}
 import { OpenAIEmbeddingInstance } from "@/features/common/openai"
 
 export interface AzureCogDocumentIndex {
@@ -70,10 +73,13 @@ export const simpleSearch = async (
     top: filter?.top || 10,
     vectorQueries: [],
   }
-  const resultDocuments = (await fetcher(url, {
+  const fetcherResponse = await fetcher(url, {
     method: "POST",
     body: JSON.stringify(searchBody),
-  })) as DocumentSearchResponseModel<AzureCogDocumentIndex & DocumentSearchModel>
+  })
+  const resultDocuments = {
+    value: fetcherResponse.value as (AzureCogDocumentIndex & DocumentSearchModel)[],
+  }
 
   return resultDocuments.value
 }
@@ -108,10 +114,13 @@ export const similaritySearchVectorWithScore = async (
     vectorQueries: [{ vector: embeddings.data[0].embedding, fields: "embedding", k: k, kind: "vector" }],
   }
 
-  const resultDocuments = (await fetcher(url, {
+  const fetcherResponse = await fetcher(url, {
     method: "POST",
     body: JSON.stringify(searchBody),
-  })) as DocumentSearchResponseModel<AzureCogDocumentIndex & DocumentSearchModel>
+  })
+  const resultDocuments: DocumentSearchResponseModel<AzureCogDocumentIndex & DocumentSearchModel> = {
+    value: fetcherResponse.value ? (fetcherResponse.value as (AzureCogDocumentIndex & DocumentSearchModel)[]) : [],
+  }
 
   return resultDocuments.value
 }
@@ -150,7 +159,7 @@ export const deleteDocuments = async (chatThreadId: string, userId: string, tena
   })
 }
 
-export const embedDocuments = async (documents: Array<AzureCogDocumentIndex>) => {
+export const embedDocuments = async (documents: Array<AzureCogDocumentIndex>): Promise<void> => {
   const openai = OpenAIEmbeddingInstance()
 
   try {
@@ -173,7 +182,7 @@ const baseIndexUrl = (): string => {
   return `${process.env.QGAIP_APIM_BASE}/indexes/${process.env.AZURE_SEARCH_INDEX_NAME}`
 }
 
-const fetcher = async (url: string, init?: RequestInit) => {
+const fetcher = async (url: string, init?: RequestInit): Promise<FetcherResponse> => {
   const response = await fetch(url, {
     ...init,
     cache: "no-store",

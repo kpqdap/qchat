@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Heart } from "lucide-react"
 import { getSession } from "next-auth/react"
 
-export const EasterEgg = () => {
+export const EasterEgg = (): React.JSX.Element => {
   const [isEasterEggDay, setIsEasterEggDay] = useState(false)
 
   useEffect(() => {
@@ -25,7 +25,9 @@ export const EasterEgg = () => {
       <div className="flex flex-col items-center gap-1">
         <div className={`flex items-center justify-center ${textColorClass}`}>
           <Heart className="w-4 h-4" fill="currentColor" />
-          <p className="text-sm mx-2">Made with love by Keith Oak, Rahul Shokeen, Ella Salehi and Fred Delage</p>
+          <p className="text-sm mx-2">
+            Made with love by Keith Oak, Rahul Shokeen, Ella Salehi, Fred Delage and Bruno Piovan
+          </p>
           <Heart className="w-4 h-4" fill="currentColor" />
         </div>
       </div>

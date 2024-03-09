@@ -3,7 +3,7 @@
 import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from "@/features/ui/toast"
 import { useToast } from "@/features/ui/use-toast"
 
-export function Toaster() {
+export function Toaster(): JSX.Element {
   const { toasts } = useToast()
 
   return (

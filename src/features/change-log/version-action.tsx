@@ -1,6 +1,6 @@
 import { appVersionDetails } from "./app-version"
 
-export const UpdateIndicatorAction = async () => {
+export const UpdateIndicatorAction = async (): Promise<JSX.Element | null> => {
   const appVersion = await appVersionDetails()
 
   if (!appVersion.isOutdated) {

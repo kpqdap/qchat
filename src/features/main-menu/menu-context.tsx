@@ -10,14 +10,14 @@ export const MenuContext = createContext<MenuContextProps>({
   toggleMenu: () => {},
 })
 
-export const MenuProvider = ({ children }: { children: React.ReactNode }) => {
+export const MenuProvider = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(true)
 
-  const toggleMenu = () => {
+  const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen)
   }
 
   return <MenuContext.Provider value={{ isMenuOpen, toggleMenu }}>{children}</MenuContext.Provider>
 }
 
-export const useMenuContext = () => useContext(MenuContext)
+export const useMenuContext = (): MenuContextProps => useContext(MenuContext)

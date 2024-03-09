@@ -35,15 +35,15 @@ const ChatInput: FC<Props> = () => {
     return formattedDate.split(",").join("_").split(" ").join("_").split(":").join("_")
   }
 
-  const exportDocument = async () => {
+  const exportDocument = async (): Promise<void> => {
     const fileName = `QChatExport_${getFormattedDateTime()}.docx`
     const userId = chatBody.userId
     const tenantId = chatBody.tenantId
-    const chatThreadId = chatBody.id
+    const chatThreadId = chatBody.chatThreadId
     await convertMarkdownToWordDocument(messages, fileName, AI_NAME, userId, tenantId, chatThreadId)
   }
 
-  const submit = (e: FormEvent<HTMLFormElement>) => {
+  const submit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (!isModalOpen) {
       handleSubmit(e)
@@ -51,11 +51,11 @@ const ChatInput: FC<Props> = () => {
     }
   }
 
-  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setInput(event.target.value)
   }
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (event.key === "Enter" && !event.shiftKey && !isModalOpen) {
       event.preventDefault()
       if (!isLoading) {

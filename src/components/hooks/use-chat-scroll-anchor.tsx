@@ -3,7 +3,7 @@
 import { Message } from "ai"
 import { RefObject, useEffect } from "react"
 
-export const useChatScrollAnchor = (chats: Message[], ref: RefObject<HTMLDivElement>) => {
+export const useChatScrollAnchor = (chats: Message[], ref: RefObject<HTMLDivElement>): void => {
   useEffect(() => {
     if (ref && ref.current) {
       ref.current.scrollTop = ref.current.scrollHeight

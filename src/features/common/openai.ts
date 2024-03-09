@@ -1,6 +1,6 @@
 import { OpenAI } from "openai"
 
-export const OpenAIInstance = () => {
+export const OpenAIInstance = (): OpenAI => {
   const openai = new OpenAI({
     apiKey: process.env.AZURE_OPENAI_API_KEY,
     baseURL: `${process.env.QGAIP_APIM_BASE}/openai/deployments/${process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME}`,
@@ -10,7 +10,7 @@ export const OpenAIInstance = () => {
   return openai
 }
 
-export const OpenAIEmbeddingInstance = () => {
+export const OpenAIEmbeddingInstance = (): OpenAI => {
   if (
     !process.env.AZURE_OPENAI_API_KEY ||
     !process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME ||

@@ -3,7 +3,7 @@ import { FindAllChatThreadForCurrentUser } from "@/features/chat/chat-services/c
 import { MenuItems } from "./menu-items"
 import { NewChat } from "./new-chat"
 
-export const ChatMenu = async () => {
+export const ChatMenu = async (): Promise<JSX.Element> => {
   const items = await FindAllChatThreadForCurrentUser()
 
   return (

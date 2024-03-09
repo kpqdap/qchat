@@ -26,7 +26,7 @@ const PopupMessage: React.FC<{ message: string }> = ({ message }) => (
   </div>
 )
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose }): JSX.Element => {
   const [newName, setNewName] = useState("")
   const [showPopup, setShowPopup] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -39,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
     }
   }, [isOpen, focusAfterClose])
 
-  const handleSave = () => {
+  const handleSave = (): void => {
     onSave(newName)
     onClose()
     setShowPopup(true)
@@ -98,21 +98,21 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
   const params = useParams()
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
 
-  const sendData = async (threadID: string) => {
+  const sendData = async (threadID: string): Promise<void> => {
     await SoftDeleteChatThreadByID(threadID)
     router.refresh()
     router.replace("/chat")
   }
 
-  const handleOpenModal = (chatThreadId: string) => {
+  const handleOpenModal = (chatThreadId: string): void => {
     setSelectedThreadId(chatThreadId)
   }
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setSelectedThreadId(null)
   }
 
-  const handleSaveModal = async (newName: string) => {
+  const handleSaveModal = async (newName: string): Promise<void> => {
     if (newName.trim() !== "" && selectedThreadId) {
       try {
         await RenameChatThreadByID(selectedThreadId, newName)

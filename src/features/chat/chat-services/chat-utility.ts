@@ -83,7 +83,7 @@ export async function updateChatThreadIfUncategorised(
   }
 }
 
-export async function StoreOriginalChatName(currentChatName: string) {
+export async function StoreOriginalChatName(currentChatName: string): Promise<string> {
   let previousChatName: string = ""
   if (currentChatName !== previousChatName) {
     previousChatName = currentChatName

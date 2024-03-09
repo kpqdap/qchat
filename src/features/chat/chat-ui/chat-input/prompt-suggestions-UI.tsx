@@ -18,7 +18,7 @@ export const PromptSuggestion: React.FC<PromptSuggestionProps> = ({ newInputValu
       .catch(_err => setSuggestions([]))
   }, [newInputValue])
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = (suggestion: string): void => {
     onSelect(suggestion)
     onHide()
   }

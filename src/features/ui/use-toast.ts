@@ -1,3 +1,12 @@
+interface ToastReturn {
+  toasts: ToastProps[]
+  toast: (props: Omit<ToastProps, "id">) => {
+    id: string
+    dismiss: () => void
+    update: (props: Partial<ToastProps>) => void
+  }
+  dismiss: (toastId?: string) => void
+}
 import * as React from "react"
 
 interface ToastProps {
@@ -47,7 +56,7 @@ const addToRemoveQueue = (dispatch: React.Dispatch<Action>, toastId: string): vo
   toastTimeouts.set(toastId, timeout)
 }
 
-const reducer = (state: State, action: Action): State => {
+const reducer = (state: State, action: Action, dispatch: React.Dispatch<Action>): State => {
   switch (action.type) {
     case ActionType.ADD_TOAST:
       return {
@@ -83,11 +92,11 @@ const reducer = (state: State, action: Action): State => {
 
 let memoryState: State = { toasts: [] }
 
-function useToast(): ReturnType<typeof reducer> {
+function useToast(): ToastReturn {
   const [state, setState] = React.useState<State>(memoryState)
 
   const dispatch = React.useCallback((action: Action) => {
-    const newState = reducer(memoryState, action)
+    const newState = reducer(memoryState, action, dispatch)
     memoryState = newState
     setState(newState)
   }, [])
@@ -119,4 +128,4 @@ function useToast(): ReturnType<typeof reducer> {
   }
 }
 
-export { useToast, toast }
+export { useToast }

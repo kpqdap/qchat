@@ -3,10 +3,12 @@ import { IndexDocuments, UploadDocument } from "../../chat-services/chat-documen
 import { useChatContext } from "../chat-context"
 
 interface Props {
-  id: string
+  chatThreadId: string
 }
 
-export const useFileSelection = (props: Props) => {
+export const useFileSelection = (
+  props: Props
+): { onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> } => {
   const { setChatBody, chatBody, fileState } = useChatContext()
   const { setIsUploadingFile, setUploadButtonLabel } = fileState
 
@@ -18,13 +20,13 @@ export const useFileSelection = (props: Props) => {
     await onFileChange(formData)
   }
 
-  const onFileChange = async (formData: FormData) => {
+  const onFileChange = async (formData: FormData): Promise<void> => {
     try {
       setIsUploadingFile(true)
       setUploadButtonLabel("Uploading file...")
       const chatType = fileState.showFileUpload
       formData.append("chatType", chatType)
-      formData.append("id", props.id)
+      formData.append("chatThreadId", props.chatThreadId)
       const file: File | null = formData.get(chatType) as unknown as File
       const uploadResponse = await UploadDocument(formData)
 
@@ -34,7 +36,7 @@ export const useFileSelection = (props: Props) => {
         for (const doc of uploadResponse.response) {
           setUploadButtonLabel(`Indexing file [${index + 1}]/[${uploadResponse.response.length}]`)
           try {
-            const indexResponse = await IndexDocuments(file.name, [doc], props.id, index + 1)
+            const indexResponse = await IndexDocuments(file.name, [doc], props.chatThreadId, index + 1)
 
             if (!indexResponse.success) {
               showError(indexResponse.error)

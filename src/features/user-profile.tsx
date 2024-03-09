@@ -1,5 +1,6 @@
 "use client"
 
+import React, { ReactElement } from "react"
 import { Avatar, AvatarImage } from "@/features/ui/avatar"
 import { Button } from "@/features/ui/button"
 import {
@@ -13,7 +14,7 @@ import {
 import { LogOut, UserCircle } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 
-const UserProfile = () => {
+const UserProfile = (): ReactElement => {
   const { data: session } = useSession()
 
   return (

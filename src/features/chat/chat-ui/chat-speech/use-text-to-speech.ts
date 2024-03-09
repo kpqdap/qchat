@@ -21,14 +21,14 @@ export const useTextToSpeech = (): TextToSpeechProps => {
 
   const { showError } = useGlobalMessageContext()
 
-  const stopPlaying = () => {
+  const stopPlaying = (): void => {
     setIsPlaying(false)
     if (playerRef.current) {
       playerRef.current.pause()
     }
   }
 
-  const textToSpeech = async (textToSpeak: string) => {
+  const textToSpeech = async (textToSpeak: string): Promise<void> => {
     if (isPlaying) {
       stopPlaying()
     }

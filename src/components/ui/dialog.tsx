@@ -2,7 +2,7 @@ import React from "react"
 import * as Dialog from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
-export const Dailog = () => (
+export const Dailog = (): React.JSX.Element => (
   <Dialog.Root>
     <Dialog.Trigger asChild>
       <button className="text-violet11 shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none">

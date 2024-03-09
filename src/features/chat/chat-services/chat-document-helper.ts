@@ -1,7 +1,7 @@
 "use server"
 import "server-only"
 
-export async function arrayBufferToBase64(buffer: ArrayBuffer) {
+export async function arrayBufferToBase64(buffer: ArrayBuffer): Promise<string> {
   const binary = new Uint8Array(buffer)
   let base64String = ""
   for (let i = 0; i < binary.length; i++) {
@@ -10,23 +10,27 @@ export async function arrayBufferToBase64(buffer: ArrayBuffer) {
   return btoa(base64String)
 }
 
-const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) => {
+interface AnalyzeDocumentResult {
+  status: string
+  analyzeResult: {
+    version: string
+    readResults: Array<unknown>
+    pageResults?: Array<unknown>
+  }
+}
+
+interface DocumentIntelligenceObject {
+  analyzeDocumentUrl: string
+  analyzeResultUrl: string | undefined
+  diHeaders: HeadersInit
+}
+
+export const customDocumentIntelligenceObject = (modelId?: string, resultId?: string): DocumentIntelligenceObject => {
   const apiVersion = "2023-07-31"
-  const analyzeDocumentUrl =
-    process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT +
-    "/formrecognizer/documentModels/" +
-    modelId +
-    ":analyze?api-version=" +
-    apiVersion +
-    "&locale=en-GB"
-  const analyzeResultUrl =
-    process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT +
-    "/formrecognizer/documentModels/" +
-    modelId +
-    "/analyzeResults/" +
-    resultId +
-    "?api-version=" +
-    apiVersion
+  const analyzeDocumentUrl = `${process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT}/formrecognizer/documentModels/${modelId}:analyze?api-version=${apiVersion}&locale=en-GB`
+  const analyzeResultUrl = resultId
+    ? `${process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT}/formrecognizer/documentModels/${modelId}/analyzeResults/${resultId}?api-version=${apiVersion}`
+    : undefined
   const diHeaders = {
     "Content-Type": "application/json",
     "api-key": process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY,
@@ -38,7 +42,11 @@ const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) =
   }
 }
 
-export async function customBeginAnalyzeDocument(modelId: string, source: string, sourceType: "base64" | "url") {
+export async function customBeginAnalyzeDocument(
+  modelId: string,
+  source: string,
+  sourceType: "base64" | "url"
+): Promise<AnalyzeDocumentResult> {
   const diParam = customDocumentIntelligenceObject(modelId)
   const analyzeDocumentUrl = diParam.analyzeDocumentUrl
   const analyzeDocumentHeaders = diParam.diHeaders
@@ -51,26 +59,33 @@ export async function customBeginAnalyzeDocument(modelId: string, source: string
   })
 
   if (!response.ok) {
-    throw new Error("Failed to analyze document. " + response.statusText)
+    throw new Error(`Failed to analyze document. ${response.statusText}`)
   }
 
   const resultId = response.headers.get("apim-request-id")
 
-  if (resultId != null) {
+  if (resultId) {
     return await customGetAnalyzeResult(modelId, resultId)
   }
 
-  throw new Error("Failed to get Result ID. Status: " + response.status)
+  throw new Error(`Failed to get Result ID. Status: ${response.status}`)
 }
 
-async function customGetAnalyzeResult(modelId: string, resultId: string) {
+async function customGetAnalyzeResult(modelId: string, resultId: string): Promise<AnalyzeDocumentResult> {
   const diParam = customDocumentIntelligenceObject(modelId, resultId)
   const analyzeResultUrl = diParam.analyzeResultUrl
+  if (!analyzeResultUrl) {
+    throw new Error("analyzeResultUrl is undefined")
+  }
   const analyzeDocumentHeaders = diParam.diHeaders
 
   try {
-    let operationStatus
-    let analyzedResult
+    let operationStatus: string = ""
+    let analyzedResult: AnalyzeDocumentResult["analyzeResult"] = {
+      version: "",
+      readResults: [],
+      pageResults: [],
+    }
 
     while (!operationStatus || operationStatus !== "succeeded") {
       const response = await fetch(analyzeResultUrl, {
@@ -79,7 +94,7 @@ async function customGetAnalyzeResult(modelId: string, resultId: string) {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to fetch result." + response.json)
+        throw new Error("Failed to fetch result." + (await response.json()))
       }
 
       const responseBody = await response.json()
@@ -94,56 +109,12 @@ async function customGetAnalyzeResult(modelId: string, resultId: string) {
       await new Promise(resolve => setTimeout(resolve, 5000))
     }
 
-    return analyzedResult
+    return {
+      status: operationStatus,
+      analyzeResult: analyzedResult,
+    }
   } catch (e) {
-    console.log(e)
+    console.error(e)
+    throw e
   }
 }
-
-// const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) => {
-//     const apiVersion = "2023-07-31"
-//     const analyzeDocumentUrl = process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT + "/formrecognizer/documentModels/" + modelId + ":analyze?api-version=" + apiVersion + "&locale=en-GB";
-//     const analyzeResultUrl = process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT + "/formrecognizer/documentModels/" + modelId + "/analyzeResults/" + resultId + "?api-version=" + apiVersion + ""
-//     const diHeaders = {
-//         'Content-Type': 'application/json',
-//         'api-key': process.env.AZURE_DOCUMENT_INTELLIGENCE_KEY
-//     }
-//     return {
-//         analyzeDocumentUrl,
-//         analyzeResultUrl,
-//         diHeaders
-//     }
-// }
-
-// export async function customBeginAnalyzeDocument(modelId: string, base64String: string) {
-
-//     const diParam = customDocumentIntelligenceObject(modelId);
-//     const analyzeDocumentUrl = diParam.analyzeDocumentUrl;
-//     const analyzeDocumentHeaders = diParam.diHeaders;
-//     const analyzeDocumentBody = {
-//         'base64Source': base64String
-//     }
-
-//     try {
-//         const response = await fetch(analyzeDocumentUrl, {
-//             method: 'POST',
-//             headers: analyzeDocumentHeaders,
-//             body: JSON.stringify(analyzeDocumentBody),
-//         });
-
-//         if (!response.ok) {
-//             throw new Error('Failed to analyze document. '+ response.statusText);
-//         }
-
-//         const resultId = response.headers.get('apim-request-id');
-
-//         if(resultId != null)
-//         {
-//             return await customGetAnalyzeResult(modelId, resultId);
-//         }
-
-//         throw new Error('Failed to get Result ID. Status: ' + response.status)
-//     }
-//     catch (e) {
-//     }
-// }

@@ -119,7 +119,10 @@ import { getTenantId } from "@/features/auth/helpers"
 //   return resources;
 // };
 
-export const FindAllChatThreadsForReporting = async (pageSize = 10, pageNumber = 0) => {
+export const FindAllChatThreadsForReporting = async (
+  pageSize = 10,
+  pageNumber = 0
+): Promise<{ resources: ChatThreadModel[] }> => {
   try {
     const container = await CosmosDBContainer.getInstance().getContainer()
     const tenantId = await getTenantId()
@@ -167,7 +170,7 @@ export const FindAllChatThreadsForReporting = async (pageSize = 10, pageNumber =
   }
 }
 
-export const FindChatThreadByID = async (chatThreadId: string) => {
+export const FindChatThreadByID = async (chatThreadId: string): Promise<ChatThreadModel[]> => {
   try {
     const container = await CosmosDBContainer.getInstance().getContainer()
     const tenantId = await getTenantId()
@@ -201,7 +204,7 @@ export const FindChatThreadByID = async (chatThreadId: string) => {
   }
 }
 
-export const FindAllChatsInThread = async (chatThreadId: string) => {
+export const FindAllChatsInThread = async (chatThreadId: string): Promise<ChatMessageModel[]> => {
   try {
     const container = await CosmosDBContainer.getInstance().getContainer()
     const tenantId = await getTenantId()

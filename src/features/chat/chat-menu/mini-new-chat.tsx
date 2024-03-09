@@ -10,11 +10,11 @@ import {
 } from "../chat-services/chat-thread-service"
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
 
-export const MiniNewChat = () => {
+export const MiniNewChat = (): JSX.Element => {
   const router = useRouter()
   const { showError } = useGlobalMessageContext()
 
-  const startNewChat = async () => {
+  const startNewChat = async (): Promise<void> => {
     const title = "New Chat"
 
     try {

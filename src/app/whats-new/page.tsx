@@ -6,7 +6,7 @@ import { Suspense } from "react"
 
 export const dynamic = "force-dynamic"
 
-export default async function Home() {
+export default async function Home(): Promise<JSX.Element> {
   const content = await loadContent()
   return (
     <Card className="flex h-full flex-1 justify-center overflow-y-scroll">

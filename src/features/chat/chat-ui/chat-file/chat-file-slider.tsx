@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/fe
 import { FileText } from "lucide-react"
 import { ChatFileUI } from "./chat-file-ui"
 
-export const ChatFileSlider = () => {
+export const ChatFileSlider = (): JSX.Element => {
   return (
     <div>
       <Sheet>

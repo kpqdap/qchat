@@ -10,11 +10,11 @@ import {
 } from "../chat-services/chat-thread-service"
 import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
 
-export const NewChat = () => {
+export const NewChat = (): JSX.Element => {
   const router = useRouter()
   const { showError } = useGlobalMessageContext()
 
-  const startNewChat = async () => {
+  const startNewChat = async (): Promise<void> => {
     const title = "New Chat"
 
     try {
@@ -29,7 +29,6 @@ export const NewChat = () => {
           router.push(`/chat/${newChatThread.id}`)
         }
       }
-      router.refresh()
     } catch (_error) {
       showError("Failed to start a new chat. Please try again later.")
     }
