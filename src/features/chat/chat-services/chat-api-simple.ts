@@ -20,20 +20,20 @@ async function buildUserContextPrompt(): Promise<string> {
 }
 
 export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> => {
-  const { lastHumanMessage, chatThread } = await initAndGuardChatSession(props)
+  const { updatedLastHumanMessage, chatThread } = await initAndGuardChatSession(props)
   const openAI = OpenAIInstance()
   const userId = await userHashedId()
   const tenantId = await getTenantId()
   const userContextPrompt = await buildUserContextPrompt()
 
   const chatHistory = new CosmosDBChatMessageHistory({
-    sessionId: chatThread.id,
+    chatThreadId: chatThread.id,
     userId: userId,
     tenantId: tenantId,
   })
 
   await chatHistory.addMessage({
-    content: lastHumanMessage.content,
+    content: updatedLastHumanMessage.content,
     role: "user",
   })
 
@@ -57,9 +57,7 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> =>
     })
 
     const stream = OpenAIStream(response, {
-      async onStart() {
-        console.log("Chat streaming started")
-      },
+      async onStart() {},
       async onCompletion(completion) {
         try {
           const translatedCompletion = await translator(completion)

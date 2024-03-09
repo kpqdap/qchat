@@ -1,11 +1,11 @@
 trigger:
   branches:
-      include:
-        - main
+    include:
+      - main
 
 variables:
   - name: poolName
-    value: 'QGGPT_Pool'
+    value: "QGGPT_Pool"
 
   - name: appSettings
     value: >
@@ -62,197 +62,215 @@ variables:
       -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"
       -QGAIP_QCHAT_FQDN_URI "$(QGAIP_QCHAT_FQDN_URI)"
       -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"
-    
 
   - group: dev-az-qggpt-variables
   - group: prod-az-qggpt-variables
 
 stages:
-- stage: Build
-  displayName: Build Stage
-  variables:
-  - group: dev-az-qggpt-variables
-  jobs:
-    - job: BuildJob
-      displayName: 'Build Job'
-      pool:
-        name: $(poolName)
-      steps:
-        - checkout: self
-          clean: "true"
-        - task: Docker@2
-          displayName: 'Build Docker Image for Analysis'
-          inputs:
-            containerRegistry: '$(CONTAINER_REGISTRY)'
-            command: 'build'
-            Dockerfile: 'src/dockerfile'
-            repository: '$(REPOSITORY)'
-            tags: '$(Build.BuildId)'
+  - stage: Linting
+    displayName: "🕵️‍♂️ - Linting Stage"
+    jobs:
+      - job: LintJob
+        displayName: Linting Job
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+            displayName: "Install Node.js"
+          - script: |
+              cd src/
+              npm ci
+              npm run lint
+            displayName: "Npm scripts"
 
-- stage: Development
-  displayName: Development Stage
-  dependsOn: Build
-  condition: succeeded()
-  variables:
-    - group: dev-az-qggpt-variables
-  jobs:
-    - deployment: DeployToDev
-      displayName: 'Deploy to Development Environment'
-      environment: 'Dev'
-      pool:
-        name: $(poolName)
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: Docker@2
-                displayName: 'Push Docker Image to Dev Registry'
-                inputs:
-                  containerRegistry: '$(CONTAINER_REGISTRY)'
-                  repository: '$(REPOSITORY)'
-                  command: 'push'
-                  tags: '$(Build.BuildId)'
-              - task: AzureRmWebAppDeployment@4
-                displayName: 'Deploy to Development Web App'
-                inputs:
-                  ConnectionType: 'AzureRM'
-                  azureSubscription: '$(Dev_Service_Connection)'
-                  appType: 'webAppContainer'
-                  WebAppName: '$(WEBAPPNAME)'
-                  DockerNamespace: $(DOCKER_NAMESPACE)
-                  DockerRepository: '$(REPOSITORY)'
-                  DockerImageTag: '$(Build.BuildId)'
-                  AppSettings: '$(appSettings)'
-    - job: CleanupImagesDev
-      displayName: 'Cleanup Docker Images - Dev'
-      dependsOn: DeployToDev
-      pool:
-        name: $(poolName)
-      steps:
-        - task: AzureCLI@2
-          inputs:
-            azureSubscription: '$(Dev_Service_Connection)'
-            scriptType: 'ps'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-              $registryName = '$(REGISTRY_NAME)'
-              $doNotDeleteTags = '$(Build.BuildId)'
-              $skipLastTags = 3
-                    
-              # Get a list of repositories in the ACR
-              $repoArray = (az acr repository list --name $registryName --output json | ConvertFrom-Json)
-              
-              # Loop through each repository
-              foreach ($repo in $repoArray)
-              {
-                  # Get a list of tags for the repository, skip the number of tags specified in $skipLastTags
-                  $tagsArray = (az acr repository show-tags --name $registryName --repository $repo --orderby time_asc --output json | ConvertFrom-Json ) | Select-Object -SkipLast $skipLastTags
-              
-                  # Loop through each tag and delete the image
-                  foreach($tag in $tagsArray)
-                  {
-                      # Skip recently build tag
-                      if($doNotDeleteTags -contains $tag) 
-                      {
-                          Write-Output("Tag skipped - $tag")
-                      }
-                      else
-                      {
-                          # Delete the image
-                          try 
-                          {
-                              az acr repository delete --name $registryName --image "$repo`:$tag" --yes
-                              Write-Output "Deleted images: $repo`:$tag"
-                          }
-                          catch 
-                          {
-                              Write-Error ("Failed to delete image $repo`:$tag. Error: $_")
-                          }
-                      }
-                  }
-              }
-            powerShellErrorActionPreference: 'continue'
+  - stage: Build
+    displayName: "🛠️ - Build Stage"
+    variables:
+      - group: dev-az-qggpt-variables
+    jobs:
+      - job: BuildJob
+        displayName: "Build Job"
+        pool:
+          name: $(poolName)
+        steps:
+          - checkout: self
+            clean: true
 
-- stage: Production
-  displayName: Production Stage
-  dependsOn: Development
-  condition: and(succeeded('Development'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  variables:
-    - group: prod-az-qggpt-variables
-  jobs:
-    - deployment: DeployToProd
-      displayName: 'Deploy to Production Environment'
-      environment: 'Prod'
-      pool:
-        name: $(poolName)
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: Docker@2
-                displayName: 'Push Docker Image to Prod Registry'
-                inputs:
-                  containerRegistry: '$(CONTAINER_REGISTRY)'
-                  repository: '$(REPOSITORY)'
-                  command: 'push'
-                  tags: '$(Build.BuildId)'
-              - task: AzureRmWebAppDeployment@4
-                displayName: 'Deploy to Production Web App'
-                inputs:
-                  ConnectionType: 'AzureRM'
-                  azureSubscription: 'Prod QGGPT'
-                  appType: 'webAppContainer'
-                  WebAppName: '$(WEBAPPNAME)'
-                  DockerNamespace: '$(DOCKER_NAMESPACE)'
-                  DockerRepository: '$(REPOSITORY)'
-                  DockerImageTag: '$(Build.BuildId)'
-                  AppSettings: '$(appSettings)'
+          - task: Docker@2
+            displayName: "Build Docker Image for Analysis"
+            inputs:
+              containerRegistry: "$(CONTAINER_REGISTRY)"
+              command: "build"
+              Dockerfile: "src/dockerfile"
+              repository: "$(REPOSITORY)"
+              tags: "$(Build.BuildId)"
 
-    - job: CleanupImagesProd
-      displayName: 'Cleanup Docker Images - Prod'
-      dependsOn: DeployToProd
-      pool:
-        name: $(poolName)
-      steps:
-        - task: AzureCLI@2
-          inputs:
-            azureSubscription: 'Prod QGGPT'
-            scriptType: 'ps'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-              $registryName = '$(REGISTRY_NAME)'
-              $doNotDeleteTags = '$(Build.BuildId)'
-              $skipLastTags = 3
-              # Get a list of repositories in the ACR
-              $repoArray = (az acr repository list --name $registryName --output json | ConvertFrom-Json)
-              
-              # Loop through each repository
-              foreach ($repo in $repoArray)
-              {
-                  # Get a list of tags for the repository, skip the number of tags specified in $skipLastTags
-                  $tagsArray = (az acr repository show-tags --name $registryName --repository $repo --orderby time_asc --output json | ConvertFrom-Json ) | Select-Object -SkipLast $skipLastTags
-              
-                  # Loop through each tag and delete the image
-                  foreach($tag in $tagsArray)
-                  {
-                      # Skip recently build tag
-                      if($doNotDeleteTags -contains $tag) 
-                      {
-                          Write-Output("Tag skipped - $tag")
-                      }
-                      else
-                      {
-                          # Delete the image
-                          try 
-                          {
-                              az acr repository delete --name $registryName --image "$repo`:$tag" --yes
-                              Write-Output "Deleted images: $repo`:$tag"
-                          }
-                          catch 
-                          {
-                              Write-Error ("Failed to delete image $repo`:$tag. Error: $_")
-                          }
-                      }
-                  }
-              }
-            powerShellErrorActionPreference: 'continue'
+  - stage: Development
+    displayName: "🧪🚀 - Development Stage"
+    dependsOn: Build
+    condition: succeeded()
+    variables:
+      - group: dev-az-qggpt-variables
+    jobs:
+      - deployment: DeployToDev
+        displayName: "Deploy to Development Environment"
+        environment: "Dev"
+        pool:
+          name: $(poolName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: Docker@2
+                  displayName: "Push Docker Image to Dev Registry"
+                  inputs:
+                    containerRegistry: "$(CONTAINER_REGISTRY)"
+                    repository: "$(REPOSITORY)"
+                    command: "push"
+                    tags: "$(Build.BuildId)"
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy to Development Web App"
+                  inputs:
+                    ConnectionType: "AzureRM"
+                    azureSubscription: "$(Dev_Service_Connection)"
+                    appType: "webAppContainer"
+                    WebAppName: "$(WEBAPPNAME)"
+                    DockerNamespace: $(DOCKER_NAMESPACE)
+                    DockerRepository: "$(REPOSITORY)"
+                    DockerImageTag: "$(Build.BuildId)"
+                    AppSettings: "$(appSettings)"
+      - job: CleanupImagesDev
+        displayName: "Cleanup Docker Images - Dev"
+        dependsOn: DeployToDev
+        pool:
+          name: $(poolName)
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: "$(Dev_Service_Connection)"
+              scriptType: "ps"
+              scriptLocation: "inlineScript"
+              inlineScript: |
+                $registryName = '$(REGISTRY_NAME)'
+                $doNotDeleteTags = '$(Build.BuildId)'
+                $skipLastTags = 3
+                      
+                # Get a list of repositories in the ACR
+                $repoArray = (az acr repository list --name $registryName --output json | ConvertFrom-Json)
+
+                # Loop through each repository
+                foreach ($repo in $repoArray)
+                {
+                    # Get a list of tags for the repository, skip the number of tags specified in $skipLastTags
+                    $tagsArray = (az acr repository show-tags --name $registryName --repository $repo --orderby time_asc --output json | ConvertFrom-Json ) | Select-Object -SkipLast $skipLastTags
+
+                    # Loop through each tag and delete the image
+                    foreach($tag in $tagsArray)
+                    {
+                        # Skip recently build tag
+                        if($doNotDeleteTags -contains $tag) 
+                        {
+                            Write-Output("Tag skipped - $tag")
+                        }
+                        else
+                        {
+                            # Delete the image
+                            try 
+                            {
+                                az acr repository delete --name $registryName --image "$repo`:$tag" --yes
+                                Write-Output "Deleted images: $repo`:$tag"
+                            }
+                            catch 
+                            {
+                                Write-Error ("Failed to delete image $repo`:$tag. Error: $_")
+                            }
+                        }
+                    }
+                }
+              powerShellErrorActionPreference: "continue"
+
+  - stage: Production
+    displayName: "🔥🚀 - Production Stage"
+    dependsOn: Development
+    condition: and(succeeded('Development'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    variables:
+      - group: prod-az-qggpt-variables
+    jobs:
+      - deployment: DeployToProd
+        displayName: "Deploy to Production Environment"
+        environment: "Prod"
+        pool:
+          name: $(poolName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: Docker@2
+                  displayName: "Push Docker Image to Prod Registry"
+                  inputs:
+                    containerRegistry: "$(CONTAINER_REGISTRY)"
+                    repository: "$(REPOSITORY)"
+                    command: "push"
+                    tags: "$(Build.BuildId)"
+                - task: AzureRmWebAppDeployment@4
+                  displayName: "Deploy to Production Web App"
+                  inputs:
+                    ConnectionType: "AzureRM"
+                    azureSubscription: "Prod QGGPT"
+                    appType: "webAppContainer"
+                    WebAppName: "$(WEBAPPNAME)"
+                    DockerNamespace: "$(DOCKER_NAMESPACE)"
+                    DockerRepository: "$(REPOSITORY)"
+                    DockerImageTag: "$(Build.BuildId)"
+                    AppSettings: "$(appSettings)"
+
+      - job: CleanupImagesProd
+        displayName: "Cleanup Docker Images - Prod"
+        dependsOn: DeployToProd
+        pool:
+          name: $(poolName)
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: "Prod QGGPT"
+              scriptType: "ps"
+              scriptLocation: "inlineScript"
+              inlineScript: |
+                $registryName = '$(REGISTRY_NAME)'
+                $doNotDeleteTags = '$(Build.BuildId)'
+                $skipLastTags = 3
+                # Get a list of repositories in the ACR
+                $repoArray = (az acr repository list --name $registryName --output json | ConvertFrom-Json)
+
+                # Loop through each repository
+                foreach ($repo in $repoArray)
+                {
+                    # Get a list of tags for the repository, skip the number of tags specified in $skipLastTags
+                    $tagsArray = (az acr repository show-tags --name $registryName --repository $repo --orderby time_asc --output json | ConvertFrom-Json ) | Select-Object -SkipLast $skipLastTags
+
+                    # Loop through each tag and delete the image
+                    foreach($tag in $tagsArray)
+                    {
+                        # Skip recently build tag
+                        if($doNotDeleteTags -contains $tag) 
+                        {
+                            Write-Output("Tag skipped - $tag")
+                        }
+                        else
+                        {
+                            # Delete the image
+                            try 
+                            {
+                                az acr repository delete --name $registryName --image "$repo`:$tag" --yes
+                                Write-Output "Deleted images: $repo`:$tag"
+                            }
+                            catch 
+                            {
+                                Write-Error ("Failed to delete image $repo`:$tag. Error: $_")
+                            }
+                        }
+                    }
+                }
+              powerShellErrorActionPreference: "continue"

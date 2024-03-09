@@ -2,14 +2,15 @@ import { getTenantId, userHashedId } from "@/features/auth/helpers"
 import { OpenAIInstance } from "@/features/common/openai"
 import { AI_NAME } from "@/features/theme/customise"
 import { OpenAIStream, StreamingTextResponse } from "ai"
-import { similaritySearchVectorWithScore } from "./azure-cog-search/azure-cog-vector-store"
+import { AzureCogDocumentIndex, similaritySearchVectorWithScore } from "./azure-cog-search/azure-cog-vector-store"
 import { initAndGuardChatSession } from "./chat-thread-service"
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb"
 import { PromptGPTProps } from "./models"
 import { updateChatThreadIfUncategorised } from "./chat-utility"
+import { DocumentSearchModel } from "./azure-cog-search/azure-cog-vector-store"
 
 const SYSTEM_PROMPT = `You are ${AI_NAME} who is a helpful AI Assistant.`
-const CONTEXT_PROMPT = ({ context, userQuestion }: { context: string; userQuestion: string }) => {
+const CONTEXT_PROMPT = ({ context, userQuestion }: { context: string; userQuestion: string }): string => {
   return `
 - Given the following extracted parts of a document, create a final answer. \n
 - If you don't know the answer, just say that you don't know. Don't try to make up an answer.\n
@@ -22,14 +23,14 @@ ${context}
 question: ${userQuestion}`
 }
 
-export const ChatAPIData = async (props: PromptGPTProps) => {
-  const { lastHumanMessage, id, chatThread } = await initAndGuardChatSession(props)
+export const ChatAPIData = async (props: PromptGPTProps): Promise<Response> => {
+  const { chatThreadId, updatedLastHumanMessage, chatThread } = await initAndGuardChatSession(props)
 
   const openAI = OpenAIInstance()
   const userId = await userHashedId()
   const tenantId = await getTenantId()
   const chatHistory = new CosmosDBChatMessageHistory({
-    sessionId: chatThread.id,
+    chatThreadId: chatThreadId,
     userId: userId,
     tenantId: tenantId,
   })
@@ -37,7 +38,7 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
   const history = await chatHistory.getMessages()
   const topHistory = history.slice(history.length - 30, history.length)
 
-  const relevantDocuments = await findRelevantDocuments(lastHumanMessage.content, id)
+  const relevantDocuments = await findRelevantDocuments(updatedLastHumanMessage.content, chatThreadId)
 
   const context = relevantDocuments
     .map((result, index) => {
@@ -59,7 +60,7 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
           role: "user",
           content: CONTEXT_PROMPT({
             context,
-            userQuestion: lastHumanMessage.content,
+            userQuestion: updatedLastHumanMessage.content,
           }),
         },
       ],
@@ -70,7 +71,7 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
     const stream = OpenAIStream(response, {
       async onCompletion(completion) {
         await chatHistory.addMessage({
-          content: lastHumanMessage.content,
+          content: updatedLastHumanMessage.content,
           role: "user",
         })
 
@@ -104,7 +105,10 @@ export const ChatAPIData = async (props: PromptGPTProps) => {
   }
 }
 
-const findRelevantDocuments = async (query: string, chatThreadId: string) => {
+const findRelevantDocuments = async (
+  query: string,
+  chatThreadId: string
+): Promise<(AzureCogDocumentIndex & DocumentSearchModel)[]> => {
   const userId = await userHashedId()
   const tenantId = await getTenantId()
   const relevantDocuments = await similaritySearchVectorWithScore(query, 10, userId, chatThreadId, tenantId)

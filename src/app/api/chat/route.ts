@@ -1,8 +1,8 @@
 import { chatAPIEntry } from "@/features/chat/chat-services/chat-api-entry"
 
-const delay = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = (ms: number | undefined): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<Response> {
   const body = await req.json()
 
   const maxRetries = 2

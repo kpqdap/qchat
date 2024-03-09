@@ -13,7 +13,7 @@ export interface IAppInsightsContext {
 
 export const AppInsightsContext = createContext<IAppInsightsContext | null>(null)
 
-export const useAppInsightsContext = () => {
+export const useAppInsightsContext = (): IAppInsightsContext => {
   const context = useContext(AppInsightsContext)
   if (context === null) {
     throw new Error("useAppInsightsContext must be used within an AppInsightsProvider")
