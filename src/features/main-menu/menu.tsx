@@ -8,7 +8,7 @@ import { UserProfile } from "../user-profile"
 import { useSession } from "next-auth/react"
 import { useMenuContext } from "./menu-context"
 
-export const MainMenu = () => {
+export const MainMenu = (): JSX.Element => {
   const { data: session } = useSession()
   const { isMenuOpen, toggleMenu } = useMenuContext()
   return (
@@ -22,14 +22,12 @@ export const MainMenu = () => {
             <Home />
           </Link>
         </Button>
-        {session?.user?.qchatAdmin ? (
+        {session?.user?.qchatAdmin && (
           <Button asChild className="rounded-full w-[40px] h-[40px] p-2 text-primary" variant={"outline"}>
             <Link href="/reporting" title="Reporting">
               <LayoutDashboard />
             </Link>
           </Button>
-        ) : (
-          <></>
         )}
       </div>
       <div className="flex flex-col gap-2 items-center">

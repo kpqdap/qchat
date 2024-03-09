@@ -88,7 +88,7 @@ export const ChatProvider: FC<Prop> = props => {
   const closeModal = (): void => setIsModalOpen(false)
 
   const validateChatBody = (newBody: PromptGPTBody): boolean => {
-    return newBody.id !== undefined && newBody.chatType !== undefined
+    return newBody.chatThreadId !== undefined && newBody.chatType !== undefined
   }
 
   const setChatBody = (body: PromptGPTBody): void => {

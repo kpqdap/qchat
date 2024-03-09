@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/features/ui/card
 
 export const dynamic = "force-dynamic"
 
-export default async function Home() {
+export default async function Home(): Promise<JSX.Element> {
   return (
     <div className="col-span-5 h-full w-full">
       <div className="grid h-full w-full grid-cols-2 grid-rows-2 justify-center">

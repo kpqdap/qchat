@@ -14,7 +14,12 @@ function threeMonthsAgo(): string {
   return date.toISOString()
 }
 
-export const FindAllChatThreadsForReporting = async (pageSize = 10, pageNumber = 0) => {
+export const FindAllChatThreadsForReporting = async (
+  pageSize = 10,
+  pageNumber = 0
+): Promise<{
+  resources: ChatThreadModel[]
+}> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
 
   const querySpec: SqlQuerySpec = {
@@ -53,7 +58,7 @@ export const FindAllChatThreadsForReporting = async (pageSize = 10, pageNumber =
   return { resources }
 }
 
-export const FindChatThreadByID = async (chatThreadID: string) => {
+export const FindChatThreadByID = async (chatThreadID: string): Promise<ChatThreadModel[]> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
 
   const querySpec: SqlQuerySpec = {
@@ -83,7 +88,7 @@ export const FindChatThreadByID = async (chatThreadID: string) => {
   return resources
 }
 
-export const FindAllChatsInThread = async (chatThreadID: string) => {
+export const FindAllChatsInThread = async (chatThreadID: string): Promise<ChatMessageModel[]> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
 
   const querySpec: SqlQuerySpec = {

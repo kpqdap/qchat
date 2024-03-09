@@ -34,7 +34,7 @@ export class CosmosDBChatMessageHistory {
   async addMessage(message: ChatCompletionMessage, citations: string = ""): Promise<void> {
     try {
       const modelToSave: ChatMessageModel = {
-        id: message.id,
+        id: uniqueId(),
         createdAt: new Date(),
         type: MESSAGE_ATTRIBUTE,
         isDeleted: false,

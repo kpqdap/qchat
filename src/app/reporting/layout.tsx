@@ -5,7 +5,7 @@ export const metadata = {
   description: AI_NAME,
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }): Promise<JSX.Element> {
   return (
     <>
       <div className="h-full w-full flex-1">{children}</div>

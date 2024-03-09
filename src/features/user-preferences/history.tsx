@@ -12,7 +12,7 @@ export type ReportingProp = {
   }
 }
 
-export const Reporting = async (props: ReportingProp) => {
+export const Reporting = async (props: ReportingProp): Promise<JSX.Element> => {
   const _pageNumber = Number(props.searchParams.pageNumber ?? 0)
   const pageSize = Number(props.searchParams.pageSize ?? 10)
   const pageNumber = _pageNumber < 0 ? 0 : _pageNumber

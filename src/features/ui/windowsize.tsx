@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export function useWindowSize() {
+export function useWindowSize(): { width: number; height: number } {
   // Initialize state with 0 width/height so server and client renders match
   const [windowSize, setWindowSize] = useState({
     width: 0,
@@ -9,7 +9,7 @@ export function useWindowSize() {
 
   useEffect(() => {
     // Handler to call on window resize
-    function handleResize() {
+    function handleResize(): void {
       // Set window width/height to state
       setWindowSize({
         width: window.innerWidth,

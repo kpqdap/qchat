@@ -8,7 +8,7 @@ export const metadata = {
   description: AI_NAME,
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
     <>
       <div className="grid h-full w-full grid-cols-6 overflow-hidden bg-card">
