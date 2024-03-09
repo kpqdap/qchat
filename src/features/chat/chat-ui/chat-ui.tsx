@@ -13,11 +13,7 @@ export const ChatUI: FC<Prop> = () => {
 
   return (
     <div className="col-span-6 md:col-span-5 lg:col-span-4 xl:col-span-5 relative overflow-hidden flex-1 bg-altBackground shadow-md text-text sm:text-lg lg:text-xl h-full">
-      {messages.length !== 0 ? (
-        <ChatMessageContainer chatId={""} sentiment={""} chatThreadId={""} />
-      ) : (
-        <ChatMessageEmptyState />
-      )}
+      {messages.length !== 0 ? <ChatMessageContainer chatThreadId={""} /> : <ChatMessageEmptyState />}
 
       <ChatInput />
     </div>

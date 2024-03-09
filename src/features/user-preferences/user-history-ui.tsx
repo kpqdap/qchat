@@ -6,13 +6,12 @@ import { FindAllChatsInThread, FindChatThreadByID } from "./history-service"
 import { ChatRole } from "../chat/chat-services/models"
 
 interface Props {
-  chatId: string
   chatThreadId: string
 }
 
 export const ChatReportingUI: FC<Props> = async props => {
-  const chatThreads = await FindChatThreadByID(props.chatId)
-  const chats = await FindAllChatsInThread(props.chatId)
+  const chatThreads = await FindChatThreadByID(props.chatThreadId)
+  const chats = await FindAllChatsInThread(props.chatThreadId)
   const chatThread = chatThreads[0]
 
   return (
@@ -26,8 +25,12 @@ export const ChatReportingUI: FC<Props> = async props => {
               message={message.content}
               type={message.role}
               key={index}
-              chatMessageId={chatThread.id}
-              chatThreads={props.chatId}
+              chatMessageId={message.id}
+              chatThreadId={chatThread.id}
+              contentSafetyWarning={undefined}
+              feedback={undefined}
+              sentiment={undefined}
+              reason={undefined}
             />
           ))}
         </div>

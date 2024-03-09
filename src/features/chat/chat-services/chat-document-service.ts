@@ -74,7 +74,7 @@ const LoadFile = async (
         // const poller = await client.beginAnalyzeDocument("prebuilt-read", await blob.arrayBuffer());
         // const { paragraphs } = await poller.pollUntilDone();
 
-        const { paragraphs } = analyzeDocument as AnalyzeResult<AnalyzedDocument>
+        const { paragraphs } = analyzeDocument as unknown as AnalyzeResult<AnalyzedDocument>
 
         const docs: Array<string> = []
 
