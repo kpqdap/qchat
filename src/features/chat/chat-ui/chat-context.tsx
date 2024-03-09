@@ -34,6 +34,7 @@ interface ChatContextProps extends UseChatHelpers {
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null)
+
 interface Prop {
   children: React.ReactNode
   id: string
@@ -83,28 +84,57 @@ export const ChatProvider: FC<Prop> = props => {
   })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const openModal = () => setIsModalOpen(true)
-  const closeModal = () => setIsModalOpen(false)
+  const openModal = (): void => setIsModalOpen(true)
+  const closeModal = (): void => setIsModalOpen(false)
 
-  const setChatBody = (body: PromptGPTBody) => {
+  const validateChatBody = (newBody: PromptGPTBody): boolean => {
+    return newBody.id !== undefined && newBody.chatType !== undefined
+  }
+
+  const setChatBody = (body: PromptGPTBody): void => {
+    if (!validateChatBody(body)) {
+      showError("Invalid chat body")
+      Router.refresh()
+      return
+    }
+    if (JSON.stringify(body) === JSON.stringify(chatBody)) {
+      return
+    }
     setBody(body)
   }
 
-  const onChatTypeChange = (value: ChatType) => {
-    fileState.setShowFileUpload(value)
-    fileState.setIsFileNull(true)
-    setChatBody({ ...chatBody, chatType: value })
+  const onChatTypeChange = (value: ChatType): boolean => {
+    if (value === chatBody.chatType) {
+      return false
+    }
+    try {
+      fileState.setShowFileUpload(value)
+      fileState.setIsFileNull(true)
+      setChatBody({ ...chatBody, chatType: value })
+    } catch (error) {
+      showError((error as Error).message)
+      return false
+    }
+    return true
   }
 
-  const onConversationStyleChange = (value: ConversationStyle) => {
+  const onConversationStyleChange = (value: ConversationStyle): boolean => {
+    if (value === chatBody.conversationStyle) {
+      return false
+    }
     setChatBody({ ...chatBody, conversationStyle: value })
+    return true
   }
 
-  const onConversationSensitivityChange = (value: ConversationSensitivity) => {
+  const onConversationSensitivityChange = (value: ConversationSensitivity): boolean => {
+    if (value === chatBody.conversationSensitivity) {
+      return false
+    }
     setChatBody({ ...chatBody, conversationSensitivity: value })
+    return true
   }
 
-  function onError(error: Error) {
+  function onError(error: Error): void {
     showError(error.message, response.reload)
   }
 
@@ -133,10 +163,10 @@ export const ChatProvider: FC<Prop> = props => {
   )
 }
 
-export const useChatContext = () => {
+export const useChatContext = (): ChatContextProps => {
   const context = useContext(ChatContext)
   if (!context) {
-    throw new Error("ChatContext is null")
+    throw new Error("Chat context must be used within a ChatProvider")
   }
   return context
 }

@@ -7,7 +7,7 @@ import { CosmosDBContainer } from "../../common/cosmos"
 import { ChatMessageModel, MESSAGE_ATTRIBUTE, ChatSentiment, ChatRole } from "./models"
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
 
-export const FindAllChats = async (chatThreadId: string) => {
+export const FindAllChats = async (chatThreadId: string): Promise<ChatMessageModel[]> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
 
   const querySpec: SqlQuerySpec = {
@@ -27,7 +27,7 @@ export const FindAllChats = async (chatThreadId: string) => {
   return resources
 }
 
-export const FindChatMessageByID = async (id: string, chatThreadId: string) => {
+export const FindChatMessageByID = async (id: string, chatThreadId: string): Promise<ChatMessageModel[]> => {
   const container = await CosmosDBContainer.getInstance().getContainer()
 
   const querySpec: SqlQuerySpec = {
@@ -54,7 +54,7 @@ export const CreateUserFeedbackChatId = async (
   sentiment: ChatSentiment,
   reason: string,
   chatThreadId: string
-) => {
+): Promise<ChatMessageModel[]> => {
   try {
     const container = await CosmosDBContainer.getInstance().getContainer()
     const chatMessageModel = await FindChatMessageByID(chatMessageId, chatThreadId)
@@ -67,14 +67,20 @@ export const CreateUserFeedbackChatId = async (
 
       const itemToUpdate = { ...message }
       await container.items.upsert(itemToUpdate)
-      return itemToUpdate
+      return [itemToUpdate]
     }
+    return []
   } catch (e) {
     console.log(e)
+    return []
   }
 }
 
-export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, tenantId: string) => {
+export const UpsertChat = async (
+  chatModel: ChatMessageModel,
+  userId: string,
+  tenantId: string
+): Promise<ChatMessageModel[]> => {
   const modelToSave: ChatMessageModel = {
     ...chatModel,
     createdAt: new Date(),
@@ -86,8 +92,10 @@ export const UpsertChat = async (chatModel: ChatMessageModel, userId: string, te
 
   const container = await CosmosDBContainer.getInstance().getContainer()
   if (container) {
-    await container.items.upsert(modelToSave)
+    const response = await container.items.upsert(modelToSave)
+    return response.resource ? [response.resource as unknown as ChatMessageModel] : []
   }
+  return []
 }
 
 export const insertPromptAndResponse = async (
@@ -96,7 +104,7 @@ export const insertPromptAndResponse = async (
   assistantResponse: string,
   userId: string,
   tenantId: string
-) => {
+): Promise<void> => {
   await UpsertChat(
     {
       ...newChatModel(userId, tenantId),
@@ -120,7 +128,6 @@ export const insertPromptAndResponse = async (
 }
 
 export const newChatModel = (userId: string, tenantId: string): ChatMessageModel => {
-  // Added parameters
   return {
     content: "",
     chatThreadId: "",

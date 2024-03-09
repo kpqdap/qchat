@@ -3,7 +3,7 @@ import { Container, CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKin
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev"
 const CONTAINER_NAME = process.env.AZURE_COSMOSDB_CONTAINER_NAME || "history"
 
-export const initDBContainer = async () => {
+export const initDBContainer = async (): Promise<Container> => {
   const endpoint = process.env.AZURE_COSMOSDB_URI
   const key = process.env.AZURE_COSMOSDB_KEY
   const defaultHeaders = { "api-key": process.env.AZURE_SEARCH_API_KEY }
