@@ -2,7 +2,7 @@ import { ChatAPIData } from "./chat-api-data"
 import { ChatAPISimple } from "./chat-api-simple"
 import { PromptGPTProps } from "./models"
 
-export const chatAPIEntry = async (props: PromptGPTProps): Promise<Response> => {
+export const ChatAPIEntry = async (props: PromptGPTProps): Promise<Response> => {
   if (props.chatType === "simple") {
     return await ChatAPISimple(props)
   } else if (props.chatType === "data") {
