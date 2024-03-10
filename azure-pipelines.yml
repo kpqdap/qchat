@@ -94,13 +94,13 @@ stages:
             command: 'buildAndPush'
             Dockerfile: 'src/dockerfile'
         
-        # - task: Docker@2
-        #   displayName: 'Build and Push to PROD'
-        #   inputs:
-        #     containerRegistry: 'Prod-qggptprdacr'
-        #     repository: 'az_qggpt_image'
-        #     command: 'buildAndPush'
-        #     Dockerfile: 'src/dockerfile'
+        - task: Docker@2
+          displayName: 'Build and Push to PROD'
+          inputs:
+            containerRegistry: 'Prod-qggptprdacr'
+            repository: 'az_qggpt_image'
+            command: 'buildAndPush'
+            Dockerfile: 'src/dockerfile'
 
         - task: CmdLine@2
           displayName: 'Trim Local Docker Images'
