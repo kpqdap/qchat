@@ -1,7 +1,6 @@
-import React from 'react';
-import { Mail } from 'lucide-react';
-import { QgovSvg } from '@/components/ui/qldgovlogo';
-import Typography from "@/components/typography";
+import React from 'react'
+import { Mail } from 'lucide-react'
+import Typography from "@/components/typography"
 
 export const Footer: React.FC = () => {
     return (

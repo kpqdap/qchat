@@ -21,13 +21,12 @@ export const userHashedId = async (): Promise<string> => {
 };
 
 export const getTenantId = async (): Promise<string> => {
-  const user = await userSession();
+  const user = await userSession()
   if (user) {
-    return user.tenantId;
+    return user.tenantId
   }
-
-  throw new Error("Tenant not found");
-};
+  throw new Error("Tenant not found")
+}
 
 export type UserModel = {
   name: string;
@@ -40,7 +39,7 @@ export type UserModel = {
 };
 
 export const hashValue = (value: string): string => {
-  const hash = createHash("sha256");
-  hash.update(value);
-  return hash.digest("hex");
-};
+  const hash = createHash("sha256")
+  hash.update(value)
+  return hash.digest("hex")
+}
