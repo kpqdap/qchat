@@ -1,4 +1,4 @@
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 import {
   AudioConfig,
   AutoDetectSourceLanguageConfig,

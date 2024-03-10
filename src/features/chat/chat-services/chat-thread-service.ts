@@ -5,7 +5,7 @@ import { getTenantId, userHashedId, userSession } from "@/features/auth/helpers"
 import { FindAllChats } from "@/features/chat/chat-services/chat-service"
 import { uniqueId } from "@/features/common/util"
 import { ItemResponse, Resource, SqlQuerySpec } from "@azure/cosmos"
-import { CosmosDBContainer } from "../../common/cosmos"
+import { CosmosDBContainer } from "../../common/services/cosmos"
 import {
   CHAT_THREAD_ATTRIBUTE,
   ChatMessageModel,

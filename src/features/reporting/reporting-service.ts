@@ -6,7 +6,7 @@ import {
   ChatThreadModel,
   MESSAGE_ATTRIBUTE,
 } from "../chat/chat-services/models"
-import { CosmosDBContainer } from "../common/cosmos"
+import { CosmosDBContainer } from "../common/services/cosmos"
 import { getTenantId } from "@/features/auth/helpers"
 
 // export const FindAllChatThreadsForReporting = async (

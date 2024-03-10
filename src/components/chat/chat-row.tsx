@@ -8,7 +8,7 @@ import Typography from "../typography"
 import Modal from "../../features/ui/modal"
 import { Markdown } from "../markdown/markdown"
 import AssistantButtons from "../../features/ui/assistant-buttons"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 
 interface ChatRowProps {
   chatMessageId: string

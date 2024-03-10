@@ -1,6 +1,6 @@
 "use client"
 
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { signIn } from "next-auth/react"
 import { Button } from "../../features/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../features/ui/card"

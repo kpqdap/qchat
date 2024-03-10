@@ -1,22 +1,39 @@
 import { getTenantId, userHashedId, userSession } from "@/features/auth/helpers"
-import { OpenAIInstance } from "@/features/common/openai"
+import { OpenAIInstance } from "@/features/common/services/open-ai"
 import { OpenAIStream, StreamingTextResponse } from "ai"
 import { initAndGuardChatSession } from "./chat-thread-service"
 import { CosmosDBChatMessageHistory } from "./cosmosdb/cosmosdb"
-import { PromptGPTProps } from "./models"
+import { PromptGPTProps, ChatRole } from "./models"
 import { updateChatThreadIfUncategorised } from "./chat-utility"
 import { translator } from "./chat-translator-service"
+import { ChatCompletionMessage } from "openai/resources"
 
 async function buildUserContextPrompt(): Promise<string> {
   const session = await userSession()
   const displayName = session?.name
   const contextPrompt = session?.contextPrompt
   if (!displayName) return ""
-  let prompt = `Note, you are chatting to ${displayName}`
+  let prompt = `\nNote, you are chatting to ${displayName}`
   if (contextPrompt && contextPrompt.length > 0) {
-    prompt += ` and they have provided the below context: ${contextPrompt}`
+    prompt += ` and they have provided the below context:\n${contextPrompt}\n`
   }
   return prompt
+}
+
+function getSystemPrompt(): string {
+  return (
+    process.env.SYSTEM_PROMPT ||
+    `-You are QChat who is a helpful AI Assistant developed to assist Queensland government employees in their day-to-day tasks.
+    - You will provide clear and concise queries, and you will respond with polite and professional answers.
+    - You will answer questions truthfully and accurately.
+    - You will respond to questions in accordance with rules of Queensland government.`
+  )
+}
+
+export async function buildFullMetaPrompt(): Promise<string> {
+  const userContextPrompt = await buildUserContextPrompt()
+  const systemPrompt = getSystemPrompt()
+  return systemPrompt + userContextPrompt
 }
 
 export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> => {
@@ -24,7 +41,7 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> =>
   const openAI = OpenAIInstance()
   const userId = await userHashedId()
   const tenantId = await getTenantId()
-  const userContextPrompt = await buildUserContextPrompt()
+  const metaPrompt = await buildFullMetaPrompt()
 
   const chatHistory = new CosmosDBChatMessageHistory({
     chatThreadId: chatThread.id,
@@ -40,21 +57,13 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> =>
   const history = await chatHistory.getMessages()
   const topHistory = history.slice(history.length - 30, history.length)
 
-  const systemPrompt =
-    process.env.SYSTEM_PROMPT ||
-    `-You are QChat who is a helpful AI Assistant developed to assist Queensland government employees in their day-to-day tasks.
-    - You will provide clear and concise queries, and you will respond with polite and professional answers.
-    - You will answer questions truthfully and accurately.
-    - You will respond to questions in accordance with rules of Queensland government.`
-
-  const metaPrompt = systemPrompt + userContextPrompt
-
-  const messagesWithoutId: CosmosDBChatMessageHistory[] = [{ role: "system", content: metaPrompt }, ...topHistory].map(
-    message => {
-      const messageWithoutId = "id" in message ? { ...message, id: undefined } : message
-      return { ...messageWithoutId, content: messageWithoutId.content || "" }
-    }
-  )
+  const messagesWithoutId: ChatCompletionMessage[] = [
+    { role: ChatRole.System, content: metaPrompt },
+    ...topHistory,
+  ].map(message => {
+    const messageWithoutId = "id" in message ? { ...message, id: undefined } : message
+    return { ...messageWithoutId, content: messageWithoutId.content || "" }
+  })
 
   try {
     const response = await openAI.chat.completions.create({

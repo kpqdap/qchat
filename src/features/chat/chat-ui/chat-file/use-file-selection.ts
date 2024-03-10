@@ -1,4 +1,4 @@
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 import { IndexDocuments, UploadDocument } from "../../chat-services/chat-document-service"
 import { useChatContext } from "../chat-context"
 

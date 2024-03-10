@@ -1,7 +1,7 @@
 "use client"
 import React, { FC, useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 import { Button } from "@/features/ui/button"
 import { MenuItem } from "@/components/menu"
 import { FileText, MessageCircle, Trash, Pencil, AudioLines } from "lucide-react"
@@ -78,10 +78,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
           )}
         </div>
         <div className="flex justify-end gap-4 mt-4">
-          <Button variant="default" onClick={handleSave}>
+          <Button variant="default" onClick={handleSave} aria-label="Save">
             Save
           </Button>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} aria-label="Cancel">
             Cancel
           </Button>
         </div>
@@ -163,6 +163,7 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
             className="invisible group-hover:visible"
             size={"sm"}
             variant="default"
+            aria-label="Delete Chat"
             onClick={async e => {
               e.preventDefault()
               const yesDelete = confirm("Are you sure you want to delete this chat?")

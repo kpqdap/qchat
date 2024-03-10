@@ -1,7 +1,7 @@
 import ChatRow from "@/components/chat/chat-row"
 import { Card } from "@/features/ui/card"
 import { FC } from "react"
-import { AI_NAME } from "../theme/customise"
+import { AI_NAME } from "../theme/theme-config"
 import { FindAllChatsInThread, FindChatThreadByID } from "./reporting-service"
 import { ChatMessageModel, ChatRole } from "../chat/chat-services/models"
 

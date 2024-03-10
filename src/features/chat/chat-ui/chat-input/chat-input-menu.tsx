@@ -4,7 +4,7 @@ import { Button } from "@/features/ui/button"
 import { Menu, File, Clipboard } from "lucide-react"
 import { Message } from "ai"
 import { toast } from "@/features/ui/use-toast"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { User } from "microsoft-cognitiveservices-speech-sdk"
 
 interface ChatInputMenuProps {

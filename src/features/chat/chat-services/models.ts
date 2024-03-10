@@ -85,6 +85,7 @@ export interface ChatThreadModel {
   contentSafetyWarning?: string
   prompts?: string[]
   selectedPrompt?: string
+  lastMessageAt: Date
 }
 
 export interface PromptGPTBody {
@@ -102,6 +103,17 @@ export interface PromptGPTBody {
 export interface PromptGPTProps extends PromptGPTBody {
   messages: Message[]
 }
+
+// export function preparePromptGPTProps(
+//   props: Omit<PromptGPTProps, "messages"> & { messages: (Omit<Message, "id"> & { id?: string })[] }
+// ): PromptGPTProps {
+//   const messagesWithId: Message[] = props.messages.map(message => ({
+//     ...message,
+//     id: uniqueId(),
+//   }))
+
+//   return { ...props, messages: messagesWithId }
+// }
 
 export interface ChatDocumentModel {
   id: string

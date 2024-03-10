@@ -4,6 +4,7 @@ import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "./button"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 
@@ -11,9 +12,9 @@ const DropdownMenuTrigger: React.FC<
   React.PropsWithChildren<React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>>
 > = ({ children, ...props }) => (
   <DropdownMenuPrimitive.Trigger asChild {...props}>
-    <button className="flex cursor-pointer select-none items-center rounded-md px-2 py-1.5 text-sm font-medium text-left text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    <Button variant={"dropdownTrigger"} ariaLabel="DropdownMenu">
       {children}
-    </button>
+    </Button>
   </DropdownMenuPrimitive.Trigger>
 )
 

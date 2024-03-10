@@ -1,13 +1,14 @@
 import React from "react"
 import * as Dialog from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
+import { Button } from "@/features/ui/button"
 
 export const Dailog = (): React.JSX.Element => (
   <Dialog.Root>
     <Dialog.Trigger asChild>
-      <button className="text-violet11 shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none">
+      <Button className="text-violet11 shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none">
         Edit profile
-      </button>
+      </Button>
     </Dialog.Trigger>
     <Dialog.Portal>
       <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
@@ -38,18 +39,18 @@ export const Dailog = (): React.JSX.Element => (
         </fieldset>
         <div className="mt-[25px] flex justify-end">
           <Dialog.Close asChild>
-            <button className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
+            <Button className="bg-green4 text-green11 hover:bg-green5 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none">
               Save changes
-            </button>
+            </Button>
           </Dialog.Close>
         </div>
         <Dialog.Close asChild>
-          <button
+          <Button
             className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
             aria-label="Close"
           >
             <X />
-          </button>
+          </Button>
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>

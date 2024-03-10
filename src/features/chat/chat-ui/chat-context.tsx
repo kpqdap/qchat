@@ -1,6 +1,6 @@
 "use client"
 
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 import { Message } from "ai"
 import { UseChatHelpers, useChat } from "ai/react"
 import React, { FC, createContext, useContext, useState } from "react"
@@ -79,7 +79,6 @@ export const ChatProvider: FC<Prop> = props => {
         textToSpeech(lastMessage.content)
         resetMicrophoneUsed()
       }
-      console.log("Chat streaming finished" + ChatContext)
       Router.refresh()
     },
   })

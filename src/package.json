@@ -1,5 +1,5 @@
 {
-  "name": "azure-open-ai-accelerator",
+  "name": "src",
   "version": "1.2.0",
   "private": true,
   "scripts": {

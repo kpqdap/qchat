@@ -7,7 +7,7 @@ import { useChatContext } from "./chat-context"
 import { ChatHeader } from "./chat-header"
 import { ChatRole } from "../chat-services/models"
 import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 
 interface Props {
   chatThreadId: string

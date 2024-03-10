@@ -2,7 +2,7 @@
 
 import React from "react"
 import { useTheme } from "next-themes"
-import { Theme } from "./customise"
+import { Theme } from "./theme-provider"
 import { Moon, Sun } from "lucide-react"
 
 export const ThemeToggle: React.FC = () => {

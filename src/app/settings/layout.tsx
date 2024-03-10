@@ -1,4 +1,4 @@
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { UserSettingsMenu } from "@/features/user-management/user-menu"
 
 export const dynamic = "force-dynamic"

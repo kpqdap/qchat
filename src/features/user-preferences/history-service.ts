@@ -6,7 +6,7 @@ import {
   MESSAGE_ATTRIBUTE,
 } from "../chat/chat-services/models"
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
-import { CosmosDBContainer } from "../common/cosmos"
+import { CosmosDBContainer } from "../common/services/cosmos"
 
 function threeMonthsAgo(): string {
   const date = new Date()

@@ -1,6 +1,6 @@
 import { FindAllChats } from "@/features/chat/chat-services/chat-service"
 import { ChatMessageModel, ChatRole, ChatSentiment, MESSAGE_ATTRIBUTE } from "@/features/chat/chat-services/models"
-import { CosmosDBContainer } from "@/features/common/cosmos"
+import { CosmosDBContainer } from "@/features/common/services/cosmos"
 import { uniqueId } from "@/features/common/util"
 import { ChatCompletionMessage, ChatCompletionRole } from "openai/resources"
 
@@ -50,6 +50,7 @@ export class CosmosDBChatMessageHistory {
         reason: "",
         contentSafetyWarning: "",
       }
+      console.log("Adding message", modelToSave)
       await UpsertChat(modelToSave)
       return Promise.resolve()
     } catch (error) {

@@ -8,7 +8,7 @@ import {
   FindChatThreadByTitleAndEmpty,
   UpdateChatThreadCreatedAt,
 } from "../chat-services/chat-thread-service"
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 
 export const MiniNewChat = (): JSX.Element => {
   const router = useRouter()

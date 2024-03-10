@@ -1,6 +1,6 @@
 import Typography from "@/components/typography"
 import { Card } from "@/features/ui/card"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { NewChat } from "../../chat-menu/new-chat"
 
 export const StartNewChat = (): JSX.Element => {

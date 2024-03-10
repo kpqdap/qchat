@@ -1,7 +1,7 @@
 "use server"
 
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
-import { CosmosDBContainer } from "@/features/common/cosmos"
+import { CosmosDBContainer } from "@/features/common/services/cosmos"
 import { uniqueId } from "@/features/common/util"
 import { AnalyzeResult, AnalyzedDocument } from "@azure/ai-form-recognizer"
 import { SqlQuerySpec } from "@azure/cosmos"

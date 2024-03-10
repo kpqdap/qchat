@@ -1,6 +1,6 @@
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
-import { OpenAIInstance } from "@/features/common/openai"
-import { AI_NAME } from "@/features/theme/customise"
+import { OpenAIInstance } from "@/features/common/services/open-ai"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { OpenAIStream, StreamingTextResponse } from "ai"
 import { AzureCogDocumentIndex, similaritySearchVectorWithScore } from "./azure-cog-search/azure-cog-vector-store"
 import { initAndGuardChatSession } from "./chat-thread-service"

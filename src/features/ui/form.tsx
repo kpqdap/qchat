@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import * as Form from "@radix-ui/react-form"
+import { Button } from "@/features/ui/button"
 
 interface PromptFormData {
   fullName: string
@@ -67,7 +68,7 @@ const PromptForm: React.FC = () => {
 
       <Form.ValidityState>{validity => <div>Form Validity: {validity ? "valid" : "invalid"}</div>}</Form.ValidityState>
 
-      <button type="submit">Submit</button>
+      <Button type="submit">Submit</Button>
     </Form.Root>
   )
 }
