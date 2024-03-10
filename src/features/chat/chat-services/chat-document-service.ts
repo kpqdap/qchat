@@ -2,7 +2,7 @@
 
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
 import { CosmosDBContainer } from "@/features/common/services/cosmos"
-import { uniqueId } from "@/features/common/util"
+import { uniqueId } from "@/lib/utils"
 import { AnalyzeResult, AnalyzedDocument } from "@azure/ai-form-recognizer"
 import { SqlQuerySpec } from "@azure/cosmos"
 import { AzureCogDocumentIndex, indexDocuments } from "./azure-cog-search/azure-cog-vector-store"

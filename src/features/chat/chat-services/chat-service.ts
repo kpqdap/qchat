@@ -1,7 +1,7 @@
 "use server"
 import "server-only"
 
-import { uniqueId } from "@/features/common/util"
+import { uniqueId } from "@/lib/utils"
 import { SqlQuerySpec } from "@azure/cosmos"
 import { CosmosDBContainer } from "../../common/services/cosmos"
 import { ChatMessageModel, MESSAGE_ATTRIBUTE, ChatSentiment, ChatRole } from "./models"

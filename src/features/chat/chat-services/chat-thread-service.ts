@@ -3,7 +3,7 @@
 import "server-only"
 import { getTenantId, userHashedId, userSession } from "@/features/auth/helpers"
 import { FindAllChats } from "@/features/chat/chat-services/chat-service"
-import { uniqueId } from "@/features/common/util"
+import { uniqueId } from "@/lib/utils"
 import { ItemResponse, Resource, SqlQuerySpec } from "@azure/cosmos"
 import { CosmosDBContainer } from "../../common/services/cosmos"
 import {

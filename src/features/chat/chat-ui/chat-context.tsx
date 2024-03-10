@@ -16,7 +16,7 @@ import { transformCosmosToAIModel } from "../chat-services/utils"
 import { FileState, useFileState } from "./chat-file/use-file-state"
 import { SpeechToTextProps, useSpeechToText } from "./chat-speech/use-speech-to-text"
 import { TextToSpeechProps, useTextToSpeech } from "./chat-speech/use-text-to-speech"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 interface ChatContextProps extends UseChatHelpers {
   chatThreadId: string
@@ -46,6 +46,7 @@ interface Prop {
 export const ChatProvider: FC<Prop> = props => {
   const { showError } = useGlobalMessageContext()
   const Router = useRouter()
+  const path = usePathname()
   const speechSynthesizer = useTextToSpeech()
   const speechRecognizer = useSpeechToText({
     onSpeech(value) {
@@ -79,7 +80,9 @@ export const ChatProvider: FC<Prop> = props => {
         textToSpeech(lastMessage.content)
         resetMicrophoneUsed()
       }
-      Router.refresh()
+      if (!path.includes("chat")) {
+        window.history.pushState({}, "", `/chat/${props.chatThreadId}`)
+      }
     },
   })
 
