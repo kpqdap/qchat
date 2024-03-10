@@ -1,25 +1,25 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { MessageSquarePlus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { CreateChatThread } from "../chat-services/chat-thread-service";
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context";
+import { Button } from "@/components/ui/button"
+import { MessageSquarePlus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { CreateChatThread } from "../chat-services/chat-thread-service"
+import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
 
 export const NewChat = () => {
-  const router = useRouter();
-  const { showError } = useGlobalMessageContext();
+  const router = useRouter()
+  const { showError } = useGlobalMessageContext()
 
   const startNewChat = async () => {
     try {
-      const newChatThread = await CreateChatThread();
+      const newChatThread = await CreateChatThread()
       if (newChatThread) {
-        router.push("/chat/" + newChatThread.id);
+        router.push("/chat/" + newChatThread.id)
       }
     } catch (e) {
-      showError('Failed to start a new chat. Please try again later.');
+      showError("Failed to start a new chat. Please try again later.")
     }
-  };
+  }
 
   return (
     <Button
@@ -29,9 +29,9 @@ export const NewChat = () => {
       aria-label="Start a new chat"
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && startNewChat()}
+      onKeyDown={e => e.key === "Enter" && startNewChat()}
     >
       <MessageSquarePlus size={40} strokeWidth={1.2} />
     </Button>
-  );
-};
+  )
+}

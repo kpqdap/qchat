@@ -49,7 +49,7 @@ const configureIdentityProvider = (): Provider[] => {
             client_secret: process.env.AZURE_AD_CLIENT_SECRET,
             grant_type: "authorization_code",
             redirect_uri: process.env.AZURE_AD_REDIRECT_URL,
-          }
+          },
         },
         userinfo: process.env.AZURE_AD_USERINFO_ENDPOINT,
         profile: profile => {
@@ -98,7 +98,7 @@ const configureIdentityProvider = (): Provider[] => {
             userId: username,
           }
           return userIdentity
-        }
+        },
       })
     )
   }
@@ -146,7 +146,7 @@ export const options: NextAuthOptions = {
     async signIn({ user, profile }) {
       if (user?.tenantId && user?.upn) {
         const now = new Date()
-        const ExtendedProfile = profile as ExtendedProfile;
+        const ExtendedProfile = profile as ExtendedProfile
         const userIdentity: UserIdentity = {
           id: hashValue(user.upn),
           tenantId: user.tenantId,
@@ -185,7 +185,6 @@ export const options: NextAuthOptions = {
         authToken.qchatAdmin = user.qchatAdmin ?? false
         authToken.tenantId = user.tenantId ?? ""
         authToken.upn = user.upn ?? ""
-
       }
       if (account && account.access_token && account.refresh_token) {
         const expiresIn = Number(account.expires_in ?? 0)
@@ -216,4 +215,4 @@ export const options: NextAuthOptions = {
   },
 }
 
-export const handlers = NextAuth(options);
+export const handlers = NextAuth(options)
