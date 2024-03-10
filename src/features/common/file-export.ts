@@ -54,6 +54,24 @@ const customStyles: IStylesOptions = {
           spacing: { after: 120 }, // Adjust spacing to your liking
         },
       },
+      {
+        id: "MyCustomList",
+        name: "My Custom List Item",
+        basedOn: "MsoListParagraph",
+        next: "Normal",
+        quickFormat: true,
+        run: {
+          font: "Aptos", // Monospaced font for code
+          size: 18, // Adjust font size as needed
+        },
+        paragraph: {
+          spacing: { after: 30 }, // Adjust spacing as needed
+          numbering: {
+            reference: "decimal",
+            level: 0,
+          },
+        },
+      },
       // Add more paragraph styles as needed
   ],
   characterStyles: [
@@ -186,11 +204,17 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
             break;
           case 'LI':
             para = new Paragraph({
-              text: textContentTrimmed,
+              children: [new TextRun({ text: textContentTrimmed})],
               bullet: { level: 0 },
-              style: 'MyCustomParagraph',
+              style: 'MyCustomList',
             });
             paragraphs.push(para);
+            break;
+          case 'BLOCKQUOTE':
+            paragraphs.push(new Paragraph({
+              children: [new TextRun({ text: textContentTrimmed, bold: true })],
+              indent: { left: 720 } // This indentation might need adjustment based on your document's styling needs
+            }));
             break;
           // Add cases for H1-H6, OL, UL, BLOCKQUOTE as needed
           default:
@@ -212,9 +236,6 @@ const createParagraphFromHtml = (html: string): Paragraph[] => {
   Array.from(doc.body.children).forEach(processNode); // Use children for direct child elements
   return paragraphs;
   };
-
-
-
 
   export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string, userName: string, chatThreadName: string) => {
     
