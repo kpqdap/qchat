@@ -95,6 +95,7 @@ export interface PromptGPTBody {
   userId: string;
   offenderId?: string;
   contextPrompt?: string;
+  chatThreadName?: string;
 };
 
 export interface PromptGPTProps extends PromptGPTBody {

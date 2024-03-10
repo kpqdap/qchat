@@ -1,12 +1,75 @@
-import { Document, Paragraph, Packer, TextRun, HeadingLevel } from 'docx';
-import { saveAs } from 'file-saver';
-import { marked } from 'marked';
-import { toast } from '@/features/ui/use-toast';
+import { Document, Paragraph, Packer, TextRun, HeadingLevel, IStylesOptions } from 'docx'
+import { saveAs } from 'file-saver'
+import { marked } from 'marked'
+import { toast } from '@/features/ui/use-toast'
+import style from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark';
+import { IPropertiesOptions } from 'docx/build/file/core-properties/properties';
 
 interface MessageType {
   role: string;
   content: string;
 }
+
+const customStyles: IStylesOptions = {
+  paragraphStyles: [
+      {
+          id: "MyCustomHeading1",
+          name: "My Custom Heading 1",
+          basedOn: "Normal",
+          next: "Normal",
+          quickFormat: true,
+          run: {
+              size: 28,
+              bold: true,
+              font: "Aptos",
+              color: "2E74B5",
+          },
+          paragraph: {
+              spacing: { after: 240 },
+          },
+      },
+      {
+          id: "MyCustomParagraph",
+          name: "My Custom Paragraph",
+          basedOn: "Normal",
+          next: "Normal",
+          quickFormat: true,
+          run: {
+              size: 22,
+              font: "Aptos",
+          },
+      },
+      {
+        id: "MyCustomCode",
+        name: "My Custom Code Block",
+        basedOn: "Normal",
+        next: "Normal",
+        quickFormat: true,
+        run: {
+          font: "Aptos", // Monospaced font for code
+          size: 20, // Smaller size for code blocks
+          color: "006633",
+        },
+        paragraph: {
+          spacing: { after: 120 }, // Adjust spacing to your liking
+        },
+      },
+      // Add more paragraph styles as needed
+  ],
+  characterStyles: [
+      {
+          id: "MyCustomBoldText",
+          name: "My Custom Bold Text",
+          basedOn: "DefaultParagraphFont",
+          run: {
+              bold: true,
+              size: 24,
+          },
+      },
+      // Add more character styles as needed
+  ],
+  // If you have initial styles, default styles or imported styles, define them here
+};
 
 class CustomRenderer extends marked.Renderer {
   paragraph(text: string): string {
@@ -74,83 +137,123 @@ class CustomRenderer extends marked.Renderer {
 }
 
 const createParagraphFromHtml = (html: string): Paragraph[] => {
-    const paragraphs: Paragraph[] = [];
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+  const paragraphs: Paragraph[] = [];
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
   
-    const processNode = (node: ChildNode): void => {
-      if (node.textContent && node.textContent.trim() !== '') {
-        switch (node.nodeName) {
+  const processNode = (node: ChildNode): void => {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as Element;
+      let para: Paragraph;
+
+      if (element.tagName === 'PRE') {
+        const codeElement = element.querySelector('code');
+        if (codeElement) {
+          const codeText = codeElement.textContent || ''; // Ensuring text content is not null
+          para = new Paragraph({
+            text: codeText.trim(),
+            style: 'MyCustomCode', // Custom style for code
+          });
+          paragraphs.push(para);
+          return; // Skip further processing to avoid treating code as list items
+        }
+      }
+
+      // Process non-code elements
+      const textContentTrimmed = element.textContent?.trim() ?? "";
+      if (textContentTrimmed) {
+        switch (element.tagName) {
           case 'P':
-            paragraphs.push(new Paragraph(node.textContent.trim()));
+            para = new Paragraph({
+              text: textContentTrimmed,
+              style: 'MyCustomParagraph',
+            });
+            paragraphs.push(para);
             break;
           case 'STRONG':
-            paragraphs.push(new Paragraph({
-              children: [new TextRun({ text: node.textContent.trim(), bold: true })]
-            }));
+            para = new Paragraph({
+              children: [new TextRun({ text: textContentTrimmed, bold: true })],
+              style: 'MyCustomParagraph',
+            });
+            paragraphs.push(para);
             break;
           case 'EM':
-            paragraphs.push(new Paragraph({
-              children: [new TextRun({ text: node.textContent.trim(), italics: true })]
-            }));
-            break;
-          case 'H1': case 'H2': case 'H3': case 'H4': case 'H5': case 'H6':
-            paragraphs.push(new Paragraph({
-              text: node.textContent.trim(),
-              heading: HeadingLevel[`HEADING_${node.nodeName.charAt(1)}` as keyof typeof HeadingLevel],
-            }));
-            break;
-          case 'UL': case 'OL':
-            const listItems = node.childNodes;
-            listItems.forEach(li => {
-              processNode(li);
+            para = new Paragraph({
+              children: [new TextRun({ text: textContentTrimmed, italics: true })],
+              style: 'MyCustomParagraph',
             });
-            break;
-          case 'BLOCKQUOTE':
-            paragraphs.push(new Paragraph({
-              children: [new TextRun({
-                text: node.textContent.trim(),
-                italics: true
-              })],
-              indent: { left: 720 }
-            }));
+            paragraphs.push(para);
             break;
           case 'LI':
-            paragraphs.push(new Paragraph({
-              text: node.textContent.trim(),
-              bullet: { level: 0 }
-            }));
+            para = new Paragraph({
+              text: textContentTrimmed,
+              bullet: { level: 0 },
+              style: 'MyCustomParagraph',
+            });
+            paragraphs.push(para);
+            break;
+          // Add cases for H1-H6, OL, UL, BLOCKQUOTE as needed
+          default:
+            if (element.tagName.startsWith('H') && element.tagName.length === 2) {
+              para = new Paragraph({
+                text: textContentTrimmed,
+                heading: HeadingLevel[`HEADING_${element.tagName.charAt(1)}` as keyof typeof HeadingLevel],
+              });
+              paragraphs.push(para);
+            } else if (element.tagName === 'OL' || element.tagName === 'UL') {
+              Array.from(element.children).forEach(child => processNode(child)); // Recursively process list items
+            }
             break;
         }
       }
-    };
-  
-    doc.body.childNodes.forEach(processNode);
-    return paragraphs;
+    }
   };
 
-  export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string, userId:string, tenantId:string, chatThreadId:string) => {
+  Array.from(doc.body.children).forEach(processNode); // Use children for direct child elements
+  return paragraphs;
+  };
+
+
+
+
+  export const convertMarkdownToWordDocument = async (messages: MessageType[], fileName: string, aiName: string, userName: string, chatThreadName: string) => {
+    
     const renderer = new CustomRenderer();
     marked.use({ renderer });
 
+    const coreProperties: IPropertiesOptions = {
+      title: chatThreadName,
+      subject: chatThreadName, // or any other logic to determine the subject
+      creator: aiName, // Using the environment variable
+      lastModifiedBy: aiName,
+      sections: []
+    };
+
     const messageParagraphPromises = messages.map(async message => {
-        const author = message.role === 'system' || message.role === 'assistant' ? aiName : "You";
+        const author = message.role === 'system' || message.role === 'assistant' ? aiName : userName;
         const authorParagraph = new Paragraph({
             text: `${author}:`,
             heading: HeadingLevel.HEADING_2,
+            style: 'MyCustomHeading1',
         });
 
         const processedContent = await processCitationsInText(message.content);
         const content = await marked.parse(processedContent);
         const contentParagraphs = createParagraphFromHtml(content);
       
-        return [authorParagraph, ...contentParagraphs, new Paragraph('')];
+        return [authorParagraph, ...contentParagraphs, new Paragraph({style: "MyCustomParagraph"})];
       });
 
     const messageParagraphs = (await Promise.all(messageParagraphPromises)).flat();
 
+
     const doc = new Document({
-        sections: [{ children: messageParagraphs }],
+      styles: customStyles,
+      title: coreProperties.title,
+      subject: coreProperties.subject,
+      creator: coreProperties.creator,
+      lastModifiedBy: coreProperties.lastModifiedBy,
+      sections: [{ children: messageParagraphs }],
     });
 
     Packer.toBlob(doc).then(blob => {
