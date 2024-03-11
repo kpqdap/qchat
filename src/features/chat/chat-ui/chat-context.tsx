@@ -40,6 +40,7 @@ interface Prop {
   chats: Array<ChatMessageModel>
   chatThread: ChatThreadModel
   offenderId?: string
+  chatThreadName?: ChatThreadModel["name"]
 }
 
 export const ChatProvider: FC<Prop> = props => {
@@ -63,6 +64,7 @@ export const ChatProvider: FC<Prop> = props => {
     tenantId: props.chatThread.tenantId,
     userId: props.chatThread.userId,
     offenderId: props.chatThread.offenderId,
+    chatThreadName: props.chatThread.name,
   })
 
   const { textToSpeech } = speechSynthesizer

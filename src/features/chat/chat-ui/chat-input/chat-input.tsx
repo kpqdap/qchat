@@ -7,6 +7,7 @@ import { AI_NAME } from "@/features/theme/customise"
 import { ChatFileSlider } from "../chat-file/chat-file-slider"
 import { convertMarkdownToWordDocument } from "@/features/common/file-export"
 import ChatInputMenu from "./chat-input-menu"
+import { getSession } from "next-auth/react"
 
 interface Props {}
 
@@ -19,6 +20,11 @@ const ChatInput: FC<Props> = () => {
     [chatBody.chatType, chatBody.chatOverFileName]
   )
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Brisbane"
+  const getNameInline = async () => {
+    const session = await getSession()
+    const name = session?.user?.name || "You"
+    return name
+  }
 
   const getFormattedDateTime = (): string => {
     const date = new Date()
@@ -36,11 +42,10 @@ const ChatInput: FC<Props> = () => {
   }
 
   const exportDocument = async () => {
-    const fileName = `QChatExport_${getFormattedDateTime()}.docx`
-    const userId = chatBody.userId
-    const tenantId = chatBody.tenantId
-    const chatThreadId = chatBody.id
-    await convertMarkdownToWordDocument(messages, fileName, AI_NAME, userId, tenantId, chatThreadId)
+    const fileName = AI_NAME + ` Export_${getFormattedDateTime()}.docx`
+    const userName = await getNameInline()
+    const chatThreadName = chatBody.chatThreadName || AI_NAME + ` Export_${getFormattedDateTime()}.docx`
+    await convertMarkdownToWordDocument(messages, fileName, AI_NAME, userName, chatThreadName)
   }
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
