@@ -21,9 +21,8 @@ const ChatInput: FC<Props> = () => {
   )
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Brisbane"
   const getNameInline = async () => {
-    let name = ""
     const session = await getSession()
-    name = session?.user?.name || "You"
+    const name = session?.user?.name || "You"
     return name
   }
 

@@ -32,9 +32,8 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
 
   const copyToClipboard = async () => {
     const getNameInline = async () => {
-      let name = ""
       const session = await getSession()
-      name = session?.user?.name || "You"
+      const name = session?.user?.name || "You"
       return name
     }
 
