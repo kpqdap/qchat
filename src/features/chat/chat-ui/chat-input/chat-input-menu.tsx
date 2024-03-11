@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useRef } from "react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { Button } from "@/features/ui/button"
-import { Menu, File, Clipboard } from "lucide-react"
+import { Menu, File, Clipboard, Bird } from "lucide-react"
 import { Message } from "ai"
 import { toast } from "@/features/ui/use-toast"
 import { getSession } from "next-auth/react"
@@ -15,34 +15,35 @@ interface ChatInputMenuProps {
 
 const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit, setInput, messageCopy }) => {
   const firstMenuItemRef = useRef<HTMLDivElement>(null)
-  let name = '';
-  getSession().then(session => {
-    name = session?.user?.name || 'You';
-  })
-
-
   useEffect(() => {
     if (firstMenuItemRef.current) {
       firstMenuItemRef.current.focus()
     }
   }, [])
 
-  // const fairClickHandler = () => {
-  //   const fairInput = "Help me complete a Queensland Government Fast AI Risk Assessment (FAIRA)"
-  //   setInput(fairInput)
-  //   setTimeout(() => {
-  //     const syntheticEvent = { preventDefault: () => {} } as FormEvent<HTMLFormElement>
-  //     handleSubmit(syntheticEvent)
-  //   }, 0)
-  // }
+  const fairClickHandler = () => {
+    const fairInput = "Help me complete a Queensland Government Fast AI Risk Assessment (FAIRA)"
+    setInput(fairInput)
+    setTimeout(() => {
+      const syntheticEvent = { preventDefault: () => {} } as FormEvent<HTMLFormElement>
+      handleSubmit(syntheticEvent)
+    }, 0)
+  }
 
-  const copyToClipboard = () => {
-    const formattedMessages = messageCopy
-      .map(message => {
-        const author = message.role === 'system' || message.role === 'assistant' ? "AI" : name
+  const copyToClipboard = async () => {
+    const getNameInline = async () => {
+      let name = ""
+      const session = await getSession()
+      name = session?.user?.name || "You"
+      return name
+    }
+
+    const formattedMessages = await Promise.all(
+      messageCopy.map(async message => {
+        const author = message.role === "system" || message.role === "assistant" ? "AI" : await getNameInline()
         return `${author}: ${message.content}`
       })
-      .join("\n")
+    ).then(messages => messages.join("\n"))
 
     navigator.clipboard
       .writeText(formattedMessages)
@@ -73,7 +74,7 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
           className="min-w-[220px] bg-background text-popover-foreground p-[5px] shadow-lg rounded-md"
           sideOffset={5}
         >
-          {/* <DropdownMenu.Item
+          <DropdownMenu.Item
             asChild
             onSelect={fairClickHandler}
             className="DropdownMenuItem bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground rounded-md cursor-pointer"
@@ -83,7 +84,7 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
               Complete a Fast AI Risk Assessment
             </div>
           </DropdownMenu.Item>
-          <DropdownMenu.Separator className="h-[1px] bg-secondary my-2" /> */}
+          <DropdownMenu.Separator className="h-[1px] bg-secondary my-2" />
           <DropdownMenu.Item asChild onSelect={onDocExport} className="dropdown-menu-item">
             <div
               tabIndex={0}

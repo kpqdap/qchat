@@ -9,6 +9,8 @@ import { convertMarkdownToWordDocument } from "@/features/common/file-export"
 import ChatInputMenu from "./chat-input-menu"
 import { getSession } from "next-auth/react"
 
+interface Props {}
+
 const ChatInput: FC<Props> = () => {
   const { setInput, handleSubmit, isLoading, input, chatBody, isModalOpen, messages } = useChatContext()
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -18,9 +20,12 @@ const ChatInput: FC<Props> = () => {
     [chatBody.chatType, chatBody.chatOverFileName]
   )
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Brisbane"
-  let name = ''
-  getSession().then(session => {
+  const getNameInline = async () => {
+    let name = ""
+    const session = await getSession()
     name = session?.user?.name || "You"
+    return name
+  }
 
   const getFormattedDateTime = (): string => {
     const date = new Date()
@@ -39,11 +44,11 @@ const ChatInput: FC<Props> = () => {
 
   const exportDocument = async () => {
     const fileName = AI_NAME + ` Export_${getFormattedDateTime()}.docx`
-    const userName = name
+    const userName = await getNameInline()
     const chatThreadName = chatBody.chatThreadName || AI_NAME + ` Export_${getFormattedDateTime()}.docx`
     await convertMarkdownToWordDocument(messages, fileName, AI_NAME, userName, chatThreadName)
   }
-        
+
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!isModalOpen) {

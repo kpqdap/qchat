@@ -86,16 +86,16 @@ export interface ChatThreadModel {
 }
 
 export interface PromptGPTBody {
-  id: string;
-  chatType: ChatType;
-  conversationStyle: ConversationStyle;
-  conversationSensitivity: ConversationSensitivity;
-  chatOverFileName: string;
-  tenantId: string;
-  userId: string;
-  offenderId?: string;
-  contextPrompt?: string;
-  chatThreadName?: string;
+  id: string
+  chatType: ChatType
+  conversationStyle: ConversationStyle
+  conversationSensitivity: ConversationSensitivity
+  chatOverFileName: string
+  tenantId: string
+  userId: string
+  offenderId?: string
+  contextPrompt?: string
+  chatThreadName?: string
 }
 
 export interface PromptGPTProps extends PromptGPTBody {
