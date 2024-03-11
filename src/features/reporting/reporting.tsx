@@ -24,8 +24,8 @@ export const Reporting = async (props: ReportingProp): Promise<JSX.Element> => {
   const hasMoreResults = chatThreads && chatThreads.length === pageSize
 
   return (
-    <Card className="h-full w-full flex pt-8 overflow-y-auto">
-      <div className="container mx-auto w-full h-full space-y-8">
+    <Card className="size-full flex pt-8 overflow-y-auto">
+      <div className="container mx-auto size-full space-y-8">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Chat Reporting</h2>
           <p className="text-muted-foreground">History for this week - all users in your tenant</p>

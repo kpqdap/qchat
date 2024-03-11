@@ -7,7 +7,7 @@ export default async function Home(): Promise<JSX.Element> {
     <Card className="col-span-6 flex h-full flex-1 items-center justify-center sm:col-span-6 md:col-span-5 lg:col-span-4 xl:col-span-5">
       <div className="items-left col-span-5 h-full bg-altBackground text-foreground shadow-sm">
         <section
-          className="container mx-auto h-full w-full max-w-3xl justify-center gap-9 bg-altBackground"
+          className="container mx-auto size-full max-w-3xl justify-center gap-9 bg-altBackground"
           aria-labelledby="startChatTitle"
         >
           Useful Help goes here

@@ -6,8 +6,8 @@ export const dynamic = "force-dynamic"
 
 export default async function Home(): Promise<JSX.Element> {
   return (
-    <div className="col-span-5 h-full w-full">
-      <div className="grid h-full w-full grid-cols-2 grid-rows-2 justify-center">
+    <div className="col-span-5 size-full">
+      <div className="grid size-full grid-cols-2 grid-rows-2 justify-center">
         <Card className="col-span-1 w-full p-4">
           <div className="flex h-full flex-col justify-between rounded-lg bg-altBackground text-foreground shadow-sm">
             <CardHeader>

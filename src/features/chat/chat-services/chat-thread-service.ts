@@ -228,6 +228,7 @@ export const CreateChatThread = async (): Promise<(ChatThreadModel & Resource) |
     chatOverFileName: "",
     prompts: [],
     selectedPrompt: "",
+    lastMessageAt: new Date(),
   }
 
   const container = await CosmosDBContainer.getInstance().getContainer()

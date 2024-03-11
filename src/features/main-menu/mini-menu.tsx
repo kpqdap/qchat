@@ -31,7 +31,7 @@ const MiniMenuItem = ({
     tabIndex={0}
     aria-label={ariaLabel}
   >
-    <Icon className="w-4 h-4 mr-2" aria-hidden="true" />
+    <Icon className="size-4 mr-2" aria-hidden="true" />
     {name}
     <Link href={href} passHref>
       <span className="hidden"></span>
@@ -79,11 +79,11 @@ export const MiniMenu = (): React.JSX.Element => {
             ))}
             {session ? (
               <button onClick={() => signOut({ callbackUrl: "/" })} className="...">
-                <LogOut className="w-4 h-4 mr-2" /> Logout
+                <LogOut className="size-4 mr-2" /> Logout
               </button>
             ) : (
               <button onClick={() => signIn(getSignInProvider())} className="...">
-                <LogIn className="w-4 h-4 mr-2" /> Login
+                <LogIn className="size-4 mr-2" /> Login
               </button>
             )}
           </div>
