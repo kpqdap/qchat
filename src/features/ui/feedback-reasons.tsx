@@ -1,10 +1,10 @@
-import React from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/features/ui/tabs";
-import { XCircle, Ban, FileQuestion } from "lucide-react";
+import React from "react"
+import { Tabs, TabsList, TabsTrigger } from "@/features/ui/tabs"
+import { XCircle, Ban, FileQuestion } from "lucide-react"
 
 interface FeedbackButtonsProps {
-  areTabsEnabled: boolean;
-  onReasonChange: (reason: string) => void;
+  areTabsEnabled: boolean
+  onReasonChange: (reason: string) => void
 }
 
 const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onReasonChange }) => {
@@ -18,7 +18,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
             disabled={!areTabsEnabled}
             aria-label="Mark feedback as unsafe"
           >
-            <Ban size={20} aria-hidden="true"/> Unsafe
+            <Ban size={20} aria-hidden="true" /> Unsafe
           </TabsTrigger>
           <TabsTrigger
             value="Inaccurate"
@@ -26,7 +26,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
             disabled={!areTabsEnabled}
             aria-label="Mark feedback as inaccurate"
           >
-            <XCircle size={20} aria-hidden="true"/> Inaccurate
+            <XCircle size={20} aria-hidden="true" /> Inaccurate
           </TabsTrigger>
           <TabsTrigger
             value="Unhelpful"
@@ -34,12 +34,12 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
             disabled={!areTabsEnabled}
             aria-label="Mark feedback as unhelpful"
           >
-            <FileQuestion size={20} aria-hidden="true"/> Unhelpful
+            <FileQuestion size={20} aria-hidden="true" /> Unhelpful
           </TabsTrigger>
         </TabsList>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default FeedbackButtons;
+export default FeedbackButtons

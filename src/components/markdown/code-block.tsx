@@ -44,13 +44,13 @@ export const CodeBlock: FC<Props> = memo(({ language, children }) => {
   }
 
   return (
-    <div className="relative group">
+    <div className="group relative">
       <Prism language={language} style={atomDark} PreTag="pre">
         {children}
       </Prism>
       <Button
         onClick={handleCopy}
-        className="absolute top-2 right-2 focus:bg-accent focus:text-link text-sm p-1 h-7"
+        className="absolute right-2 top-2 h-7 p-1 text-sm focus:bg-accent focus:text-link"
         title="Copy code"
       >
         <ClipboardIcon size={14} />

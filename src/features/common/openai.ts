@@ -1,4 +1,4 @@
-import { OpenAI } from "openai";
+import { OpenAI } from "openai"
 
 export const OpenAIInstance = () => {
   const openai = new OpenAI({
@@ -6,9 +6,9 @@ export const OpenAIInstance = () => {
     baseURL: `${process.env.QGAIP_APIM_BASE}/openai/deployments/${process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME}`,
     defaultQuery: { "api-version": process.env.AZURE_OPENAI_API_VERSION },
     defaultHeaders: { "api-key": process.env.AZURE_OPENAI_API_KEY },
-  });
-  return openai;
-};
+  })
+  return openai
+}
 
 export const OpenAIEmbeddingInstance = () => {
   if (
@@ -16,9 +16,7 @@ export const OpenAIEmbeddingInstance = () => {
     !process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME ||
     !process.env.AZURE_OPENAI_API_INSTANCE_NAME
   ) {
-    throw new Error(
-      "Azure OpenAI Embeddings endpoint config is not set, check environment variables."
-    );
+    throw new Error("Azure OpenAI Embeddings endpoint config is not set, check environment variables.")
   }
 
   const openai = new OpenAI({
@@ -26,9 +24,9 @@ export const OpenAIEmbeddingInstance = () => {
     baseURL: `${process.env.QGAIP_APIM_BASE}/openai/deployments/${process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME}`,
     defaultQuery: { "api-version": process.env.AZURE_OPENAI_API_VERSION },
     defaultHeaders: { "api-key": process.env.AZURE_OPENAI_API_KEY },
-  });
-  return openai;
-};
+  })
+  return openai
+}
 
 // // a new instance definition for DALL-E image generation
 // export const OpenAIDALLEInstance = () => {
@@ -78,4 +76,3 @@ export const OpenAIEmbeddingInstance = () => {
 //   });
 //   return openai;
 // };
-

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { Avatar, AvatarImage } from "@/features/ui/avatar";
-import { Button } from "@/features/ui/button";
+import { Avatar, AvatarImage } from "@/features/ui/avatar"
+import { Button } from "@/features/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +9,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/features/ui/dropdown-menu";
-import { LogOut, UserCircle } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+} from "@/features/ui/dropdown-menu"
+import { LogOut, UserCircle } from "lucide-react"
+import { signOut, useSession } from "next-auth/react"
 
 const UserProfile = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession()
 
   return (
     <DropdownMenu>
@@ -26,10 +26,7 @@ const UserProfile = () => {
           >
             {session?.user?.image ? (
               <Avatar className="">
-                <AvatarImage
-                  src={session.user.image}
-                  alt={session.user.name ?? "You"}
-                />
+                <AvatarImage src={session.user.image} alt={session.user.name ?? "You"} />
               </Avatar>
             ) : (
               <UserCircle />
@@ -40,25 +37,19 @@ const UserProfile = () => {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {session?.user?.name ?? "Anonymous"}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {session?.user?.email ?? "No email provided"}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {session?.user?.qchatAdmin ? "Admin" : ""}
-            </p>
+            <p className="text-sm font-medium leading-none">{session?.user?.name ?? "Anonymous"}</p>
+            <p className="text-xs leading-none text-muted-foreground">{session?.user?.email ?? "No email provided"}</p>
+            <p className="text-xs leading-none text-muted-foreground">{session?.user?.qchatAdmin ? "Admin" : ""}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({callbackUrl: '/' })}>
+        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
-export { UserProfile };
+export { UserProfile }

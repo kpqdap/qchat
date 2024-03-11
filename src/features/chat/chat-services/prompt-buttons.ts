@@ -1,24 +1,24 @@
-"use server";
-import "server-only";
-import { GenericChatAPI } from "./generic-chat-api";
+"use server"
+import "server-only"
+import { GenericChatAPI } from "./generic-chat-api"
 
 function getBooleanEnv(variable: string): boolean {
-  return process.env[variable]?.toLowerCase() === 'true';
+  return process.env[variable]?.toLowerCase() === "true"
 }
 
 export const PromptButtons = async (): Promise<string[]> => {
   const apiName = "generatePromptButtons";
   const defaultPrompts = ['Summarise the below article into three key points:', 'Provide a summary of the below text'];
 
-  if (!getBooleanEnv('PROMPT_BUTTON_ENABLED')) {
-    return defaultPrompts;
+  if (!getBooleanEnv("PROMPT_BUTTON_ENABLED")) {
+    return defaultPrompts
   }
- 
+
   try {
     const promptButtons = await GenericChatAPI(apiName, {
       messages: [{
         role: "system",
-        content: ` - create 2 different prompt suggestions which encourage the user to get the most out of an LLM powered Generative AI Assistant, limited to ten words, the user will select this prompt and then add their additional or relevant context; for Queensland government employees:
+        content: ` - create two different prompt suggestions which encourage the user to get the most out of an LLM powered Generative AI Assistant, limited to ten words, the user will select this prompt and then add their additional or relevant context; for Queensland government employees:
         - these prompts will have some suggestions similar to the below examples:
           " Summarise the below article into three key points: "
           " Write a response to this email: "
@@ -34,10 +34,10 @@ export const PromptButtons = async (): Promise<string[]> => {
       return defaultPrompts;
     }
 
-    const filteredPrompts = prompts.filter(prompt => typeof prompt === 'string');
-    return filteredPrompts.length > 0 ? filteredPrompts : defaultPrompts;
-    } catch (error) {
-    console.error(`An error occurred: ${error}`);
-    return defaultPrompts;
+    const filteredPrompts = prompts.filter(prompt => typeof prompt === "string")
+    return filteredPrompts.length > 0 ? filteredPrompts : defaultPrompts
+  } catch (error) {
+    console.error(`An error occurred: ${error}`)
+    return defaultPrompts
   }
-};
+}
