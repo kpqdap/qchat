@@ -8,7 +8,7 @@ function getBooleanEnv(variable: string): boolean {
 
 export const PromptButtons = async (): Promise<string[]> => {
   const apiName = "generatePromptButtons"
-  const defaultPrompts = ["Write a Ministerial Briefing Note", "Provide a summary of the below text"]
+  const defaultPrompts = ["Summarise the below article into three key points:", "Provide a summary of the below text"]
 
   if (!getBooleanEnv("PROMPT_BUTTON_ENABLED")) {
     return defaultPrompts
@@ -19,12 +19,12 @@ export const PromptButtons = async (): Promise<string[]> => {
       messages: [
         {
           role: "system",
-          content: ` - create 2 different succinct prompt button suggestions, limited to ten words, for Queensland government employees:
-        - this prompt will have some suggestions similar to the below examples:
-          " Write a Ministerial Briefing Note "
-          " Write a response to a ... "
-          " Rewrite this in layman terms "
-          " Provide a summary of the below text "
+          content: ` - create two different prompt suggestions which encourage the user to get the most out of an LLM powered Generative AI Assistant, limited to ten words, the user will select this prompt and then add their additional or relevant context; for Queensland government employees:
+        - these prompts will have some suggestions similar to the below examples:
+          " Summarise the below article into three key points: "
+          " Write a response to this email: "
+          " Rewrite this in layman terms: "
+          " Provide a summary of the below text: "
         - provide response as an array only, must be in format: ["Prompt1", "Prompt2"]`,
         },
       ],
