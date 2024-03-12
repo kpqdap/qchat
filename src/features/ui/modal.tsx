@@ -47,9 +47,9 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
       role="dialog"
       aria-modal="true"
       aria-labelledby="feedbackHeading"
-      className={`fixed inset-0 bg-black flex items-center justify-center ${props.open ? "block" : "hidden"}`}
+      className={`fixed inset-0 flex items-center justify-center bg-black ${props.open ? "block" : "hidden"}`}
     >
-      <div className="bg-background w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
+      <div className="bg-background mx-auto w-full max-w-lg overflow-hidden rounded-lg p-4">
         <div className="mb-4">
           <Typography id="feedbackHeading" variant="h4" className="text-primary">
             Submit your feedback
@@ -63,12 +63,12 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
             placeholder="Please provide any additional details about the message or your feedback, our team will not reply directly but it will assist us in improving our service."
             ref={textAreaRef}
             rows={6}
-            className="w-full p-4 bg-background border border-gray-300 rounded"
+            className="bg-background w-full rounded border border-gray-300 p-4"
             onChange={() => handleFeedbackChange()}
           />
         </div>
         <FeedbackButtons areTabsEnabled={areTabsEnabled} onReasonChange={handleReasonChange} />
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="mt-4 flex justify-center gap-2">
           <Button variant="default" onClick={handleSubmit}>
             Submit
           </Button>

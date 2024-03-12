@@ -23,11 +23,11 @@ export function ThemeSwitch(): JSX.Element {
 
   return (
     <Tabs defaultValue={resolvedTheme} aria-label="Theme Switch">
-      <TabsList className="flex flex-row items-center justify-center gap-1 h-10">
+      <TabsList className="flex h-10 flex-row items-center justify-center gap-1">
         <TabsTrigger
           value="dark"
           onClick={() => handleTabChange("dark")}
-          className="size-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
+          className="text-altButton hover:bg-altBackgroundShade hover:text-altButton size-[35px] rounded-md focus:ring"
           aria-label="Switch to dark mode"
         >
           <Moon size={18} />
@@ -35,7 +35,7 @@ export function ThemeSwitch(): JSX.Element {
         <TabsTrigger
           value="light"
           onClick={() => handleTabChange("light")}
-          className="size-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
+          className="text-altButton hover:bg-altBackgroundShade hover:text-altButton size-[35px] rounded-md focus:ring"
           aria-label="Switch to light mode"
         >
           <Sun size={18} />
