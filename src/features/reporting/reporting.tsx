@@ -24,7 +24,7 @@ export const Reporting = async (props: ReportingProp): Promise<JSX.Element> => {
   const hasMoreResults = chatThreads && chatThreads.length === pageSize
 
   return (
-    <Card className="size-full flex pt-8 overflow-y-auto">
+    <Card className="flex size-full overflow-y-auto pt-8">
       <div className="container mx-auto size-full space-y-8">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Chat Reporting</h2>
@@ -68,7 +68,7 @@ export const Reporting = async (props: ReportingProp): Promise<JSX.Element> => {
                   ))}
               </TableBody>
             </Table>
-            <div className="flex gap-2 p-2 justify-end">
+            <div className="flex justify-end gap-2 p-2">
               {previousPage >= 0 && (
                 <Button asChild size={"icon"} variant={"outline"}>
                   <Link

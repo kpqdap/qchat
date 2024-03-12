@@ -36,12 +36,12 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
         <div className="text-sm text-muted-foreground">Offender ID {offenderId} saved.</div>
       ) : (
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-wrap items-center grid-cols-3 gap-[15px]">
-            <Label.Root htmlFor="offenderID" className="leading-[35px] text-sm text-muted-foreground">
+          <div className="flex grid-cols-3 flex-wrap items-center gap-[15px]">
+            <Label.Root htmlFor="offenderID" className="text-sm leading-[35px] text-muted-foreground">
               Offender&apos;s Identification Number:
             </Label.Root>
             <input
-              className="bg-inputBackground text-sm text-muted-foreground shadow-blackA6 inline-flex h-[35px] w-[200px] appearance-none items-center justify-center rounded-[4px] px-[10px] leading-none shadow-[0_0_0_1px] outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary selection:text-foreground selection:bg-accent"
+              className="bg-inputBackground shadow-blackA6 inline-flex h-[35px] w-[200px] appearance-none items-center justify-center rounded-[4px] px-[10px] text-sm leading-none text-muted-foreground shadow-[0_0_0_1px] outline-none selection:bg-accent selection:text-foreground focus:ring-2 focus:ring-primary focus:ring-offset-2"
               type="text"
               id="offenderID"
               name="offenderID"

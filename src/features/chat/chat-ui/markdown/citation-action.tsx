@@ -19,7 +19,7 @@ export const CitationAction = async (_previousState: unknown, formData: FormData
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="border rounded-sm p-2">
+      <div className="rounded-sm border p-2">
         <div className="font-bold">File name</div>
         <div>{firstResult.metadata}</div>
       </div>

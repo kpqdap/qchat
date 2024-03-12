@@ -22,7 +22,7 @@ export const UserComponent: React.FC = () => {
           aria-label="Log out"
           variant="link"
         >
-          <LogOut className="text-darkAltButton mr-2 size-4" aria-hidden="true" />
+          <LogOut className="mr-2 size-4 text-darkAltButton" aria-hidden="true" />
           <Typography variant="span">Log out</Typography>
         </Button>
       ) : (
@@ -32,7 +32,7 @@ export const UserComponent: React.FC = () => {
           aria-label="Log in"
           variant="link"
         >
-          <LogIn className="text-darkAltButton mr-2 size-4" aria-hidden="true" />
+          <LogIn className="mr-2 size-4 text-darkAltButton" aria-hidden="true" />
           <Typography variant="span">Log in</Typography>
         </Button>
       )}

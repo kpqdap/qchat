@@ -13,7 +13,7 @@ export const MainMenu = (): JSX.Element => {
   const { isMenuOpen, toggleMenu } = useMenuContext()
   return (
     <div className="flex flex-col justify-between p-2">
-      <div className="flex gap-2  flex-col  items-center">
+      <div className="flex flex-col  items-center  gap-2">
         <Button onClick={toggleMenu} variant={"menuRound"}>
           {isMenuOpen ? <PanelLeftClose /> : <PanelRightClose />}
         </Button>
@@ -30,7 +30,7 @@ export const MainMenu = (): JSX.Element => {
           </Button>
         )}
       </div>
-      <div className="flex flex-col gap-2 items-center">
+      <div className="flex flex-col items-center gap-2">
         <ThemeToggle />
         <UserProfile />
       </div>

@@ -23,12 +23,12 @@ export const PromptButton: React.FC<Prop> = ({ onPromptSelected, selectedPrompt 
 
   return (
     <div className="space-container">
-      <ul aria-live="polite" className="w-full mb-2 ">
+      <ul aria-live="polite" className="mb-2 w-full ">
         {prompts.map((prompt, index) => (
-          <li key={index} className="mb-2 bg-background rounded text-foreground">
+          <li key={index} className="mb-2 rounded bg-background text-foreground">
             <Button
               onClick={() => handlePromptClick(prompt)}
-              className={`w-full text-center p-2 rounded text-buttonText ${selectedPrompt === prompt ? "bg-button" : "text-buttonText"}`}
+              className={`w-full rounded p-2 text-center text-buttonText ${selectedPrompt === prompt ? "bg-button" : "text-buttonText"}`}
               disabled={selectedPrompt === prompt}
               aria-pressed={selectedPrompt === prompt}
             >

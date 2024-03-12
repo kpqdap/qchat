@@ -6,11 +6,11 @@ import { NewChat } from "../../chat-menu/new-chat"
 export const StartNewChat = (): JSX.Element => {
   return (
     <section
-      className="grid grid-cols-3 w-full items-center container mx-auto max-w-3xl justify-center max:h-5/6 gap-9 bg-altBackground"
+      className="max:h-5/6 container mx-auto grid w-full max-w-3xl grid-cols-3 items-center justify-center gap-9 bg-altBackground"
       aria-labelledby="startChatTitle"
     >
-      <Card className="col-span-3 flex flex-col gap-5 p-5 bg-altBackgroundShade">
-        <Typography variant="h4" className="text-siteTitle text-2xl" id="startChatTitle">
+      <Card className="col-span-3 flex flex-col gap-5 bg-altBackgroundShade p-5">
+        <Typography variant="h4" className="text-2xl text-siteTitle" id="startChatTitle">
           {AI_NAME}
           <br />
           The Queensland Government AI Assistant
@@ -26,7 +26,7 @@ export const StartNewChat = (): JSX.Element => {
           </p>
           <p className="lg:hidden">Press the plus button below to get started.</p>
         </div>
-        <div className="-mx-5 -mb-5 p-5 flex flex-col border-t bg-muted">
+        <div className="-mx-5 -mb-5 flex flex-col border-t bg-muted p-5">
           <NewChat aria-label="Start a new chat" />
         </div>
       </Card>

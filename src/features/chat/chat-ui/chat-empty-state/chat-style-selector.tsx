@@ -23,7 +23,7 @@ export const ChatStyleSelector: FC<Prop> = props => {
               defaultValue={chatBody.conversationStyle}
               onValueChange={value => onConversationStyleChange(value as ConversationStyle)}
             >
-              <TabsList aria-label="Conversation Style" className="grid w-full grid-cols-3 h-12 items-stretch">
+              <TabsList aria-label="Conversation Style" className="grid h-12 w-full grid-cols-3 items-stretch">
                 <TabsTrigger
                   value="precise"
                   className="flex gap-2"
@@ -58,7 +58,7 @@ export const ChatStyleSelector: FC<Prop> = props => {
             </Tabs>
           </div>
         </Tooltip.Trigger>
-        <Tooltip.Content side="top" className="bg-primary-foreground p-2 rounded-md shadow-lg text-sm text-foreground">
+        <Tooltip.Content side="top" className="rounded-md bg-primary-foreground p-2 text-sm text-foreground shadow-lg">
           <p>This controls the &quot;temperature&quot; of the model, with the values for each being 0.1, 0.5 and 1</p>
           <p>
             <strong>Precise:</strong> Focused and detail-oriented conversations.

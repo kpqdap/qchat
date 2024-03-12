@@ -19,10 +19,10 @@ export const ChatSensitivitySelector: FC<Prop> = ({ disable }) => {
         <Tooltip.Trigger asChild>
           <div>
             <Tabs defaultValue={chatBody.conversationSensitivity}>
-              <TabsList aria-label="Conversation Sensitivity" className="grid w-full grid-cols-3 h-12 items-stretch">
+              <TabsList aria-label="Conversation Sensitivity" className="grid h-12 w-full grid-cols-3 items-stretch">
                 <TabsTrigger
                   value="official"
-                  className="flex gap-2 items-center justify-center"
+                  className="flex items-center justify-center gap-2"
                   disabled={disable}
                   role="tab"
                   aria-selected={chatBody.conversationSensitivity === "official"}
@@ -32,7 +32,7 @@ export const ChatSensitivitySelector: FC<Prop> = ({ disable }) => {
                 </TabsTrigger>
                 <TabsTrigger
                   value="sensitive"
-                  className="flex gap-2 items-center justify-center"
+                  className="flex items-center justify-center gap-2"
                   disabled={disable}
                   role="tab"
                   aria-selected={chatBody.conversationSensitivity === "sensitive"}
@@ -42,7 +42,7 @@ export const ChatSensitivitySelector: FC<Prop> = ({ disable }) => {
                 </TabsTrigger>
                 <TabsTrigger
                   value="protected"
-                  className="flex gap-2 items-center justify-center"
+                  className="flex items-center justify-center gap-2"
                   disabled={true}
                   role="tab"
                   aria-selected={chatBody.conversationSensitivity === "protected"}
@@ -54,7 +54,7 @@ export const ChatSensitivitySelector: FC<Prop> = ({ disable }) => {
             </Tabs>
           </div>
         </Tooltip.Trigger>
-        <Tooltip.Content side="top" className="bg-primary-foreground p-2 rounded-md shadow-lg text-sm text-foreground">
+        <Tooltip.Content side="top" className="rounded-md bg-primary-foreground p-2 text-sm text-foreground shadow-lg">
           <p>
             <strong>Official:</strong> Verified and formal conversations.
           </p>

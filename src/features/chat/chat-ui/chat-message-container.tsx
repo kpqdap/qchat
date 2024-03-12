@@ -32,7 +32,7 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId }) => {
       <div className="flex justify-center p-4">
         <ChatHeader />
       </div>
-      <div className="pb-[80px] flex flex-col justify-end flex-1">
+      <div className="flex flex-1 flex-col justify-end pb-[80px]">
         {messages.map((message, index) => (
           <ChatRow
             chatMessageId={message.id}

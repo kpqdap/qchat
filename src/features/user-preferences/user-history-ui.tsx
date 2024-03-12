@@ -15,8 +15,8 @@ export const ChatReportingUI: FC<Props> = async props => {
   const chatThread = chatThreads[0]
 
   return (
-    <Card className="h-full relative">
-      <div className="h-full rounded-md overflow-y-auto">
+    <Card className="relative h-full">
+      <div className="h-full overflow-y-auto rounded-md">
         <div className="flex justify-center p-4"></div>
         <div className=" pb-[80px] ">
           {chats.map((message, index) => (

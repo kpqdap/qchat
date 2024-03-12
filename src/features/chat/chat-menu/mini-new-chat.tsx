@@ -36,12 +36,12 @@ export const MiniNewChat = (): JSX.Element => {
   }
 
   return (
-    <div className="lg:hidden absolute top-4 right-4">
+    <div className="absolute right-4 top-4 lg:hidden">
       <Button
         aria-label="Start a new chat"
         role="button"
         tabIndex={0}
-        className="gap-2 rounded-md w-[40px] h-[40px] p-1"
+        className="size-[40px] gap-2 rounded-md p-1"
         variant="default"
         onClick={startNewChat}
         onKeyDown={e => e.key === "Enter" && startNewChat()}

@@ -24,7 +24,7 @@ const MiniMenuItem = ({
   onClick: () => void
 }): React.JSX.Element => (
   <div
-    className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
+    className="flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
     onClick={onClick}
     role="button"
     tabIndex={0}

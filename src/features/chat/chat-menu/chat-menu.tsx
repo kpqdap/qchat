@@ -7,7 +7,7 @@ export const ChatMenu = async (): Promise<JSX.Element> => {
   const items = await FindAllChatThreadForCurrentUser()
 
   return (
-    <Menu className="hidden md:block lg:col-span-2 xl:col-span-1 w-auto p-2 bg-background overflow-auto h-full">
+    <Menu className="hidden h-full w-auto overflow-auto bg-background p-2 md:block lg:col-span-2 xl:col-span-1">
       <MenuHeader className="justify-end">
         <NewChat />
       </MenuHeader>

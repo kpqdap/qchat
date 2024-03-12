@@ -30,7 +30,7 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
   const { showFileUpload } = fileState
 
   return (
-    <div className="grid grid-cols-5 w-full items-center container overflow-auto mx-auto max-w-3xl justify-center max:h-5/6 p-4 gap-9 pb-[80px]">
+    <div className="max:h-5/6 container mx-auto grid w-full max-w-3xl grid-cols-5 items-center justify-center gap-9 overflow-auto p-4 pb-[80px]">
       <Card className="col-span-5 flex flex-col gap-2 p-5 ">
         <EasterEgg />
         <div className="flex flex-col gap-1">
