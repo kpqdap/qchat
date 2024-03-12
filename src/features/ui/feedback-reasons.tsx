@@ -14,7 +14,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
         <TabsList className="grid w-full grid-cols-3 h-12 items-stretch">
           <TabsTrigger
             value="Unsafe"
-            className="flex items-center justify-center gap-2 px-3 py-2 flex-grow"
+            className="flex items-center justify-center gap-2 px-3 py-2 grow"
             disabled={!areTabsEnabled}
             aria-label="Mark feedback as unsafe"
           >
@@ -22,7 +22,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
           </TabsTrigger>
           <TabsTrigger
             value="Inaccurate"
-            className="flex items-center justify-center gap-2 px-3 py-2 flex-grow"
+            className="flex items-center justify-center gap-2 px-3 py-2 grow"
             disabled={!areTabsEnabled}
             aria-label="Mark feedback as inaccurate"
           >
@@ -30,7 +30,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onRea
           </TabsTrigger>
           <TabsTrigger
             value="Unhelpful"
-            className="flex items-center justify-center gap-2 px-3 py-2 flex-grow"
+            className="flex items-center justify-center gap-2 px-3 py-2 grow"
             disabled={!areTabsEnabled}
             aria-label="Mark feedback as unhelpful"
           >

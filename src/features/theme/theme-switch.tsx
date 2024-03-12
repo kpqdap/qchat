@@ -27,7 +27,7 @@ export function ThemeSwitch(): JSX.Element {
         <TabsTrigger
           value="dark"
           onClick={() => handleTabChange("dark")}
-          className="h-[35px] w-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
+          className="size-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
           aria-label="Switch to dark mode"
         >
           <Moon size={18} />
@@ -35,7 +35,7 @@ export function ThemeSwitch(): JSX.Element {
         <TabsTrigger
           value="light"
           onClick={() => handleTabChange("light")}
-          className="h-[35px] w-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
+          className="size-[35px] rounded-md focus:ring text-altButton hover:bg-altBackgroundShade hover:text-altButton"
           aria-label="Switch to light mode"
         >
           <Sun size={18} />

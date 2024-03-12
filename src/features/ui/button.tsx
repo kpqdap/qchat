@@ -15,17 +15,17 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-button hover:text-buttonText",
         link: "text-primary underline-offset-4 hover:underline",
-        code: "absolute right-2 top-2 h-7 p-1 text-sm font-white focus:bg-accent focus:text-link",
+        code: "absolute right-2 top-2 h-7 p-1 text-sm text-white focus:bg-accent focus:text-link",
         copyCode: "absolute right-2 top-2 h-7 p-1 text-sm text-white focus:bg-accent focus:text-link",
-        menuRound: "rounded-full w-10 h-10 p-1 text-primary border border-input hover:bg-accent",
+        menuRound: "rounded-full size-10 p-1 text-primary border border-input hover:bg-accent",
         dropdownTrigger:
           "flex cursor-pointer select-none items-center rounded-md px-2 py-1.5 text-sm font-medium text-left text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-7 w-7 rounded",
+        sm: "size-7 rounded",
         lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        icon: "size-10",
       },
     },
     defaultVariants: {

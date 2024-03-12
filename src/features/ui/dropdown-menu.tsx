@@ -112,7 +112,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     {...props}
     role="menuitemcheckbox"
   >
-    <span className="mr-2">{checked ? <Check className="h-5 w-5 text-indigo-600" /> : null}</span>
+    <span className="mr-2">{checked ? <Check className="size-5 text-indigo-600" /> : null}</span>
     {children}
   </DropdownMenuPrimitive.CheckboxItem>
 ))
@@ -133,7 +133,7 @@ const DropdownMenuRadioItem = React.forwardRef<
     role="menuitemradio"
   >
     <span className="mr-2">
-      <Circle className="h-5 w-5 text-indigo-600" />
+      <Circle className="size-5 text-indigo-600" />
     </span>
     {children}
   </DropdownMenuPrimitive.RadioItem>
