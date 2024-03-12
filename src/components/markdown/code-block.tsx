@@ -1,3 +1,5 @@
+"use client"
+
 import { CheckIcon, ClipboardIcon } from "lucide-react"
 import { FC, memo, useEffect, useState } from "react"
 import { Prism } from "react-syntax-highlighter"

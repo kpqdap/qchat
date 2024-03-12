@@ -1,5 +1,4 @@
 import { ChatAPIEntry } from "@/features/chat/chat-services/chat-api-entry"
-import { UserPrompt } from "@/features/chat-page/chat-services/models"
 
 const delay = (ms: number | undefined): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -32,17 +31,4 @@ export async function POST(req: Request): Promise<Response> {
     }
   }
   return new Response("We're sorry, the server timed-out after several retries.", { status: 504 })
-}
-
-export async function POST(req: Request): Promise<Response> {
-  const formData = await req.formData()
-  const content = formData.get("content") as unknown as string
-  const multimodalImage = formData.get("image-base64") as unknown as string
-
-  const userPrompt: UserPrompt = {
-    ...JSON.parse(content),
-    multimodalImage,
-  }
-
-  return await ChatAPIEntry(userPrompt, req.signal)
 }
