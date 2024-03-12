@@ -1,5 +1,5 @@
 import { Container, CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos"
-import { handleCosmosError } from "./cosmos-error"
+import { handleCosmosError } from "@/services/cosmos-error"
 
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev"
 const USER_PREFS_CONTAINER_NAME = process.env.AZURE_COSMOSDB_USER_CONTAINER_NAME || "userprefs"

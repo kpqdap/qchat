@@ -25,7 +25,9 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/ui/*": ["./features/ui/*"]
+      "@/ui/*": ["./features/ui/*"],
+      "@/services/*": ["./features/common/services/*"],
+      "@/components/*": ["./components/*"]
     },
     "rootDir": "."
   },

@@ -1,7 +1,8 @@
+import { OpenAIEmbeddingInstance } from "@/services/open-ai"
+
 interface FetcherResponse {
   [key: string]: unknown
 }
-import { OpenAIEmbeddingInstance } from "@/features/common/services/open-ai"
 
 export interface AzureCogDocumentIndex {
   id: string

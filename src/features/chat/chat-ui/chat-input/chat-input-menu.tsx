@@ -22,7 +22,7 @@ const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport, handleSubmit
     }
   }, [])
 
-  const fairClickHandler = () => {
+  const fairClickHandler = (): void => {
     const fairInput = "Help me complete a Queensland Government Fast AI Risk Assessment (FAIRA)"
     setInput(fairInput)
     setTimeout(() => {

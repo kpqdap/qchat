@@ -7,6 +7,18 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import { Button } from "@/features/ui/button"
 import { AI_NAME } from "@/features/theme/theme-config"
 
+export const fence = {
+  render: "CodeBlock",
+  attributes: {
+    language: {
+      type: String,
+    },
+    value: {
+      type: String,
+    },
+  },
+}
+
 interface Props {
   language: string
   children: string
