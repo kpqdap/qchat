@@ -42,7 +42,7 @@ export const NewChat = (): JSX.Element => {
 
   return (
     <Button
-      className="gap-2 rounded-md w-[40px] h-[40px] p-1"
+      className="size-[40px] gap-2 rounded-md p-1"
       variant="default"
       onClick={startNewChat}
       aria-label="Start a new chat"
