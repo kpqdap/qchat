@@ -8,8 +8,8 @@ interface Props {
 
 export const Callout = ({ title, description }: Props): React.JSX.Element => {
   return (
-    <div className="bg-background/100 p-6 border-l-4 border-accent max-w-lg">
-      <Typography variant="h3" className="text-lg font-semibold mb-2">
+    <div className="bg-background border-accent max-w-lg border-l-4 p-6">
+      <Typography variant="h3" className="mb-2 text-lg font-semibold">
         {title}
       </Typography>
       <Typography variant="p" className="text-base">
