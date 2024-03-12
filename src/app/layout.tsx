@@ -13,7 +13,7 @@ import { Footer } from "./footer"
 const notoSans = Noto_Sans({ subsets: ["latin"] })
 
 export const metadata = {
-  metadataBase: new URL(`https://qchat.ai.qld.gov.au`),
+  metadataBase: new URL("https://qchat.ai.qld.gov.au"),
   title: AI_NAME,
   description: AI_NAME + "the Queensland Government's AI Chatbot",
   icons: {
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
                 <NavBar />
               </nav>
               {/* <main className="main grid grid-cols-6 w-full h-5/6 bg-background"> */}
-              <main className="main h-5/6 w-full bg-background">
+              <main className="main bg-background h-5/6 w-full">
                 {children}
                 {/* <div className={cn("col-span-6 w-full gap-2 bg-primary h-full")}>
             
