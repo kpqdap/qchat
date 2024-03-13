@@ -69,17 +69,13 @@ export const MiniMenu = (): React.JSX.Element => {
         <div className="fixed inset-0 z-[99999] bg-altBackgroundShade" role="dialog" aria-modal="true">
           <div className="mt-16 p-2">
             {menuItems.map(item => (
-              <MiniMenuItem
-                key={item.name}
-                onClick={toggleMenu} // Only toggle the menu without toggling the theme
-                {...item}
-              />
+              <MiniMenuItem key={item.name} onClick={toggleMenu} {...item} />
             ))}
-            {/* Dedicated Theme Toggle Button */}
             <div
               className="flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
               onClick={() => {
-                toggleTheme() // Directly toggling theme here
+                toggleTheme()
+                toggleMenu()
               }}
               role="button"
               tabIndex={0}

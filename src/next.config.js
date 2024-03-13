@@ -54,10 +54,6 @@ const securityHeaders = [
     value: 'same-origin' 
   },
 ];
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
  
 /** @type {import('next').NextConfig} */
 
@@ -78,6 +74,11 @@ const nextConfig = {
       {
         source: '/logout',
         destination: '/api/auth/signout',
+        permanent: true,
+      },
+      {
+        source: '/chatai',
+        destination: '/chat',
         permanent: true,
       },
     ]

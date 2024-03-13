@@ -7,7 +7,6 @@ import { Noto_Sans } from "next/font/google"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 import { Header } from "./header"
-import { Footer } from "./footer"
 import { NavBar } from "@/components/ui/navbar"
 
 export const dynamic = "force-dynamic"
@@ -15,22 +14,29 @@ export const dynamic = "force-dynamic"
 const notoSans = Noto_Sans({ subsets: ["latin"] })
 
 export const metadata = {
+  metadataBase: new URL("https://qchat.ai.qld.gov.au"),
   title: AI_NAME,
-  description: AI_NAME,
+  description: AI_NAME + "the Queensland Government's AI Chatbot",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/pple-icon.png",
+    apple: "/apple-icon.png",
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full overflow-auto text-sm">
-      <body className={cn(notoSans.className, "h-full w-full flex flex-col min-w-[400px] bg-background")}>
+    <html lang="en" className="size-full overflow-hidden text-sm" suppressHydrationWarning>
+      <body className={cn(notoSans.className, "flex size-full min-w-[400px] flex-col bg-background")}>
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider>
-              <header className="header flex flex-col w-full background">
+              <header className="header background xs:h-full flex w-full flex-col sm:h-1/6">
                 <Header />
-                <NavBar />
-                <div className="bg-designAccent h-1"></div>
               </header>
+              <nav className="nav background flex w-full flex-col">
+                <NavBar />
+              </nav>
               <main className="main flex flex-col w-full h-full">
                 <div className={cn("flex w-full h-full gap-2 bg-primary")}>{children}</div>
               </main>

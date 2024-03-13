@@ -41,14 +41,14 @@ By clicking on the I understand button below, you agree to the terms of use outl
 
 QChat offers a number of services such as:
 
-* **Brainstorming**
-    Need a name for a new initiative? Looking for idea suggestions? Just ask QChat.
+- **Brainstorming**
+  Need a name for a new initiative? Looking for idea suggestions? Just ask QChat.
 
-* **Summarising**
-    Ask QChat to summarise text to make it shorter or to extract key concepts.
+- **Summarising**
+  Ask QChat to summarise text to make it shorter or to extract key concepts.
 
-* **Writing**
-    Composing briefing notes, creating reports or even writing code can be faster and easier using QChat.
+- **Writing**
+  Composing briefing notes, creating reports or even writing code can be faster and easier using QChat.
 
 > **Note:** "QChat may respond with inaccurate or false information. Always validate responses before using further." [More info here.](https://www.forgov.qld.gov.au/information-and-communication-technology/qchat/qchat-assistant)
 
