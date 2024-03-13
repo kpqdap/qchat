@@ -57,5 +57,6 @@ export const config = {
     "/admin/:path*",
     "/prompt-guide/:path*",
     "/what's-new/:path*",
+    "/terms/:path*",
   ],
 }
