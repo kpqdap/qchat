@@ -12,6 +12,7 @@ Before you start chatting with our automated assistant, we need to share a few i
 4. The new document upload feature, allowing for RAG-rated chats.
 
 **13 Dec** - We've made changes to how QChat works behind the scenes, while we don't expect any issues please reach out if you do experience any new problems using <qchat@chde.qld.gov.au>.
+
 **8 Nov** - We've updated our help links on this site and additionally made the GPT4 model available for your use. We've also made changes to ensure the replies you get are more aligned to the Queensland Government context.
 
 ## What Is This Service?
