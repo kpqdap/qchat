@@ -1,4 +1,5 @@
 "use client"
+
 import { AppInsightsProvider } from "./insights/app-insights-provider"
 import { SessionProvider } from "next-auth/react"
 import { GlobalMessageProvider } from "./global-message/global-message-context"
@@ -8,8 +9,8 @@ import { TooltipProvider } from "@/features/ui/tooltip-provider"
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <AppInsightsProvider>
-      <SessionProvider refetchInterval={5 * 60} basePath="/api/auth">
+    <SessionProvider basePath="/api/auth">
+      <AppInsightsProvider>
         <GlobalMessageProvider>
           <MenuProvider>
             <MiniMenuProvider>
@@ -17,7 +18,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
             </MiniMenuProvider>
           </MenuProvider>
         </GlobalMessageProvider>
-      </SessionProvider>
-    </AppInsightsProvider>
+      </AppInsightsProvider>
+    </SessionProvider>
   )
 }

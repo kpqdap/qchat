@@ -22,6 +22,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     const browserHistory = createBrowserHistory()
     const reactPlugin = new ReactPlugin()
     const clickPlugin = new ClickAnalyticsPlugin()
+    const appInsightsKey = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING
 
     const connectionString = appInsightsKey
     if (!connectionString) {
@@ -43,7 +44,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     appInsights.trackPageView()
 
     return { appInsights, reactPlugin, browserHistory, clickPlugin }
-  } catch (_error) {
+  } catch (error) {
     return null
   }
 }

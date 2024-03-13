@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
-export default async function Home({ params }: { params: { id: string } }) {
+export default async function Home({ params }: { params: { id: string } }): Promise<JSX.Element> {
   const [items, thread] = await Promise.all([FindAllChats(params.id), FindChatThreadByID(params.id)])
 
   if (thread.length === 0) {
