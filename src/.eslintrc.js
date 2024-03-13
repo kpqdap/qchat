@@ -54,7 +54,7 @@ module.exports = {
     ],
     "require-await": "warn",
     "@typescript-eslint/promise-function-async": [
-      "error",
+      "warn",
       {
         allowedPromiseNames: ["Thenable"],
         checkArrowFunctions: true,
