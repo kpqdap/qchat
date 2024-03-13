@@ -13,14 +13,13 @@ export async function translator(input: string): Promise<string> {
 
   try {
     const translatedTexts = await translateFunction([{ text: normalizedInput }], "en-GB", "en-US")
-    if (translatedTexts.length > 0) {
-      return revertCase(input, translatedTexts[0])
-    }
+    const result = translatedTexts.length <= 0 ? input : revertCase(input, translatedTexts[0])
+    console.log({ result })
+    return result
   } catch (error) {
     console.log(error)
+    return input
   }
-
-  return input
 }
 
 async function translateFunction(

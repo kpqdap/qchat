@@ -70,17 +70,36 @@ export const ChatProvider: FC<Prop> = props => {
   const { textToSpeech } = speechSynthesizer
   const { isMicrophoneUsed, resetMicrophoneUsed } = speechRecognizer
 
+  // const { messages, setMessages, ...response } = useChat({
+
   const response = useChat({
     onError,
     id: props.id,
     body: chatBody,
     initialMessages: transformCosmosToAIModel(props.chats),
     onFinish: async (lastMessage: Message) => {
+      // const translatedLastMessage = await translator(message.content)
+      // message.content = translatedLastMessage
+      // const newMessages = [...messages, message]
+      // console.log({ newMessages })
+      // setMessages(newMessages)
+
+      // const lastIndex = messages.findIndex(message => message === lastMessage)
+
+      // const updatedMessages = [
+      //   ...messages.slice(0, lastIndex),
+      //   { ...lastMessage, content: translatedLastMessage },
+      //   ...messages.slice(lastIndex + 1),
+      // ]
+
+      // setMessages(updatedMessages)
+
       if (isMicrophoneUsed) {
         textToSpeech(lastMessage.content)
         resetMicrophoneUsed()
       }
-      Router.refresh()
+      // Router.refresh()
+      window.location.reload()
     },
   })
 
@@ -114,6 +133,8 @@ export const ChatProvider: FC<Prop> = props => {
     <ChatContext.Provider
       value={{
         ...response,
+        // messages,
+        // setMessages,
         setChatBody,
         chatBody,
         onChatTypeChange,
