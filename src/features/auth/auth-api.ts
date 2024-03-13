@@ -105,39 +105,39 @@ const configureIdentityProvider = (): Provider[] => {
   return providers
 }
 
-async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
-  try {
-    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
-    const formData = new URLSearchParams({
-      client_id: process.env.AZURE_AD_CLIENT_ID!,
-      client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-      grant_type: "refresh_token",
-      refresh_token: token.refreshToken as string,
-    })
+// async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
+//   try {
+//     const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
+//     const formData = new URLSearchParams({
+//       client_id: process.env.AZURE_AD_CLIENT_ID!,
+//       client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
+//       grant_type: "refresh_token",
+//       refresh_token: token.refreshToken as string,
+//     })
 
-    const response = await fetch(tokenUrl, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData,
-      method: "POST",
-    })
+//     const response = await fetch(tokenUrl, {
+//       headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//       body: formData,
+//       method: "POST",
+//     })
 
-    if (!response.ok) {
-      return token
-    }
+//     if (!response.ok) {
+//       return token
+//     }
 
-    const refreshedTokens = await response.json()
+//     const refreshedTokens = await response.json()
 
-    return {
-      ...token,
-      accessToken: refreshedTokens.access_token,
-      refreshToken: refreshedTokens.refresh_token,
-      expiresIn: Date.now() + refreshedTokens.expires_in * 1000,
-      refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
-    }
-  } catch (_error) {
-    return { ...token, error: "RefreshAccessTokenError" }
-  }
-}
+//     return {
+//       ...token,
+//       accessToken: refreshedTokens.access_token,
+//       refreshToken: refreshedTokens.refresh_token,
+//       expiresIn: Date.now() + refreshedTokens.expires_in * 1000,
+//       refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
+//     }
+//   } catch (_error) {
+//     return { ...token, error: "RefreshAccessTokenError" }
+//   }
+// }
 
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -195,9 +195,9 @@ export const options: NextAuthOptions = {
         authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000
       }
 
-      if (authToken.refreshToken && typeof authToken.expiresIn === "number" && Date.now() > authToken.expiresIn) {
-        authToken = await refreshAccessToken(authToken)
-      }
+      // if (authToken.refreshToken && typeof authToken.expiresIn === "number" && Date.now() > authToken.expiresIn) {
+      //   authToken = await refreshAccessToken(authToken)
+      // }
 
       return authToken
     },
