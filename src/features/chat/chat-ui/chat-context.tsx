@@ -98,8 +98,8 @@ export const ChatProvider: FC<Prop> = props => {
         textToSpeech(lastMessage.content)
         resetMicrophoneUsed()
       }
-      // Router.refresh()
-      window.location.reload()
+      Router.refresh()
+      // window.location.reload()
     },
   })
 

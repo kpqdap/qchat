@@ -54,10 +54,21 @@ async function translateFunction(
 }
 
 function revertCase(originalText: string, translatedText: string): string {
-  return originalText
-    .split("")
-    .map((originalText, index) =>
-      originalText.match(/[A-Z]/) ? translatedText.charAt(index).toUpperCase() : translatedText.charAt(index)
-    )
-    .join("")
+  const originalWords = originalText.split(" ")
+  const translatedWords = translatedText.split(" ")
+
+  return originalWords
+    .map((originalWord, i) => {
+      const translatedWord = translatedWords[i] || ""
+      return [...originalWord]
+        .map((char, index) =>
+          char.match(/[A-Z]/) && index < translatedWord.length
+            ? translatedWord.charAt(index).toUpperCase()
+            : index < translatedWord.length
+              ? translatedWord.charAt(index)
+              : ""
+        )
+        .join("")
+    })
+    .join(" ")
 }
