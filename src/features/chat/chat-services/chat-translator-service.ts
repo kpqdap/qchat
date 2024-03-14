@@ -53,26 +53,6 @@ async function translateFunction(
   }
 }
 
-// function revertCase(originalText: string, translatedText: string): string {
-//   const originalWords = originalText.split(" ")
-//   const translatedWords = translatedText.split(" ")
-
-//   return originalWords
-//     .map((originalWord, i) => {
-//       const translatedWord = translatedWords[i] || ""
-//       return [...originalWord]
-//         .map((char, index) =>
-//           char.match(/[A-Z]/) && index < translatedWord.length
-//             ? translatedWord.charAt(index).toUpperCase()
-//             : index < translatedWord.length
-//               ? translatedWord.charAt(index)
-//               : ""
-//         )
-//         .join("")
-//     })
-//     .join(" ")
-// }
-
 function revertCase(originalText: string, translatedText: string): string {
   const originalWords = originalText.split(" ")
   const translatedWords = translatedText.split(" ")
