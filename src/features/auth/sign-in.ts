@@ -33,6 +33,7 @@ async function callGraphApi(accessToken: string, endpoint: string): Promise<stri
 
     if (!response.ok) {
       console.error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+      console.log(`Response: ${JSON.stringify(await response.json())}`)
       throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
     }
 
