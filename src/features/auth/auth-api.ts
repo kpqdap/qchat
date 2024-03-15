@@ -4,7 +4,6 @@ import AzureADProvider from "next-auth/providers/azure-ad"
 import { hashValue } from "./helpers"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
-import { UserRecord } from "../user-management/user-cosmos"
 
 export interface AuthToken extends JWT {
   qchatAdmin?: boolean
@@ -76,6 +75,7 @@ export const options: NextAuthOptions = {
         const accessToken = account?.access_token ?? ""
         return await UserSignInHandler.handleSignIn(user, accessToken)
       } catch (error) {
+        console.error("Error in signIn callback", error)
         return false
       }
     },
