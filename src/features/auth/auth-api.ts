@@ -78,21 +78,21 @@ export const options: NextAuthOptions = {
         return false
       }
     },
-    jwt({ token, user, account }) {
+    jwt({ token, user }) {
       const authToken = token as AuthToken
       if (user) {
         authToken.qchatAdmin = user.qchatAdmin ?? false
         authToken.tenantId = user.tenantId ?? ""
         authToken.upn = user.upn ?? ""
       }
-      if (account && account.access_token && account.refresh_token) {
-        const expiresIn = Number(account.expires_in ?? 0)
-        const refreshExpiresIn = Number(account.refresh_expires_in ?? 0)
-        authToken.accessToken = account.access_token
-        authToken.refreshToken = account.refresh_token
-        authToken.expiresIn = Date.now() + expiresIn * 1000
-        authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000
-      }
+      // if (account && account.access_token && account.refresh_token) {
+      // const expiresIn = Number(account.expires_in ?? 0)
+      // const refreshExpiresIn = Number(account.refresh_expires_in ?? 0)
+      // authToken.accessToken = account.access_token
+      // authToken.refreshToken = account.refresh_token
+      // authToken.expiresIn = Date.now() + expiresIn * 1000
+      // authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000
+      // }
       // if (authToken.refreshToken && typeof authToken.expiresIn === "number" && Date.now() > authToken.expiresIn) {
       //   authToken = await refreshAccessToken(authToken)
       // }
