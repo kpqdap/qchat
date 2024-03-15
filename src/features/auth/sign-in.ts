@@ -18,35 +18,49 @@ import { hashValue } from "./helpers"
 //   return result.value?.map((group: { id: string }) => group.id) || []
 // }
 
-async function callGraphApi(accessToken: string, endpoint: string): Promise<string[]> {
-  console.log(`callGraphApi called with endpoint: ${endpoint}`) // Log when the function is called and with what endpoint
+// async function callGraphApi(accessToken: string, endpoint: string): Promise<string[]> {
+//   console.log(`callGraphApi called with endpoint: ${endpoint}`) // Log when the function is called and with what endpoint
 
-  const headers = new Headers({
-    Authorization: `Bearer ${accessToken}`,
-    "Content-Type": "application/json",
-  })
-  console.log(`Request headers set for accessToken: ${accessToken.substring(0, 5)}...`) // Log part of the accessToken for security
+//   const headers = new Headers({
+//     Authorization: `Bearer ${accessToken}`,
+//     "Content-Type": "application/json",
+//   })
+//   console.log(`Request headers set for accessToken: ${accessToken.substring(0, 5)}...`) // Log part of the accessToken for security
 
+//   try {
+//     const response = await fetch(endpoint, { headers })
+//     console.log(`Received response from ${endpoint} with status: ${response.status}`) // Log the response status
+
+//     if (!response.ok) {
+//       console.error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+//       console.log(`Response: ${JSON.stringify(await response.json())}`)
+//       throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+//     }
+
+//     const result = await response.json()
+//     console.log(`Successfully fetched data from Microsoft Graph API, data length: ${result.value?.length || 0}`) // Log the length of the result if available
+
+//     const ids = result.value?.map((group: { id: string }) => group.id) || []
+//     console.log(`Extracted ${ids.length} IDs from the response`) // Log the count of IDs extracted
+
+//     return ids
+//   } catch (error) {
+//     console.error(`An error occurred while calling the Microsoft Graph API: ${error}`)
+//     throw error // Rethrow the error after logging
+//   }
+// }
+
+function getGroupsFromAccessToken(accessToken: string) {
   try {
-    const response = await fetch(endpoint, { headers })
-    console.log(`Received response from ${endpoint} with status: ${response.status}`) // Log the response status
-
-    if (!response.ok) {
-      console.error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
-      console.log(`Response: ${JSON.stringify(await response.json())}`)
-      throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+    const payload = parseJwt(accessToken)
+    console.log(JSON.stringify(payload))
+    if (process.env.NODE_ENV === "development") {
+      return (payload?.group as string[]) || []
     }
-
-    const result = await response.json()
-    console.log(`Successfully fetched data from Microsoft Graph API, data length: ${result.value?.length || 0}`) // Log the length of the result if available
-
-    const ids = result.value?.map((group: { id: string }) => group.id) || []
-    console.log(`Extracted ${ids.length} IDs from the response`) // Log the count of IDs extracted
-
-    return ids
+    return (payload?.employee_groups as string[]) || []
   } catch (error) {
-    console.error(`An error occurred while calling the Microsoft Graph API: ${error}`)
-    throw error // Rethrow the error after logging
+    console.error(`An error occurred while getting groups: ${error}`)
+    return []
   }
 }
 
@@ -75,7 +89,8 @@ export class UserSignInHandler {
         return true
       }
 
-      const userGroups = await callGraphApi(accessToken, "https://graph.microsoft.com/v1.0/me/memberOf?$select=id")
+      // const userGroups = await callGraphApi(accessToken, "https://graph.microsoft.com/v1.0/me/memberOf?$select=id")
+      const userGroups = await getGroupsFromAccessToken(accessToken)
 
       if (tenant.requiresGroupLogin && (await isUserInRequiredGroups(userGroups, tenant.groups || []))) {
         await updateUser(userContainer, existingUser, userGroups, true)
@@ -191,4 +206,19 @@ async function updateUser(
     console.error("Error updating user:", error)
     return user
   }
+}
+
+function parseJwt(token: string) {
+  const base64Url = token.split(".")[1] // get the payload
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/") // convert Base64Url to Base64
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+      })
+      .join("")
+  ) // decode Base64 and convert it to JSON
+
+  return JSON.parse(jsonPayload)
 }
