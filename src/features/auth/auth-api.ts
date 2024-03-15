@@ -1,7 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/azure-ad"
-import { hashValue } from "./helpers"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
 
