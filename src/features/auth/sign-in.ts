@@ -5,17 +5,48 @@ import { User } from "next-auth"
 import { AdapterUser } from "next-auth/adapters"
 import { hashValue } from "./helpers"
 
+// async function callGraphApi(accessToken: string, endpoint: string): Promise<string[]> {
+//   const headers = new Headers({
+//     Authorization: `Bearer ${accessToken}`,
+//     "Content-Type": "application/json",
+//   })
+//   const response = await fetch(endpoint, { headers })
+//   if (!response.ok) {
+//     throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+//   }
+//   const result = await response.json()
+//   return result.value?.map((group: { id: string }) => group.id) || []
+// }
+
 async function callGraphApi(accessToken: string, endpoint: string): Promise<string[]> {
+  console.log(`callGraphApi called with endpoint: ${endpoint}`) // Log when the function is called and with what endpoint
+
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
     "Content-Type": "application/json",
   })
-  const response = await fetch(endpoint, { headers })
-  if (!response.ok) {
-    throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+  console.log(`Request headers set for accessToken: ${accessToken.substring(0, 5)}...`) // Log part of the accessToken for security
+
+  try {
+    const response = await fetch(endpoint, { headers })
+    console.log(`Received response from ${endpoint} with status: ${response.status}`) // Log the response status
+
+    if (!response.ok) {
+      console.error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+      throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
+    }
+
+    const result = await response.json()
+    console.log(`Successfully fetched data from Microsoft Graph API, data length: ${result.value?.length || 0}`) // Log the length of the result if available
+
+    const ids = result.value?.map((group: { id: string }) => group.id) || []
+    console.log(`Extracted ${ids.length} IDs from the response`) // Log the count of IDs extracted
+
+    return ids
+  } catch (error) {
+    console.error(`An error occurred while calling the Microsoft Graph API: ${error}`)
+    throw error // Rethrow the error after logging
   }
-  const result = await response.json()
-  return result.value?.map((group: { id: string }) => group.id) || []
 }
 
 export class UserSignInHandler {
