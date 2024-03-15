@@ -65,110 +65,17 @@ const configureIdentityProvider = (): Provider[] => {
   return providers
 }
 
-// async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
-//   try {
-//     const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
-//     const formData = new URLSearchParams({
-//       client_id: process.env.AZURE_AD_CLIENT_ID!,
-//       client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-//       grant_type: "refresh_token",
-//       refresh_token: token.refreshToken as string,
-//     })
-
-//     const response = await fetch(tokenUrl, {
-//       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//       body: formData,
-//       method: "POST",
-//     })
-
-//     if (!response.ok) {
-//       console.log(`Failed to refresh access token. Status: ${response.status}. \n Response: ${await response.json()}`)
-//       return token
-//     }
-
-//     const refreshedTokens = await response.json()
-
-//     return {
-//       ...token,
-//       accessToken: refreshedTokens.access_token,
-//       refreshToken: refreshedTokens.refresh_token,
-//       expiresIn: Date.now() + refreshedTokens.expires_in * 1000,
-//       refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
-//     }
-//   } catch (_error) {
-//     return { ...token, error: "RefreshAccessTokenError" }
-//   }
-// }
-
-// export const options: NextAuthOptions = {
-//   secret: process.env.NEXTAUTH_SECRET,
-//   providers: [...configureIdentityProvider()],
-//   callbacks: {
-//     async signIn({ user, profile }) {
-//       if (user?.tenantId && user?.upn) {
-//         const now = new Date()
-//         const ExtendedProfile = profile as ExtendedProfile
-//         const userIdentity: UserIdentity = {
-//           id: hashValue(user.upn),
-//           tenantId: user.tenantId,
-//           email: user.email ?? user.upn,
-//           name: user.name ?? "",
-//           upn: user.upn,
-//           userId: user.upn,
-//           qchatAdmin: user.qchatAdmin,
-//         }
-//         const userActivity: UserActivity = {
-//           last_login: now,
-//           first_login: now,
-//           accepted_terms: true,
-//           accepted_terms_date: now.toISOString(),
-//           failed_login_attempts: 0,
-//           last_failed_login: null,
-//         }
-//         const userRecord: UserRecord = { ...userIdentity, ...userActivity }
-//         try {
-//           let groupsArray = ExtendedProfile?.employee_groups as string[] | undefined
-//           if (process.env.NODE_ENV === "development") {
-//             groupsArray = ExtendedProfile?.groups as string[] | undefined
-//           }
-//           const groupsString = groupsArray?.join(",")
-//           return await UserSignInHandler.handleSignIn(userRecord, groupsString)
-//         } catch (_error) {
-//           return false
-//         }
-//       } else {
-//         return false
-//       }
-//     },
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  providers: [...configureIdentityProvider()], // Assuming this function is defined elsewhere
+  providers: [...configureIdentityProvider()],
   callbacks: {
     async signIn({ user, account }): Promise<boolean> {
       if (!user?.tenantId || !user?.upn) return false
 
-      const now = new Date()
-      const userRecord: UserRecord = {
-        id: hashValue(user.upn), // Assuming hashValue is defined elsewhere
-        tenantId: user.tenantId,
-        email: user.email ?? user.upn,
-        name: user.name ?? "",
-        upn: user.upn,
-        userId: user.upn,
-        qchatAdmin: user.qchatAdmin ?? false,
-        last_login: now,
-        first_login: now,
-        accepted_terms: true,
-        accepted_terms_date: now.toISOString(),
-        failed_login_attempts: 0,
-        last_failed_login: null,
-      }
-
       try {
         const accessToken = account?.access_token ?? ""
-        return await UserSignInHandler.handleSignIn(userRecord, accessToken)
+        return await UserSignInHandler.handleSignIn(user, accessToken)
       } catch (error) {
-        console.error("SignIn error:", error)
         return false
       }
     },

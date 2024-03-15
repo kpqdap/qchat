@@ -1,12 +1,11 @@
 import { CosmosDBUserContainer, UserRecord } from "../user-management/user-cosmos"
 import { CosmosDBTenantContainerExtended } from "../tenant-management/tenant-groups"
 import { CosmosDBTenantContainer, TenantRecord } from "../tenant-management/tenant-cosmos"
+import { User } from "next-auth"
+import { AdapterUser } from "next-auth/adapters"
+import { hashValue } from "./helpers"
 
-interface GraphResponse {
-  value: { id: string }[]
-}
-
-async function callGraphApi(accessToken: string, endpoint: string): Promise<GraphResponse> {
+async function callGraphApi(accessToken: string, endpoint: string): Promise<string[]> {
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
     "Content-Type": "application/json",
@@ -15,37 +14,44 @@ async function callGraphApi(accessToken: string, endpoint: string): Promise<Grap
   if (!response.ok) {
     throw new Error(`Failed to fetch from Microsoft Graph API: ${response.statusText}`)
   }
-  return response.json() as Promise<GraphResponse>
+  const result = await response.json()
+  return result.value?.map((group: { id: string }) => group.id) || []
 }
 
 export class UserSignInHandler {
-  static async handleSignIn(user: UserRecord, accessToken: string): Promise<boolean> {
+  static async handleSignIn(user: User | AdapterUser, accessToken: string): Promise<boolean> {
     const userContainer = new CosmosDBUserContainer()
     const tenantContainerExtended = new CosmosDBTenantContainerExtended()
     const tenantContainer = new CosmosDBTenantContainer()
-
     try {
-      const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => email.trim().toLowerCase()) || []
       const tenant = await tenantContainerExtended.getTenantById(user.tenantId)
 
-      if (!tenant) {
-        const tenantRecord: TenantRecord = createTenantRecord(user, groupAdmins)
-        await tenantContainer.createTenant(tenantRecord)
-      } else {
-        if (tenant.requiresGroupLogin && !(await isUserInRequiredGroups(accessToken, tenant.groups || []))) {
-          await updateFailedLogin(user)
-          return false
-        }
-
-        const existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn)
-        if (!existingUser) {
-          await createUser(userContainer, user)
-        } else {
-          await updateUser(userContainer, existingUser, user)
-        }
+      let existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn)
+      if (!existingUser) {
+        existingUser = await createUser(userContainer, createUserRecord(user))
       }
 
-      return true
+      if (!tenant) {
+        const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => email.trim().toLowerCase()) || []
+        const tenantRecord: TenantRecord = createTenantRecord(existingUser, groupAdmins)
+        await tenantContainer.createTenant(tenantRecord)
+
+        await updateUser(userContainer, existingUser, [], false)
+        return false
+      }
+      if (!tenant.requiresGroupLogin) {
+        return true
+      }
+
+      const userGroups = await callGraphApi(accessToken, "https://graph.microsoft.com/v1.0/me/memberOf?$select=id")
+
+      if (tenant.requiresGroupLogin && (await isUserInRequiredGroups(userGroups, tenant.groups || []))) {
+        await updateUser(userContainer, existingUser, userGroups, true)
+        return true
+      }
+
+      await updateUser(userContainer, existingUser, userGroups, false)
+      return false
     } catch (error) {
       console.error("Error handling sign-in:", error)
       return false
@@ -53,17 +59,16 @@ export class UserSignInHandler {
   }
 }
 
-async function isUserInRequiredGroups(accessToken: string, requiredGroups: string[] = []): Promise<boolean> {
-  if (!requiredGroups.length) return true
+async function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] = []): Promise<boolean> {
+  if (!requiredGroups.length) return false
 
-  const graphResponse = await callGraphApi(accessToken, "https://graph.microsoft.com/v1.0/me/memberOf?$select=id")
-  const userGroups = graphResponse.value.map(group => group.id)
-
-  return requiredGroups.some(groupId => userGroups.includes(groupId))
+  const outcome = requiredGroups.some(groupId => userGroups.includes(groupId))
+  return outcome
 }
 
 function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantRecord {
   const domain = user.upn?.split("@")[1] || ""
+  const currentTime = new Date()
   return {
     tenantId: user.tenantId,
     primaryDomain: domain,
@@ -71,10 +76,10 @@ function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantReco
     id: user.tenantId,
     email: user.upn,
     supportEmail: `support@${domain}`,
-    dateCreated: new Date(),
+    dateCreated: currentTime,
     createdBy: user.upn,
     administrators: groupAdmins,
-    dateUpdated: null,
+    dateUpdated: currentTime,
     dateOnBoarded: null,
     dateOffBoarded: null,
     modifiedBy: null,
@@ -82,7 +87,29 @@ function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantReco
     groups: [],
     features: null,
     serviceTier: null,
+    history: [`${currentTime}: Tenant created by user ${user.upn} on failed login.`],
   }
+}
+
+function createUserRecord(user: User | AdapterUser) {
+  const now = new Date()
+  const userRecord: UserRecord = {
+    id: hashValue(user.upn),
+    tenantId: user.tenantId,
+    email: user.email ?? user.upn,
+    name: user.name ?? "",
+    upn: user.upn,
+    userId: user.upn,
+    qchatAdmin: user.qchatAdmin ?? false,
+    last_login: now,
+    first_login: now,
+    accepted_terms: true,
+    accepted_terms_date: now.toISOString(),
+    failed_login_attempts: 0,
+    last_failed_login: null,
+    history: [`${now}: User created.`],
+  }
+  return userRecord
 }
 
 async function createUser(
@@ -107,33 +134,29 @@ async function createUser(
 
 async function updateUser(
   userContainer: CosmosDBUserContainer,
-  existingUser: UserRecord,
   user: UserRecord,
-  userGroups?: string[]
-): Promise<void> {
+  userGroups?: string[],
+  loginSuccess?: boolean
+): Promise<UserRecord> {
   try {
     const currentTime = new Date()
-    await userContainer.updateUser(
-      {
-        ...existingUser,
-        last_login: currentTime,
-        groups: userGroups,
-      },
-      user.tenantId,
-      user.userId
-    )
+
+    if (loginSuccess === true) {
+      user.failed_login_attempts = 0
+      user.last_login = currentTime
+    }
+    if (loginSuccess === false) {
+      user.failed_login_attempts++
+      user.last_failed_login = currentTime
+    }
+    const updatedUser = {
+      ...user,
+      groups: userGroups,
+    }
+    await userContainer.updateUser(updatedUser, user.tenantId, user.userId)
+    return updatedUser
   } catch (error) {
     console.error("Error updating user:", error)
-  }
-}
-
-// Update failed login
-function updateFailedLogin(existingUser: UserRecord): UserRecord {
-  try {
-    existingUser.failed_login_attempts++
-    existingUser.last_failed_login = new Date()
-    return existingUser
-  } catch (_e) {
-    return existingUser
+    return user
   }
 }
