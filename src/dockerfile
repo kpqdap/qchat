@@ -72,8 +72,7 @@ RUN npm install --omit=dev
 USER nextjs
 
 # Copy the entrypoint script
-COPY entrypoint.sh ./
-
+RUN chmod +x /app/entrypoint.sh
 # Set the entrypoint script
 ENTRYPOINT ["./entrypoint.sh"]
 
