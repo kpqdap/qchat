@@ -120,10 +120,6 @@ stages:
           - checkout: self
             clean: true
 
-          - script: |
-              chmod +x src/entrypoint.sh
-            displayName: "Set executable permissions for entrypoint.sh"
-
           - task: Docker@2
             displayName: "Build Docker Image for Analysis"
             inputs:
