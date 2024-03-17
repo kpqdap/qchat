@@ -84,8 +84,8 @@ ENV HOSTNAME 0.0.0.0
 CMD ["node", "server.js"]
 
 # Health check instruction (conditionally skipped in development)
-ARG NODE_ENV=production
-RUN if [ "$NODE_ENV" = "production" ]; then \
-    HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD node -e "require('https').get({hostname: 'localhost', port: 443, path: '/api/health', rejectUnauthorized: false}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"; \
-    fi
+# ARG NODE_ENV=production
+# RUN if [ "$NODE_ENV" = "production" ]; then \
+#     HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+#     CMD node -e "require('https').get({hostname: 'localhost', port: 443, path: '/api/health', rejectUnauthorized: false}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"; \
+#     fi
