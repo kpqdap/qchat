@@ -71,10 +71,15 @@ RUN npm install --omit=dev
 # Run the application as the non-root user
 USER nextjs
 
-# Copy and set the entrypoint script
-COPY --chmod=+x entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# Copy the entrypoint script
+COPY entrypoint.sh ./
+
+# Set executable permissions
+RUN chmod +x entrypoint.sh
+
+# Set the entrypoint script
+ENTRYPOINT ["./entrypoint.sh"]
+
 
 
 # Network configuration
