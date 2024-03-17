@@ -10,7 +10,6 @@ export const chatAPIEntry = async (props: PromptGPTProps): Promise<Response> => 
   } else if (dataChatTypes.includes(props.chatType)) {
     return ChatAPIData(props)
   } else {
-    // Default case, assuming "simple" as a fallback
     return ChatAPISimple(props)
   }
 }
