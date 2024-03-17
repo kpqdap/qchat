@@ -70,7 +70,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@azure/storage-blob"],
     serverActions: {
-      allowedOrigins: [process.env.NEXT_PUBLIC_QGAIP_QCHAT_FQDN_URI, process.env.NEXT_PUBLIC_QGAIP_QCHAT_APP_URI],
+      allowedOrigins: ["*.ai.qld.gov.au", "qggptprodopenai.azurewebsites.net", "qggptdevopenai.azurewebsites.net"],
     },
   },
   redirects() {
