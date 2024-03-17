@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const localUrl = process.env.QGAIP_QCHAT_FQDN_URI
-const fullUrl = process.env.QGAIP_QCHAT_APP_URI
-
 const securityHeaders = [
   {
     key: "X-XSS-Protection",
@@ -67,10 +64,13 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  devIndicators: {
+    buildActivityPosition: "bottom-right",
+  },
   experimental: {
     serverComponentsExternalPackages: ["@azure/storage-blob"],
     serverActions: {
-      allowedOrigins: [localUrl, fullUrl],
+      allowedOrigins: [process.env.NEXT_PUBLIC_QGAIP_QCHAT_FQDN_URI, process.env.NEXT_PUBLIC_QGAIP_QCHAT_APP_URI],
     },
   },
   redirects() {

@@ -55,12 +55,12 @@ variables:
       -NEXT_PUBLIC_API_URL "$(NEXT_PUBLIC_API_URL)"
       -NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING "$(NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING)"
       -NEXT_PUBLIC_FEATURE_TRANSLATOR "$(NEXT_PUBLIC_FEATURE_TRANSLATOR)"
+      -NEXT_PUBLIC_QGAIP_QCHAT_APP_URI "$(NEXT_PUBLIC_QGAIP_QCHAT_APP_URI)"
+      -NEXT_PUBLIC_QGAIP_QCHAT_FQDN_URI "$(NEXT_PUBLIC_QGAIP_QCHAT_FQDN_URI)"
       -PROMPT_BUTTON_ENABLED "$(PROMPT_BUTTON_ENABLED)"
       -PUBLIC_SPEECH_ENABLED "$(PUBLIC_SPEECH_ENABLED)"
       -QGAIP_APIM_BASE "$(QGAIP_APIM_BASE)"
       -QGAIP_APIM_HEALTHCHECK_URI "$(QGAIP_APIM_HEALTHCHECK_URI)"
-      -QGAIP_QCHAT_APP_URI "$(QGAIP_QCHAT_APP_URI)"
-      -QGAIP_QCHAT_FQDN_URI "$(QGAIP_QCHAT_FQDN_URI)"
       -SYSTEM_PROMPT "$(SYSTEM_PROMPT)"
 
   - group: dev-az-qggpt-variables
@@ -85,6 +85,28 @@ stages:
               npm run lint
             displayName: "Npm scripts"
 
+  # - stage: Build
+  #   displayName: "🛠️ - Build Stage"
+  #   variables:
+  #     - group: dev-az-qggpt-variables
+  #   jobs:
+  #     - job: BuildJob
+  #       displayName: "Build Job"
+  #       pool:
+  #         name: $(poolName)
+  #       steps:
+  #         - checkout: self
+  #           clean: true
+
+  #         - task: Docker@2
+  #           displayName: "Build Docker Image for Analysis"
+  #           inputs:
+  #             containerRegistry: "$(CONTAINER_REGISTRY)"
+  #             command: "build"
+  #             Dockerfile: "src/dockerfile"
+  #             repository: "$(REPOSITORY)"
+  #             tags: "$(Build.BuildId)"
+
   - stage: Build
     displayName: "🛠️ - Build Stage"
     variables:
@@ -104,6 +126,8 @@ stages:
               containerRegistry: "$(CONTAINER_REGISTRY)"
               command: "build"
               Dockerfile: "src/dockerfile"
+              buildContext: "src"
+              arguments: --build-arg BUILD_ID=$(Build.BuildId)
               repository: "$(REPOSITORY)"
               tags: "$(Build.BuildId)"
 

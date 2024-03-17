@@ -43,14 +43,14 @@ declare global {
       MAX_DOCUMENT_SIZE: string
       NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING: string
       NEXT_PUBLIC_FEATURE_TRANSLATOR: string
+      NEXT_PUBLIC_QGAIP_QCHAT_APP_URI: string
+      NEXT_PUBLIC_QGAIP_QCHAT_FQDN_URI: string
       NEXTAUTH_SECRET: string
       NEXTAUTH_URL: string
       PROMPT_BUTTON_ENABLED: string
       PUBLIC_SPEECH_ENABLED: string
       QGAIP_APIM_BASE: string
       QGAIP_APIM_HEALTHCHECK_URI: string
-      QGAIP_QCHAT_APP_URI: string
-      QGAIP_QCHAT_FQDN_URI: string
       SYSTEM_PROMPT: string
     }
   }

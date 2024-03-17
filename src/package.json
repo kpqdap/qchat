@@ -8,7 +8,8 @@
     "start": "next start",
     "tidy": "npm ci && npm upgrade && npm ci && npm run lint:fix && npm run build",
     "lint": "next lint --dir .",
-    "lint:fix": "next lint --dir . --fix"
+    "lint:fix": "next lint --dir . --fix",
+    "test": "playwright test"
   },
   "dependencies": {
     "@azure-rest/ai-translation-text": "^1.0.0-beta.1",
