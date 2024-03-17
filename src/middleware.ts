@@ -16,7 +16,7 @@ const requireAuth: string[] = [
 ]
 const requireAdmin: string[] = ["/reporting", "/admin", "/settings", "/tenant"]
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (process.env.NODE_ENV === "development") {
     return NextResponse.next()
   }
@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
   return res
 }
 
-async function additionalAdminCheck(token: AuthToken): Promise<boolean> {
+function additionalAdminCheck(token: AuthToken): boolean {
   const now = Math.floor(Date.now() / 1000)
   const maxAgeSeconds = 8 * 60 * 60
   const tokenIsExpired = token.exp <= now

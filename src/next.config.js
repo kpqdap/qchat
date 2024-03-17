@@ -73,7 +73,7 @@ const nextConfig = {
       allowedOrigins: [localUrl, fullUrl],
     },
   },
-  async redirects() {
+  redirects() {
     return [
       {
         source: "/login",
@@ -87,7 +87,7 @@ const nextConfig = {
       },
     ]
   },
-  async headers() {
+  headers() {
     return [
       {
         source: "/(.*)",
