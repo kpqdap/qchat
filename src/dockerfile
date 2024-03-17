@@ -66,15 +66,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Install production dependencies
 COPY package.json package-lock.json* ./
-RUN npm install --production
+RUN npm install --omit=dev
 
 # Run the application as the non-root user
 USER nextjs
 
 # Copy and set the entrypoint script
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY --chmod=+x entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 
 # Network configuration
 ENV PORT 443
