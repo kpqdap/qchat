@@ -18,21 +18,17 @@ export const metadata = {
   description: AI_NAME,
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
-    <html lang="en" className="h-full w-full overflow-hidden text-sm">
+    <html lang="en" className="size-full overflow-hidden text-sm">
       <body className={cn(notoSans.className, "flex h-full w-full min-w-[400px] flex-col bg-background")}>
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider>
-              <header className="header background xs:h-full flex w-full flex-col sm:h-1/6">
-                <Header />
-              </header>
-              <nav className="nav background flex w-full flex-col">
-                <NavBar />
-              </nav>
+              <Header />
+              <NavBar />
               {/* <main className="main grid grid-cols-6 w-full h-5/6 bg-background"> */}
-              <main className="main h-5/6 w-full bg-background">
+              <main className="main bg-background h-5/6 w-full">
                 {children}
                 {/* <div className={cn("col-span-6 w-full gap-2 bg-primary h-full")}>
                 
