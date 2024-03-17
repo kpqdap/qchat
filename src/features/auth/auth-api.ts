@@ -44,8 +44,10 @@ const configureIdentityProvider = (): Provider[] => {
           const email = profile.email != undefined ? profile.email?.toLowerCase() : profile.upn.toLowerCase()
           const qchatAdmin = adminEmails.includes(email)
           profile.tenantId = profile.employee_idp
+          profile.secGroups = profile.employee_groups
           if (process.env.NODE_ENV === "development") {
             profile.tenantId = profile.tid
+            profile.secGroups = profile.groups
           }
           return {
             ...profile,
@@ -69,10 +71,9 @@ export const options: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }): Promise<boolean> {
       if (!user?.tenantId || !user?.upn) return false
-
       try {
-        const accessToken = account?.access_token ?? ""
-        return await UserSignInHandler.handleSignIn(user, accessToken)
+        const groups = user?.secGroups ?? []
+        return await UserSignInHandler.handleSignIn(user, groups)
       } catch (error) {
         console.error("Error in signIn callback", error)
         return false
@@ -85,17 +86,6 @@ export const options: NextAuthOptions = {
         authToken.tenantId = user.tenantId ?? ""
         authToken.upn = user.upn ?? ""
       }
-      // if (account && account.access_token && account.refresh_token) {
-      // const expiresIn = Number(account.expires_in ?? 0)
-      // const refreshExpiresIn = Number(account.refresh_expires_in ?? 0)
-      // authToken.accessToken = account.access_token
-      // authToken.refreshToken = account.refresh_token
-      // authToken.expiresIn = Date.now() + expiresIn * 1000
-      // authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000
-      // }
-      // if (authToken.refreshToken && typeof authToken.expiresIn === "number" && Date.now() > authToken.expiresIn) {
-      //   authToken = await refreshAccessToken(authToken)
-      // }
       return authToken
     },
     session({ session, token }) {
