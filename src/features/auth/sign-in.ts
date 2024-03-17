@@ -1,73 +1,45 @@
 import { CosmosDBUserContainer, UserRecord } from "../user-management/user-cosmos"
 import { CosmosDBTenantContainerExtended } from "../tenant-management/tenant-groups"
 import { CosmosDBTenantContainer, TenantRecord } from "../tenant-management/tenant-cosmos"
+import { User } from "next-auth"
+import { AdapterUser } from "next-auth/adapters"
+import { hashValue } from "./helpers"
 
 export class UserSignInHandler {
-  static async handleSignIn(user: UserRecord, groupsString?: string): Promise<boolean> {
+  static async handleSignIn(user: User | AdapterUser, groups: string[]): Promise<boolean> {
     const userContainer = new CosmosDBUserContainer()
     const tenantContainerExtended = new CosmosDBTenantContainerExtended()
     const tenantContainer = new CosmosDBTenantContainer()
-
     try {
-      // Groups claim (Profile)
-      const userGroups = groupsString ? groupsString.split(",").map(group => group.trim()) : []
+      const tenant = await tenantContainerExtended.getTenantById(user.tenantId)
 
-      // Group Admins
-      const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(string => string.toLowerCase().trim())
-
-      // Creates or updates the user
-      let existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn ?? "")
+      let existingUser = await userContainer.getUserByUPN(user.tenantId, user.upn)
       if (!existingUser) {
-        existingUser = await createUser(userContainer, user, userGroups)
-      } else {
-        await updateUser(userContainer, existingUser, user, userGroups)
+        existingUser = await createUser(userContainer, createUserRecord(user))
       }
 
-      // Validate if the tenant exists
-      const tenant = await tenantContainerExtended.getTenantById(user.tenantId)
       if (!tenant) {
-        //Create tenant with group login required
-        const tenantRecord: TenantRecord = {
-          tenantId: user.tenantId,
-          primaryDomain: user.upn?.split("@")[1],
-          requiresGroupLogin: true,
-          id: user.tenantId,
-          email: user.upn,
-          supportEmail: "support@" + user.upn?.split("@")[1],
-          dateCreated: new Date(),
-          dateUpdated: null,
-          dateOnBoarded: null,
-          dateOffBoarded: null,
-          modifiedBy: null,
-          createdBy: user.upn,
-          departmentName: null,
-          groups: [],
-          administrators: groupAdmins, //currently on groupAdmins, to be managed by tenant admins ()
-          features: null,
-          serviceTier: null,
-        }
-
+        const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(email => email.trim().toLowerCase()) || []
+        const tenantRecord: TenantRecord = createTenantRecord(existingUser, groupAdmins)
         await tenantContainer.createTenant(tenantRecord)
 
-        // Update user as failed login
-        await updateUser(userContainer, await updateFailedLogin(existingUser), user, userGroups)
-
+        await updateUser(userContainer, existingUser, [], false)
         return false
       }
-
-      // Validate if the group is required and exists on tenant
-      if (
-        tenant.requiresGroupLogin &&
-        (userGroups.length === 0 ||
-          !(await tenantContainerExtended.areGroupsPresentForTenant(user.tenantId, groupsString || "")))
-      ) {
-        // Update user as failed login
-        await updateUser(userContainer, await updateFailedLogin(existingUser), user, userGroups)
-
-        return false
+      if (!tenant.requiresGroupLogin) {
+        await updateUser(userContainer, existingUser, groups, true)
+        return true
       }
 
-      return true
+      const userGroups = groups
+
+      if (tenant.requiresGroupLogin && (await isUserInRequiredGroups(userGroups, tenant.groups || []))) {
+        await updateUser(userContainer, existingUser, userGroups, true)
+        return true
+      }
+
+      await updateUser(userContainer, existingUser, userGroups, false)
+      return false
     } catch (error) {
       console.error("Error handling sign-in:", error)
       return false
@@ -75,11 +47,63 @@ export class UserSignInHandler {
   }
 }
 
-// Create New User
+async function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] = []): Promise<boolean> {
+  if (!requiredGroups.length) return false
+
+  const outcome = requiredGroups.some(groupId => userGroups.includes(groupId))
+  return outcome
+}
+
+function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantRecord {
+  const domain = user.upn?.split("@")[1] || ""
+  const now = new Date()
+  return {
+    tenantId: user.tenantId,
+    primaryDomain: domain,
+    requiresGroupLogin: true,
+    id: user.tenantId,
+    email: user.upn,
+    supportEmail: `support@${domain}`,
+    dateCreated: now,
+    createdBy: user.upn,
+    administrators: groupAdmins,
+    dateUpdated: now,
+    dateOnBoarded: null,
+    dateOffBoarded: null,
+    modifiedBy: null,
+    departmentName: null,
+    groups: [],
+    features: null,
+    serviceTier: null,
+    history: [`${now}: Tenant created by user ${user.upn} on failed login.`],
+  }
+}
+
+function createUserRecord(user: User | AdapterUser) {
+  const now = new Date()
+  const userRecord: UserRecord = {
+    id: hashValue(user.upn),
+    tenantId: user.tenantId,
+    email: user.email ?? user.upn,
+    name: user.name ?? "",
+    upn: user.upn,
+    userId: user.upn,
+    qchatAdmin: user.qchatAdmin ?? false,
+    last_login: now,
+    first_login: now,
+    accepted_terms: true,
+    accepted_terms_date: now.toISOString(),
+    failed_login_attempts: 0,
+    last_failed_login: null,
+    history: [`${now}: User created.`],
+  }
+  return userRecord
+}
+
 async function createUser(
   userContainer: CosmosDBUserContainer,
   user: UserRecord,
-  userGroups: string[]
+  userGroups?: string[]
 ): Promise<UserRecord> {
   try {
     await userContainer.createUser({
@@ -92,42 +116,35 @@ async function createUser(
 
     return user
   } catch (_e) {
-    console.log("Failed to create User.")
     return user
   }
 }
 
-// Update existing user
 async function updateUser(
   userContainer: CosmosDBUserContainer,
-  existingUser: UserRecord,
   user: UserRecord,
-  userGroups: string[]
-): Promise<void> {
+  userGroups?: string[],
+  loginSuccess?: boolean
+): Promise<UserRecord> {
   try {
     const currentTime = new Date()
-    await userContainer.updateUser(
-      {
-        ...existingUser,
-        last_login: currentTime,
-        groups: userGroups,
-      },
-      user.tenantId,
-      user.userId
-    )
-  } catch (_e) {
-    console.log("Failed to update User.")
-  }
-}
 
-// Update failed login
-async function updateFailedLogin(existingUser: UserRecord): Promise<UserRecord> {
-  try {
-    existingUser.failed_login_attempts++
-    existingUser.last_failed_login = new Date()
-    return existingUser
-  } catch (_e) {
-    console.log("Failed to update User Login")
-    return existingUser
+    if (loginSuccess === true) {
+      user.failed_login_attempts = 0
+      user.last_login = currentTime
+    }
+    if (loginSuccess === false) {
+      user.failed_login_attempts++
+      user.last_failed_login = currentTime
+    }
+    const updatedUser = {
+      ...user,
+      groups: userGroups,
+    }
+    await userContainer.updateUser(updatedUser, user.tenantId, user.userId)
+    return updatedUser
+  } catch (error) {
+    console.error("Error updating user:", error)
+    return user
   }
 }
