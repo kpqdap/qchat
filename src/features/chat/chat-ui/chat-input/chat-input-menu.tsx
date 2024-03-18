@@ -3,7 +3,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { Button } from "@/features/ui/button"
 import { Menu, File, Clipboard, Bird } from "lucide-react"
 import { Message } from "ai"
-import { toast } from "@/features/ui/use-toast"
+import { useToast } from "@/features/ui/use-toast"
 import { getSession } from "next-auth/react"
 import { useChatContext } from "@/features/chat/chat-ui/chat-context"
 
@@ -15,6 +15,7 @@ interface ChatInputMenuProps {
 const ChatInputMenu: React.FC<ChatInputMenuProps> = ({ onDocExport }) => {
   const { setInput, handleSubmit, messages } = useChatContext()
   const firstMenuItemRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     if (firstMenuItemRef.current) {
