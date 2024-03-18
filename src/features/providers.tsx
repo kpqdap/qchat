@@ -1,4 +1,5 @@
 "use client"
+
 import { AppInsightsProvider } from "./insights/app-insights-provider"
 import { SessionProvider } from "next-auth/react"
 import { GlobalMessageProvider } from "./global-message/global-message-context"

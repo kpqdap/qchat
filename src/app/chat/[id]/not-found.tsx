@@ -1,7 +1,7 @@
 import { Card } from "@/features/ui/card"
 import { NewChat } from "@/features/chat/chat-menu/new-chat"
 
-export default async function NotFound() {
+export default async function NotFound(): Promise<JSX.Element> {
   return (
     <Card className="col-span-5 h-full items-center justify-center gap-4">
       <div className="container mx-auto flex h-full w-full max-w-xl items-center justify-center gap-2">

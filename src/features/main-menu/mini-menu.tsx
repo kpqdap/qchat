@@ -4,13 +4,13 @@ import React from "react"
 import Link from "next/link"
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useMiniMenuContext } from "./mini-menu-context"
-import { Menu, X, LogIn, LogOut, Moon, Sun, Home } from "lucide-react"
+import { Menu, X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Theme } from "../theme/customise"
 import { UrlObject } from "url"
 import { cn } from "@/lib/utils"
 
-const getSignInProvider = () => {
+const getSignInProvider = (): "QChatDevelopers" | "azure-ad" => {
   return process.env.NODE_ENV === "development" ? "QChatDevelopers" : "azure-ad"
 }
 
@@ -32,7 +32,7 @@ const MiniMenuItem: React.FC<MiniMenuItemProps> = ({ href, icon: Icon, name, ari
 
   return (
     <div className={menuItemClass} onClick={onClick} role="button" tabIndex={0} aria-label={ariaLabel}>
-      <Icon className="w-4 h-4 mr-2" aria-hidden="true" />
+      <Icon className="mr-2 size-4" aria-hidden="true" />
       {name}
       <Link href={href} passHref>
         <span style={{ display: "none" }}></span>
@@ -48,17 +48,18 @@ export const MiniMenu: React.FC = () => {
 
   const menuItems = [
     { name: "Home", href: "/chat", icon: Home, ariaLabel: "Navigate to home page" },
-    // { name: 'Prompt Guides', href: '/prompt-guide', icon: Bookmark, ariaLabel: 'Navigate to prompt guides' },
+    { name: "Prompt Guides", href: "/prompt-guide", icon: Bookmark, ariaLabel: "Navigate to prompt guides" },
+    { name: "Terms of Use", href: "/terms", icon: HeartHandshake, ariaLabel: "Navigate to terms of use" },
     // { name: "What's New", href: '/whats-new', icon: Bell, ariaLabel: "Navigate to what's new page" },
     // { name: 'Settings', href: '/settings', icon: UserCog, ariaLabel: 'Navigate to settings' },
   ]
 
-  const toggleTheme = () => {
+  const toggleTheme = (): void => {
     const newTheme = theme === Theme.Light ? Theme.Dark : Theme.Light
     setTheme(newTheme)
   }
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (): void => {
     if (isMenuOpen) {
       toggleMenu()
     }
@@ -68,8 +69,8 @@ export const MiniMenu: React.FC = () => {
     <>
       <div
         onClick={toggleMenu}
-        className="cursor-pointer flex p-4 text-darkAltButton flex-col relative hover:bg-background hover:underline border-l-2 border-accent h-full items-center"
-        aria-expanded={isMenuOpen}
+        className="text-darkAltButton hover:bg-background border-accent relative flex h-full cursor-pointer flex-col items-center border-l-2 p-4 hover:underline"
+        aria-expanded="false"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         role="button"
         tabIndex={0}
@@ -82,15 +83,11 @@ export const MiniMenu: React.FC = () => {
         Menu
       </div>
       {isMenuOpen && (
-        <div
-          className="fixed top-0 right-0 bottom-0 left-0 z-[99999] bg-altBackground text-link"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="absolute top-0 right-0 m-4 h-2/6">
+        <div className="bg-altBackground text-link fixed inset-0 z-[99999]" role="dialog" aria-modal="true">
+          <div className="absolute right-0 top-0 m-4 h-2/6">
             <div
               onClick={toggleMenu}
-              className="w-[32px] h-[32px] p-1 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+              className="hover:bg-accent hover:text-accent-foreground size-[32px] cursor-pointer p-1"
               aria-label="Close menu"
               role="button"
               tabIndex={0}
@@ -101,7 +98,7 @@ export const MiniMenu: React.FC = () => {
           <h2 id="menu-heading" className="sr-only">
             Menu
           </h2>
-          <div className="p-2 mt-16">
+          <div className="mt-16 p-2">
             {menuItems.map(item => (
               <MiniMenuItem key={item.name} onClick={handleMenuClose} {...item} />
             ))}
@@ -110,12 +107,12 @@ export const MiniMenu: React.FC = () => {
                 toggleTheme()
                 handleMenuClose()
               }}
-              className="cursor-pointer px-6 py-2 text-sm text-link hover:bg-accent hover:text-accent-foreground flex items-center whitespace-nowrap"
+              className="text-link hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
               aria-label={theme === Theme.Dark ? "Switch to light mode" : "Switch to dark mode"}
               role="button"
               tabIndex={0}
             >
-              {theme === Theme.Dark ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === Theme.Dark ? <Sun className="mr-2 size-4" /> : <Moon className="mr-2 size-4" />}
               {theme === Theme.Dark ? "Light Mode" : "Dark Mode"}
             </div>
             {session ? (
@@ -124,12 +121,12 @@ export const MiniMenu: React.FC = () => {
                   await signOut({ callbackUrl: "/" })
                   handleMenuClose()
                 }}
-                className="cursor-pointer px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center whitespace-nowrap"
+                className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
                 aria-label="Logout"
                 role="button"
                 tabIndex={0}
               >
-                <LogOut className="w-4 h-4 mr-2" />
+                <LogOut className="mr-2 size-4" />
                 Logout
               </div>
             ) : (
@@ -138,12 +135,12 @@ export const MiniMenu: React.FC = () => {
                   await signIn(getSignInProvider())
                   handleMenuClose()
                 }}
-                className="cursor-pointer px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center whitespace-nowrap"
+                className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
                 aria-label="Login"
                 role="button"
                 tabIndex={0}
               >
-                <LogIn className="w-4 h-4 mr-2" />
+                <LogIn className="mr-2 size-4" />
                 Login
               </div>
             )}

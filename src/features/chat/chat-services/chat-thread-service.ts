@@ -11,13 +11,13 @@ import {
   ChatMessageModel,
   ChatThreadModel,
   ChatType,
-  ChatUtilities,
   ConversationSensitivity,
   ConversationStyle,
   PromptGPTProps,
 } from "./models"
 import { FindAllChatDocuments } from "./chat-document-service"
 import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
+import { handleCosmosError } from "@/features/common/cosmos-error.ts"
 
 function threeMonthsAgo(): string {
   const date = new Date()
@@ -172,26 +172,14 @@ export const UpsertChatThread = async (chatThread: ChatThreadModel) => {
   return updatedChatThread
 }
 
-export const UpsertPromptButton = async (prompt: string, chatThread: ChatThreadModel) => {
-  const container = await CosmosDBContainer.getInstance().getContainer()
-  const updatedChatPrompts = await container.items.upsert<ChatUtilities>({
-    ...chatThread,
-    promptButton: prompt,
-  })
-  if (updatedChatPrompts === undefined) {
-    throw new Error("Prompt Button not selected")
-  }
-}
-
 export const updateChatThreadTitle = async (
   chatThread: ChatThreadModel,
   messages: ChatMessageModel[],
   chatType: ChatType,
   conversationStyle: ConversationStyle,
   conversationSensitivity: ConversationSensitivity,
-  chatOverFileName: string,
-  _userMessage: string
-) => {
+  chatOverFileName: string
+): Promise<ChatThreadModel> => {
   if (messages.length === 0) {
     const updatedChatThread = await UpsertChatThread({
       ...chatThread,
@@ -202,42 +190,60 @@ export const updateChatThreadTitle = async (
       conversationSensitivity: conversationSensitivity,
       name: "New Chat",
       previousChatName: "",
+      prompts: [],
+      selectedPrompt: "",
     })
 
-    return updatedChatThread.resource!
+    if (updatedChatThread && updatedChatThread.resource) {
+      return updatedChatThread.resource
+    } else {
+      throw new Error("Failed to upsert chat thread or get resource from updated chat thread")
+    }
   }
 
   return chatThread
 }
 
-export const CreateChatThread = async () => {
-  const id = uniqueId()
-  const modelToSave: ChatThreadModel = {
-    name: "New Chat",
-    previousChatName: "",
-    chatCategory: "Uncategorised",
-    useName: (await userSession())!.name,
-    userId: await userHashedId(),
-    id: id,
-    chatThreadId: id,
-    tenantId: await getTenantId(),
-    createdAt: new Date(),
-    isDeleted: false,
-    isDisabled: false,
-    contentSafetyWarning: "",
-    chatType: ChatType.Simple,
-    conversationStyle: ConversationStyle.Precise,
-    conversationSensitivity: ConversationSensitivity.Official,
-    type: CHAT_THREAD_ATTRIBUTE,
-    systemPrompt: "",
-    contextPrompt: "",
-    metaPrompt: "",
-    chatOverFileName: "",
-  }
+export const CreateChatThread = async (): Promise<ChatThreadModel> => {
+  try {
+    const id = uniqueId()
+    const modelToSave: ChatThreadModel = {
+      name: "New Chat",
+      previousChatName: "",
+      chatCategory: "Uncategorised",
+      useName: (await userSession())!.name,
+      userId: await userHashedId(),
+      id: id,
+      chatThreadId: id,
+      tenantId: await getTenantId(),
+      createdAt: new Date(),
+      isDeleted: false,
+      isDisabled: false,
+      contentSafetyWarning: "",
+      chatType: ChatType.Simple,
+      conversationStyle: ConversationStyle.Precise,
+      conversationSensitivity: ConversationSensitivity.Official,
+      type: CHAT_THREAD_ATTRIBUTE,
+      systemPrompt: "",
+      contextPrompt: "",
+      metaPrompt: "",
+      chatOverFileName: "",
+      prompts: [],
+      selectedPrompt: "",
+    }
 
-  const container = await CosmosDBContainer.getInstance().getContainer()
-  const response = await container.items.create<ChatThreadModel>(modelToSave)
-  return response.resource
+    const container = await CosmosDBContainer.getInstance().getContainer()
+    const response = await container.items.create<ChatThreadModel>(modelToSave)
+    if (response.resource) return response.resource
+    else throw new Error("Failed to create chat thread")
+  } catch (e) {
+    if (e instanceof Error) {
+      handleCosmosError(e as Error & { code?: number }) // Correctly typed now.
+    } else {
+      console.error("An unexpected error occurred", e)
+    }
+    throw e // Re-throw the error after handling it.
+  }
 }
 
 export const initAndGuardChatSession = async (props: PromptGPTProps) => {
@@ -254,8 +260,7 @@ export const initAndGuardChatSession = async (props: PromptGPTProps) => {
     chatType,
     conversationStyle,
     conversationSensitivity,
-    chatOverFileName,
-    lastHumanMessage.content
+    chatOverFileName
   )
 
   return {

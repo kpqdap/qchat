@@ -1,15 +1,21 @@
+"use client"
+
 import Typography from "@/components/typography"
 import { Card } from "@/features/ui/card"
 import { AI_NAME } from "@/features/theme/customise"
+import { FC } from "react"
 import { NewChat } from "../../chat-menu/new-chat"
+import { Button } from "@/features/ui/button"
+import { useRouter } from "next/navigation"
 
-export const StartNewChat = (): JSX.Element => {
+export const StartNewChat: FC<object> = () => {
+  const router = useRouter()
   return (
     <section
-      className="grid grid-cols-3 w-full items-center container mx-auto max-w-3xl justify-center max:h-5/6 gap-9 bg-altBackground"
+      className="bg-altBackground container mx-auto grid size-full max-w-3xl grid-cols-3 items-center justify-center gap-9"
       aria-labelledby="startChatTitle"
     >
-      <Card className="col-span-3 flex flex-col gap-5 p-5 bg-altBackgroundShade">
+      <Card className="bg-altBackgroundShade col-span-3 flex flex-col gap-5 p-5">
         <Typography variant="h4" className="text-siteTitle text-2xl" id="startChatTitle">
           {AI_NAME}
           <br />
@@ -26,8 +32,11 @@ export const StartNewChat = (): JSX.Element => {
           </p>
           <p className="lg:hidden">Press the plus button below to get started.</p>
         </div>
-        <div className="-mx-5 -mb-5 p-5 flex flex-col border-t bg-muted">
+        <div className="bg-muted -mx-5 -mb-5 inline-flex items-center justify-center border-t p-5">
           <NewChat aria-label="Start a new chat" />
+          <Button onClick={() => router.push("/terms")} variant="link" className="text-foreground">
+            By starting a new chat you agree to the {AI_NAME} Terms and Conditions, click here to view them.
+          </Button>
         </div>
       </Card>
     </section>

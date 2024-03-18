@@ -10,14 +10,14 @@ export const MiniMenuContext = createContext<MiniMenuContextProps>({
   toggleMenu: () => {},
 })
 
-export const MiniMenuProvider = ({ children }: { children: React.ReactNode }) => {
+export const MiniMenuProvider = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const toggleMenu = () => {
+  const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen)
   }
 
   return <MiniMenuContext.Provider value={{ isMenuOpen, toggleMenu }}>{children}</MiniMenuContext.Provider>
 }
 
-export const useMiniMenuContext = () => useContext(MiniMenuContext)
+export const useMiniMenuContext = (): MiniMenuContextProps => useContext(MiniMenuContext)

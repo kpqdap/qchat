@@ -1,5 +1,6 @@
 import { Container, CosmosClient, Database, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos"
 import { hashValue, userHashedId } from "../auth/helpers"
+import { handleCosmosError } from "../common/cosmos-error.ts"
 
 const AZURE_COSMOSDB_URI = process.env.AZURE_COSMOSDB_URI
 const AZURE_COSMOSDB_KEY = process.env.AZURE_COSMOSDB_KEY
@@ -78,7 +79,7 @@ export class CosmosDBTenantContainer {
       }
 
       const container = await this.container
-      const hashedUser = hashValue(tenant.createdBy as string) //Using hashValue, userHashId() throws error before session is fetched
+      const hashedUser = hashValue(tenant.createdBy as string)
 
       await container.items.create({
         ...tenant,
@@ -90,8 +91,12 @@ export class CosmosDBTenantContainer {
         requiresGroupLogin: tenant.requiresGroupLogin,
       })
     } catch (e) {
-      console.log(e)
-      throw e
+      if (e instanceof Error) {
+        handleCosmosError(e as Error & { code?: number }) // Correctly typed now.
+      } else {
+        console.error("An unexpected error occurred", e)
+      }
+      throw e // Or handle it as needed.
     }
   }
 
@@ -105,8 +110,12 @@ export class CosmosDBTenantContainer {
       const { resources } = await container.items.query<TenantRecord>(query).fetchAll()
       return resources[0]
     } catch (e) {
-      console.log(e)
-      return undefined
+      if (e instanceof Error) {
+        handleCosmosError(e as Error & { code?: number })
+      } else {
+        console.error("An unexpected error occurred", e)
+      }
+      throw e
     }
   }
 
@@ -128,7 +137,7 @@ export class CosmosDBTenantContainer {
         existingTenant.history = []
       }
 
-      const currentUser = userHashedId() //might need to switch to hashValue if throws error of User not found
+      const currentUser = userHashedId()
 
       const changes: string[] = []
 
@@ -151,8 +160,12 @@ export class CosmosDBTenantContainer {
 
       await container.items.upsert(updatedTenant)
     } catch (e) {
-      console.log(e)
-      throw e
+      if (e instanceof Error) {
+        handleCosmosError(e as Error & { code?: number }) // Correctly typed now.
+      } else {
+        console.error("An unexpected error occurred", e)
+      }
+      throw e // Or handle it as needed.
     }
   }
 }

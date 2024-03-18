@@ -1,9 +1,10 @@
-import { CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos"
+import { Container, CosmosClient, PartitionKeyDefinitionVersion, PartitionKeyKind } from "@azure/cosmos"
+import { handleCosmosError } from "./cosmos-error.ts"
 
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "localdev"
 const USER_PREFS_CONTAINER_NAME = process.env.AZURE_COSMOSDB_USER_CONTAINER_NAME || "userprefs"
 
-export const initUserPrefsContainer = async () => {
+export const initUserPrefsContainer = async (): Promise<Container> => {
   try {
     const endpoint = process.env.AZURE_COSMOSDB_URI
     const key = process.env.AZURE_COSMOSDB_KEY
@@ -26,7 +27,7 @@ export const initUserPrefsContainer = async () => {
 
     return containerResponse.container
   } catch (error) {
-    console.log(error)
+    handleCosmosError(error as Error)
     throw error
   }
 }

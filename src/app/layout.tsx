@@ -14,8 +14,14 @@ export const dynamic = "force-dynamic"
 const notoSans = Noto_Sans({ subsets: ["latin"] })
 
 export const metadata = {
+  metadataBase: new URL("https://qchat.ai.qld.gov.au"),
   title: AI_NAME,
-  description: AI_NAME,
+  description: AI_NAME + "the Queensland Government's AI Chatbot",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/apple-icon.png",
+    apple: "/apple-icon.png",
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
@@ -34,7 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
                 
                 </div> */}
               </main>
-              {/* <Footer /> */}
               <Toaster />
             </ThemeProvider>
           </Providers>
