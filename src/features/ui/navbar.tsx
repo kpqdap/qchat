@@ -1,15 +1,10 @@
 "use client"
 
 import React from "react"
-import { HomeIcon, UserCog, FileLineChart, BookMarked, HeartHandshake } from "lucide-react"
+import { HomeIcon, BookMarked, HeartHandshake } from "lucide-react"
 import Typography from "@/components/typography"
 import { ThemeSwitch } from "@/features/theme/theme-switch"
 import { useSession } from "next-auth/react"
-
-interface IconProps {
-  className: string
-  "aria-hidden"?: boolean
-}
 
 interface LinkItem {
   name: string

@@ -3,8 +3,6 @@ import { ReactPlugin } from "@microsoft/applicationinsights-react-js"
 import { ClickAnalyticsPlugin } from "@microsoft/applicationinsights-clickanalytics-js"
 import { createBrowserHistory } from "history"
 
-const appInsightsKey = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING
-
 export interface IAppInsightsContext {
   appInsights: ApplicationInsights
   reactPlugin: ReactPlugin
@@ -44,7 +42,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     appInsights.trackPageView()
 
     return { appInsights, reactPlugin, browserHistory, clickPlugin }
-  } catch (error) {
+  } catch (_error) {
     return null
   }
 }
