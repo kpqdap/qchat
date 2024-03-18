@@ -1,6 +1,6 @@
 const appInsights = require("applicationinsights")
 appInsights
-  .setup(process.env.AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING)
+  .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   .setAutoCollectRequests(true)
   .setAutoCollectPerformance(true)
   .setAutoCollectExceptions(true)
