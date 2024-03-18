@@ -79,7 +79,7 @@ function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantReco
   }
 }
 
-function createUserRecord(user: User | AdapterUser): UserRecord { {
+function createUserRecord(user: User | AdapterUser): UserRecord {
   const now = new Date()
   const userRecord: UserRecord = {
     id: hashValue(user.upn),
