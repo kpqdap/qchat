@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/features/ui/toaster"
 import { GlobalConfigProvider } from "@/features/global-config/global-client-config-context"
@@ -13,7 +14,7 @@ export const dynamic = "force-dynamic"
 
 const notoSans = Noto_Sans({ subsets: ["latin"] })
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL("https://qchat.ai.qld.gov.au"),
   title: AI_NAME,
   description: AI_NAME + "the Queensland Government's AI Chatbot",
