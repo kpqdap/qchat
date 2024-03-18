@@ -81,6 +81,7 @@ export const ChatProvider: FC<Prop> = props => {
         resetMicrophoneUsed()
       }
       Router.refresh()
+      // window.location.reload()
     },
   })
 
