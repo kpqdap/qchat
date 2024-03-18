@@ -178,9 +178,8 @@ export const updateChatThreadTitle = async (
   chatType: ChatType,
   conversationStyle: ConversationStyle,
   conversationSensitivity: ConversationSensitivity,
-  chatOverFileName: string,
-  userMessage: string
-) => {
+  chatOverFileName: string
+): Promise<ChatThreadModel> => {
   if (messages.length === 0) {
     const updatedChatThread = await UpsertChatThread({
       ...chatThread,
@@ -261,8 +260,7 @@ export const initAndGuardChatSession = async (props: PromptGPTProps) => {
     chatType,
     conversationStyle,
     conversationSensitivity,
-    chatOverFileName,
-    lastHumanMessage.content
+    chatOverFileName
   )
 
   return {
