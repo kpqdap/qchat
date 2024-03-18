@@ -9,18 +9,28 @@ export async function translator(input: string): Promise<string> {
     return input
   }
 
-  const normalizedInput = input.toLowerCase()
+  const codeBlockPattern = /(```[\s\S]*?```)/g
+  const codeBlocks: string[] = []
+  let i = 0
+
+  const processedText = input.replace(codeBlockPattern, match => {
+    codeBlocks.push(match)
+    return `__codeblock_${i++}__`
+  })
 
   try {
-    const translatedTexts = await translateFunction([{ text: normalizedInput }], "en-GB", "en-US")
-    if (translatedTexts.length > 0) {
-      return revertCase(input, translatedTexts[0])
-    }
+    const translatedTexts = await translateFunction([{ text: processedText.toLowerCase() }], "en-GB", "en-US")
+    let result = translatedTexts.length <= 0 ? processedText : revertCase(processedText, translatedTexts[0])
+
+    codeBlocks.forEach((codeBlock, index) => {
+      result = result.replace(`__codeblock_${index}__`, codeBlock)
+    })
+
+    return result
   } catch (error) {
     console.log(error)
+    return input
   }
-
-  return input
 }
 
 async function translateFunction(
@@ -55,10 +65,17 @@ async function translateFunction(
 }
 
 function revertCase(originalText: string, translatedText: string): string {
-  return originalText
-    .split("")
-    .map((originalText, index) =>
-      originalText.match(/[A-Z]/) ? translatedText.charAt(index).toUpperCase() : translatedText.charAt(index)
-    )
-    .join("")
+  const originalWords = originalText.split(" ")
+  const translatedWords = translatedText.split(" ")
+
+  return originalWords
+    .map((originalWord, i) => {
+      const translatedWord = translatedWords[i] || ""
+      return [...translatedWord]
+        .map((char, index) =>
+          index < originalWord.length && originalWord.charAt(index).match(/[A-Z]/) ? char.toUpperCase() : char
+        )
+        .join("")
+    })
+    .join(" ")
 }
