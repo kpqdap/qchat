@@ -9,8 +9,8 @@ import { TooltipProvider } from "@/features/ui/tooltip-provider"
 
 export const Providers = ({ children }: { children: React.ReactNode }): JSX.Element => {
   return (
-    <SessionProvider basePath="/api/auth">
-      <AppInsightsProvider>
+    <AppInsightsProvider>
+      <SessionProvider refetchInterval={5 * 60} basePath="/api/auth">
         <GlobalMessageProvider>
           <MenuProvider>
             <MiniMenuProvider>
@@ -18,7 +18,7 @@ export const Providers = ({ children }: { children: React.ReactNode }): JSX.Elem
             </MiniMenuProvider>
           </MenuProvider>
         </GlobalMessageProvider>
-      </AppInsightsProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </AppInsightsProvider>
   )
 }
