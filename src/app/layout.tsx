@@ -19,7 +19,7 @@ export const metadata = {
   description: AI_NAME + "the Queensland Government's AI Chatbot",
   icons: {
     icon: "/favicon.ico",
-    shortcut: "/pple-icon.png",
+    shortcut: "/apple-icon.png",
     apple: "/apple-icon.png",
   },
 }
