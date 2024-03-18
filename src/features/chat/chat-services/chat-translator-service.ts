@@ -8,22 +8,15 @@ export async function translator(input: string): Promise<string> {
   if (!getBooleanEnv("NEXT_PUBLIC_FEATURE_TRANSLATOR") || typeof input !== "string") {
     return input
   }
-  const codeBlockPattern = /```[\s\S]*?```/g
-  const codeBlocks: string[] = []
-  let processedText = input
 
-  let match
-  let newTextPieces = []
-  let prevIndex = 0
-  while ((match = codeBlockPattern.exec(processedText)) !== null) {
-    codeBlocks.push(match[0])
-    newTextPieces.push(processedText.slice(prevIndex, match.index))
-    newTextPieces.push(`__codeblock_${codeBlocks.length - 1}__`)
-    prevIndex = match.index + match[0].length
-  }
-  newTextPieces.push(processedText.slice(prevIndex))
+  const codeBlockPattern = /(```[\s\S]*?```)/g
+  let codeBlocks: string[] = []
+  let i = 0
 
-  processedText = newTextPieces.join("")
+  let processedText = input.replace(codeBlockPattern, match => {
+    codeBlocks.push(match)
+    return `__codeblock_${i++}__`
+  })
 
   try {
     const translatedTexts = await translateFunction([{ text: processedText.toLowerCase() }], "en-GB", "en-US")
