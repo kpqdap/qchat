@@ -1,26 +1,14 @@
-import NextAuth, { NextAuthOptions, Profile, User } from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/azure-ad"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { hashValue } from "./helpers"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
-import { UserActivity, UserIdentity, UserRecord } from "../user-management/user-cosmos"
-
-interface Credentials {
-  username?: string
-}
 
 export interface AuthToken extends JWT {
   qchatAdmin?: boolean
   exp: number
   iat: number
   refreshExpiresIn: number
-}
-
-interface ExtendedProfile extends Profile {
-  employee_groups?: string[]
-  groups?: string[]
 }
 
 const configureIdentityProvider = (): Provider[] => {
@@ -56,8 +44,10 @@ const configureIdentityProvider = (): Provider[] => {
           const email = profile.email != undefined ? profile.email?.toLowerCase() : profile.upn.toLowerCase()
           const qchatAdmin = adminEmails.includes(email)
           profile.tenantId = profile.employee_idp
+          profile.secGroups = profile.employee_groups
           if (process.env.NODE_ENV === "development") {
             profile.tenantId = profile.tid
+            profile.secGroups = profile.groups
           }
           return {
             ...profile,
@@ -72,134 +62,33 @@ const configureIdentityProvider = (): Provider[] => {
       })
     )
   }
-
-  if (process.env.NODE_ENV === "development") {
-    providers.push(
-      CredentialsProvider({
-        name: "QChatDevelopers",
-        credentials: {
-          username: { label: "Username", type: "text", placeholder: "Enter your username" },
-        },
-        async authorize(credentials: Record<string, unknown> | undefined, _req): Promise<User> {
-          const typedCredentials = credentials as Credentials
-
-          const username = typedCredentials.username || "dev"
-          const email = `${username}@localhost`
-          const qchatAdmin = adminEmails.includes(email.toLowerCase())
-
-          const userIdentity: User = {
-            id: hashValue(username),
-            name: username,
-            email: email,
-            upn: username,
-            tenantId: "localdev",
-            qchatAdmin: qchatAdmin,
-            userId: username,
-          }
-          return userIdentity
-        },
-      })
-    )
-  }
   return providers
-}
-
-async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
-  try {
-    const tokenUrl = process.env.AZURE_AD_TOKEN_ENDPOINT!
-    const formData = new URLSearchParams({
-      client_id: process.env.AZURE_AD_CLIENT_ID!,
-      client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-      grant_type: "refresh_token",
-      refresh_token: token.refreshToken as string,
-    })
-
-    const response = await fetch(tokenUrl, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formData,
-      method: "POST",
-    })
-
-    if (!response.ok) {
-      console.log(`Failed to refresh access token. Status: ${response.status}. \n Response: ${await response.json()}`)
-      return token
-    }
-
-    const refreshedTokens = await response.json()
-
-    return {
-      ...token,
-      accessToken: refreshedTokens.access_token,
-      refreshToken: refreshedTokens.refresh_token,
-      expiresIn: Date.now() + refreshedTokens.expires_in * 1000,
-      refreshExpiresIn: Date.now() + refreshedTokens.refresh_expires_in * 1000,
-    }
-  } catch (_error) {
-    return { ...token, error: "RefreshAccessTokenError" }
-  }
 }
 
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
-    async signIn({ user, profile }) {
-      if (user?.tenantId && user?.upn) {
-        const now = new Date()
-        const ExtendedProfile = profile as ExtendedProfile
-        const userIdentity: UserIdentity = {
-          id: hashValue(user.upn),
-          tenantId: user.tenantId,
-          email: user.email ?? user.upn,
-          name: user.name ?? "",
-          upn: user.upn,
-          userId: user.upn,
-          qchatAdmin: user.qchatAdmin,
-        }
-        const userActivity: UserActivity = {
-          last_login: now,
-          first_login: now,
-          accepted_terms: true,
-          accepted_terms_date: now.toISOString(),
-          failed_login_attempts: 0,
-          last_failed_login: null,
-        }
-        const userRecord: UserRecord = { ...userIdentity, ...userActivity }
-        try {
-          let groupsArray = ExtendedProfile?.employee_groups as string[] | undefined
-          if (process.env.NODE_ENV === "development") {
-            groupsArray = ExtendedProfile?.groups as string[] | undefined
-          }
-          const groupsString = groupsArray?.join(",")
-          return await UserSignInHandler.handleSignIn(userRecord, groupsString)
-        } catch (_error) {
-          return false
-        }
-      } else {
+    async signIn({ user }): Promise<boolean> {
+      if (!user?.tenantId || !user?.upn) return false
+      try {
+        const groups = user?.secGroups ?? []
+        return await UserSignInHandler.handleSignIn(user, groups)
+      } catch (error) {
+        console.error("Error in signIn callback", error)
         return false
       }
     },
-    async jwt({ token, user, account }) {
-      let authToken = token as AuthToken
+    jwt({ token, user }) {
+      const authToken = token as AuthToken
       if (user) {
         authToken.qchatAdmin = user.qchatAdmin ?? false
         authToken.tenantId = user.tenantId ?? ""
         authToken.upn = user.upn ?? ""
       }
-      if (account && account.access_token && account.refresh_token) {
-        const expiresIn = Number(account.expires_in ?? 0)
-        const refreshExpiresIn = Number(account.refresh_expires_in ?? 0)
-        authToken.accessToken = account.access_token
-        authToken.refreshToken = account.refresh_token
-        authToken.expiresIn = Date.now() + expiresIn * 1000
-        authToken.refreshExpiresIn = Date.now() + refreshExpiresIn * 1000
-      }
-      if (authToken.refreshToken && typeof authToken.expiresIn === "number" && Date.now() > authToken.expiresIn) {
-        authToken = await refreshAccessToken(authToken)
-      }
       return authToken
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       const authToken = token as AuthToken
       session.user.qchatAdmin = authToken.qchatAdmin ?? false
       session.user.tenantId = authToken.tenantId ? String(authToken.tenantId) : ""
