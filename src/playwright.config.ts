@@ -1,9 +1,9 @@
 import { defineConfig, devices } from "@playwright/test"
+import { loadEnvConfig } from "@next/env"
 
-export default defineConfig({
+const config = defineConfig({
   testDir: "./tests",
   testMatch: "**/*.test.ts",
-  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
@@ -11,7 +11,7 @@ export default defineConfig({
   use: {
     baseURL: "https://localhost/",
     trace: "on-first-retry",
-    ignoreHTTPSErrors: true, // Ignore HTTPS errors due to self-signed certificates
+    ignoreHTTPSErrors: true,
   },
   projects: [
     {
@@ -29,8 +29,15 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run dev",
-    url: "https://localhost:443/", // Ensure this matches your actual dev server URL
-    timeout: 120000, // Increase timeout to 120 seconds
+    port: 443,
+    timeout: 120000,
     reuseExistingServer: !process.env.CI,
   },
 })
+
+export default config
+
+export async function loadEnvironmentConfig(): Promise<void> {
+  const projectDir = process.cwd()
+  await loadEnvConfig(projectDir)
+}

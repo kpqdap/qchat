@@ -69,7 +69,7 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
-    async signIn({ user, account }): Promise<boolean> {
+    async signIn({ user }): Promise<boolean> {
       if (!user?.tenantId || !user?.upn) return false
       try {
         const groups = user?.secGroups ?? []

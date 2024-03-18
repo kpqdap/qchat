@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const localUrl = process.env.QGAIP_QCHAT_FQDN_URI
-const fullUrl = process.env.QGAIP_QCHAT_APP_URI
-
 const securityHeaders = [
   {
     key: "X-XSS-Protection",
@@ -27,7 +24,7 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; img-src 'self'; font-src 'self' data:; connect-src 'self' https://qdap-dev-apim.azure-api.net https://australiaeast-1.in.applicationinsights.azure.com/; media-src 'self'; frame-src 'self'; object-src 'none';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; img-src 'self'; font-src 'self' data:; connect-src 'self' https://qdap-dev-apim.azure-api.net https://qdap-prd-apim.developer.azure-api.net *.ai.qld.gov.au https://australiaeast-1.in.applicationinsights.azure.com/ https://australiaeast.livediagnostics.monitor.azure.com/; media-src 'self'; frame-src 'self'; object-src 'none';",
   },
   {
     key: "Referrer-Policy",
@@ -62,18 +59,24 @@ const securityHeaders = [
 
 const nextConfig = {
   output: "standalone",
+  compiler: {
+    removeConsole: true,
+  },
   logging: {
     fetches: {
       fullUrl: true,
     },
   },
+  devIndicators: {
+    buildActivityPosition: "bottom-right",
+  },
   experimental: {
     serverComponentsExternalPackages: ["@azure/storage-blob"],
     serverActions: {
-      allowedOrigins: [localUrl, fullUrl],
+      allowedOrigins: ["*.ai.qld.gov.au", "qggptprodopenai.azurewebsites.net", "qggptdevopenai.azurewebsites.net"],
     },
   },
-  async redirects() {
+  redirects() {
     return [
       {
         source: "/login",
@@ -87,7 +90,7 @@ const nextConfig = {
       },
     ]
   },
-  async headers() {
+  headers() {
     return [
       {
         source: "/(.*)",

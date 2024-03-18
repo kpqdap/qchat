@@ -1,12 +1,13 @@
 import { chatAPIEntry } from "@/features/chat/chat-services/chat-api-entry"
 
-const delay = (ms: number | undefined): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
+const delay = async (ms: number | undefined): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
 
 const errorMessages: { [key: number]: string } = {
   400: "Oops! Something went wrong with your request.",
   401: "Access denied. Please ensure your credentials are correct.",
   402: "Whoops, looks like you've exceeded your limit! Please try again later.",
   403: "Sorry, we're unable to fulfill your request.",
+  404: "We couldn't send your message for reply, please try again or report the issue.",
   429: "Hold on! Too many requests at the moment, please try again after a while.",
 }
 const defaultErrorMessage = "Our apologies, we're facing some internal issues currently."

@@ -47,7 +47,7 @@ export class UserSignInHandler {
   }
 }
 
-async function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] = []): Promise<boolean> {
+function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] = []) {
   if (!requiredGroups.length) return false
 
   const outcome = requiredGroups.some(groupId => userGroups.includes(groupId))
@@ -79,7 +79,7 @@ function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantReco
   }
 }
 
-function createUserRecord(user: User | AdapterUser) {
+function createUserRecord(user: User | AdapterUser): UserRecord { {
   const now = new Date()
   const userRecord: UserRecord = {
     id: hashValue(user.upn),
