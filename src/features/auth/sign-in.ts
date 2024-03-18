@@ -56,7 +56,7 @@ function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] =
 
 function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantRecord {
   const domain = user.upn?.split("@")[1] || ""
-  const currentTime = new Date()
+  const now = new Date()
   return {
     tenantId: user.tenantId,
     primaryDomain: domain,
@@ -64,10 +64,10 @@ function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantReco
     id: user.tenantId,
     email: user.upn,
     supportEmail: `support@${domain}`,
-    dateCreated: currentTime,
+    dateCreated: now,
     createdBy: user.upn,
     administrators: groupAdmins,
-    dateUpdated: currentTime,
+    dateUpdated: now,
     dateOnBoarded: null,
     dateOffBoarded: null,
     modifiedBy: null,
@@ -75,11 +75,11 @@ function createTenantRecord(user: UserRecord, groupAdmins: string[]): TenantReco
     groups: [],
     features: null,
     serviceTier: null,
-    history: [`${currentTime}: Tenant created by user ${user.upn} on failed login.`],
+    history: [`${now}: Tenant created by user ${user.upn} on failed login.`],
   }
 }
 
-function createUserRecord(user: User | AdapterUser): UserRecord {
+function createUserRecord(user: User | AdapterUser): UserRecord { {
   const now = new Date()
   const userRecord: UserRecord = {
     id: hashValue(user.upn),
