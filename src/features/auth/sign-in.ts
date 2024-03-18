@@ -33,7 +33,7 @@ export class UserSignInHandler {
 
       const userGroups = groups
 
-      if (tenant.requiresGroupLogin && (await isUserInRequiredGroups(userGroups, tenant.groups || []))) {
+      if (tenant.requiresGroupLogin && isUserInRequiredGroups(userGroups, tenant.groups || [])) {
         await updateUser(userContainer, existingUser, userGroups, true)
         return true
       }
@@ -47,7 +47,7 @@ export class UserSignInHandler {
   }
 }
 
-function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] = []) {
+function isUserInRequiredGroups(userGroups: string[], requiredGroups: string[] = []): boolean {
   if (!requiredGroups.length) return false
 
   const outcome = requiredGroups.some(groupId => userGroups.includes(groupId))
