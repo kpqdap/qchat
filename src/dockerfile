@@ -9,9 +9,9 @@ RUN apk --no-cache upgrade && \
 
 WORKDIR /app
 
-# Upgrade npm to the latest version
-RUN npm install -g npm@latest && \
-    npm install ip@2.0.1
+# Ensure npm is up-to-date
+RUN npm install -g npm@latest
+
 # Dependencies stage for installing Node.js dependencies
 FROM base AS deps
 
@@ -36,16 +36,20 @@ COPY . .
 # Optionally disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Build the application using npm or yarn
+# Pass the Azure DevOps build ID as a build argument
+ARG BUILD_ID
+# Use the build argument to set an environment variable
+ENV AZURE_BUILD_ID=$BUILD_ID
+
+# Build the application
 RUN npm run build
-RUN npm list ip
 
 # Runner stage for the production image
 FROM base AS runner
 WORKDIR /app
 
-RUN npm install -g npm@latest && \
-    npm install ip@2.0.1
+# Upgrade npm
+RUN npm install -g npm@latest
 
 # Set environment variables for production
 ENV NODE_ENV production
@@ -60,8 +64,17 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Install production dependencies
+COPY package.json package-lock.json* ./
+RUN npm install --omit=dev
+
 # Run the application as the non-root user
 USER nextjs
+
+# Copy the entrypoint script
+# RUN chmod +x /app/entrypoint.sh
+# Set the entrypoint script
+# ENTRYPOINT ["./entrypoint.sh"]
 
 # Network configuration
 ENV PORT 443
@@ -69,3 +82,10 @@ ENV HOSTNAME 0.0.0.0
 
 # Command to run the application
 CMD ["node", "server.js"]
+
+# Health check instruction (conditionally skipped in development)
+# ARG NODE_ENV=production
+# RUN if [ "$NODE_ENV" = "production" ]; then \
+#     HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+#     CMD node -e "require('https').get({hostname: 'localhost', port: 443, path: '/api/health', rejectUnauthorized: false}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"; \
+#     fi

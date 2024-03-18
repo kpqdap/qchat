@@ -24,21 +24,21 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
-    <html lang="en" className="size-full overflow-hidden text-sm" suppressHydrationWarning>
-      <body className={cn(notoSans.className, "flex size-full min-w-[400px] flex-col bg-background")}>
+    <html lang="en" className="size-full overflow-hidden text-sm">
+      <body className={cn(notoSans.className, "flex h-full w-full min-w-[400px] flex-col bg-background")}>
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider>
-              <header className="header background xs:h-full flex w-full flex-col sm:h-1/6">
-                <Header />
-              </header>
-              <nav className="nav background flex w-full flex-col">
-                <NavBar />
-              </nav>
-              <main className="main flex flex-col w-full h-full">
-                <div className={cn("flex w-full h-full gap-2 bg-primary")}>{children}</div>
+              <Header />
+              <NavBar />
+              {/* <main className="main grid grid-cols-6 w-full h-5/6 bg-background"> */}
+              <main className="main bg-background h-5/6 w-full">
+                {children}
+                {/* <div className={cn("col-span-6 w-full gap-2 bg-primary h-full")}>
+                
+                </div> */}
               </main>
               <Toaster />
             </ThemeProvider>

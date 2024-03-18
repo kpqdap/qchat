@@ -7,7 +7,7 @@ import { MenuProvider } from "./main-menu/menu-context"
 import { MiniMenuProvider } from "./main-menu/mini-menu-context"
 import { TooltipProvider } from "@/features/ui/tooltip-provider"
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+export const Providers = ({ children }: { children: React.ReactNode }): JSX.Element => {
   return (
     <SessionProvider basePath="/api/auth">
       <AppInsightsProvider>

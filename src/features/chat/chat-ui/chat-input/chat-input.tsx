@@ -20,7 +20,7 @@ const ChatInput: FC<Props> = () => {
     [chatBody.chatType, chatBody.chatOverFileName]
   )
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Brisbane"
-  const getNameInline = async () => {
+  const getNameInline = async (): Promise<string> => {
     const session = await getSession()
     const name = session?.user?.name || "You"
     return name
@@ -48,7 +48,7 @@ const ChatInput: FC<Props> = () => {
     await convertMarkdownToWordDocument(messages, fileName, AI_NAME, userName, chatThreadName)
   }
 
-  const submit = (e: FormEvent<HTMLFormElement>) => {
+  const submit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (!isModalOpen) {
       handleSubmit(e)
@@ -75,8 +75,8 @@ const ChatInput: FC<Props> = () => {
   }
 
   return (
-    <form onSubmit={submit} className="absolute bottom-0 w-full flex items-center">
-      <div className="container mx-auto max-w-4xl relative py-2 flex gap-2 items-center">
+    <form onSubmit={submit} className="absolute bottom-0 flex w-full items-center">
+      <div className="container relative mx-auto flex max-w-4xl items-center gap-2 py-2">
         {fileChatVisible && <ChatFileSlider />}
         <Textarea
           id="chatMessage"
@@ -84,11 +84,11 @@ const ChatInput: FC<Props> = () => {
           value={input}
           placeholder="Send a message"
           aria-label="Send a message"
-          className="md:rows-4 rows-2 min-h-fit bg-background shadow-sm resize-none py-4 pr-[80px]"
+          className="md:rows-4 rows-2 bg-background min-h-fit resize-none py-4 pr-[80px] shadow-sm"
           onChange={onChange}
           onKeyDown={onKeyDown}
         />
-        <div className="absolute right-0 bottom-0 px-8 flex items-end h-full mr-2 mb-4">
+        <div className="absolute bottom-0 right-0 mb-4 mr-2 flex h-full items-end px-8">
           {!isDataChat || (isDataChat && fileChatVisible) ? (
             <>
               <Button
@@ -106,14 +106,7 @@ const ChatInput: FC<Props> = () => {
                   <Send aria-hidden="true" size={16} />
                 )}
               </Button>
-              {!isLoading && (
-                <ChatInputMenu
-                  onDocExport={exportDocument}
-                  handleSubmit={handleSubmit}
-                  setInput={setInput}
-                  messageCopy={messages}
-                />
-              )}
+              {!isLoading && <ChatInputMenu onDocExport={exportDocument} messageCopy={messages} />}
             </>
           ) : null}
         </div>

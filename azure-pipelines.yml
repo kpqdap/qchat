@@ -104,6 +104,8 @@ stages:
               containerRegistry: "$(CONTAINER_REGISTRY)"
               command: "build"
               Dockerfile: "src/dockerfile"
+              buildContext: "src"
+              arguments: --build-arg BUILD_ID=$(Build.BuildId)
               repository: "$(REPOSITORY)"
               tags: "$(Build.BuildId)"
 
