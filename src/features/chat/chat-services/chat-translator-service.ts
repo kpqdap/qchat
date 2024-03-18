@@ -10,10 +10,10 @@ export async function translator(input: string): Promise<string> {
   }
 
   const codeBlockPattern = /(```[\s\S]*?```)/g
-  let codeBlocks: string[] = []
+  const codeBlocks: string[] = []
   let i = 0
 
-  let processedText = input.replace(codeBlockPattern, match => {
+  const processedText = input.replace(codeBlockPattern, match => {
     codeBlocks.push(match)
     return `__codeblock_${i++}__`
   })
