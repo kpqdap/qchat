@@ -59,6 +59,9 @@ const securityHeaders = [
 
 const nextConfig = {
   output: "standalone",
+  compiler: {
+    removeConsole: true,
+  },
   logging: {
     fetches: {
       fullUrl: true,
