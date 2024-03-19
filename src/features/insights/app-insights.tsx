@@ -20,7 +20,7 @@ export const createAppInsights = (): IAppInsightsContext | null => {
     const browserHistory = createBrowserHistory()
     const reactPlugin = new ReactPlugin()
     const clickPlugin = new ClickAnalyticsPlugin()
-    const appInsightsKey = process.env.NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING
+    const appInsightsKey = process.env.NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING
 
     const connectionString = appInsightsKey
     if (!connectionString) {

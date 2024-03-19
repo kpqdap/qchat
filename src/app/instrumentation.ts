@@ -5,7 +5,7 @@ export function register(): void {
   registerOTel({
     serviceName: "QChat",
     traceExporter: new AzureMonitorTraceExporter({
-      connectionString: process.env.AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING,
+      connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
     }),
   })
 }
