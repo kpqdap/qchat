@@ -12,12 +12,12 @@ import { UpsertSelectedPromptButton } from "../../chat-services/chat-thread-serv
 interface Prop {}
 
 export const ChatMessageEmptyState: FC<Prop> = () => {
-  const { setInput } = useChatContext()
+  const { setInput, id } = useChatContext()
   const [selectedPrompt, setSelectedPrompt] = useState<string | undefined>(undefined)
 
   const handlePromptSelected = async (prompt: string): Promise<void> => {
     setSelectedPrompt(prompt)
-    void UpsertSelectedPromptButton(prompt)
+    void UpsertSelectedPromptButton(prompt, id)
     setInput(prompt)
   }
   const { fileState }: { fileState: { showFileUpload: string } } = useChatContext()

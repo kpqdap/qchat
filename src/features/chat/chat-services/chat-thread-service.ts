@@ -18,7 +18,6 @@ import {
 import { FindAllChatDocuments } from "./chat-document-service"
 import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
 import { handleCosmosError } from "@/features/common/cosmos-error.ts"
-import { useChatContext } from "../chat-ui/chat-context"
 
 function threeMonthsAgo(): string {
   const date = new Date()
@@ -162,8 +161,7 @@ export const EnsureChatThreadIsForCurrentUser = async (chatThreadID: string) => 
   return modelToSave[0]
 }
 
-export const UpsertSelectedPromptButton = async (selectedPromptButton: string) => {
-  const { id } = useChatContext()
+export const UpsertSelectedPromptButton = async (selectedPromptButton: string, id: string) => {
   try {
     const threads: ChatThreadModel[] = await FindChatThreadByID(id)
     threads.forEach(async thread => {
