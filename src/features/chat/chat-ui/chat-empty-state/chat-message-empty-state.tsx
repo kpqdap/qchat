@@ -17,8 +17,11 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
 
   const handlePromptSelected = async (prompt: string): Promise<void> => {
     setSelectedPrompt(prompt)
-    void UpsertSelectedPromptButton(prompt, id)
-    setInput(prompt)
+    UpsertSelectedPromptButton(prompt, id)
+      .finally(() => setInput(prompt))
+      .catch(error => {
+        console.error("An error occurred on storing the selected prompt button", error)
+      })
   }
   const { fileState }: { fileState: { showFileUpload: string } } = useChatContext()
   const { showFileUpload } = fileState
