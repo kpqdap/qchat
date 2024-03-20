@@ -1,5 +1,5 @@
 import { useGlobalMessageContext } from "@/features/globals/global-message-context"
-import { IndexDocuments, UploadDocument } from "../../chat-services/chat-document-service"
+import { IndexDocuments, UploadDocument } from "@/features/chat/chat-services/chat-document-service"
 import { useChatContext } from "../chat-context"
 
 interface Props {

@@ -2,8 +2,8 @@
 
 import { AI_NAME } from "@/features/theme/theme-config"
 import { signIn } from "next-auth/react"
-import { Button } from "../../features/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../features/ui/card"
+import { Button } from "@/features/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/features/ui/card"
 
 export const LogIn: React.FC = () => {
   const signInProvider = process.env.NODE_ENV === "development" ? "QChatDevelopers" : "azure-ad"
@@ -18,7 +18,7 @@ export const LogIn: React.FC = () => {
           <CardDescription>Login in with your Queensland Government account</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <Button onClick={async () => signIn(signInProvider)}>Log in to {AI_NAME}</Button>
+          <Button onClick={async () => await signIn(signInProvider)}>Log in to {AI_NAME}</Button>
         </CardContent>
       </Card>
     </div>

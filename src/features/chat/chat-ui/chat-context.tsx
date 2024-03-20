@@ -75,7 +75,7 @@ export const ChatProvider: FC<Prop> = props => {
     id: props.id,
     body: chatBody,
     initialMessages: transformCosmosToAIModel(props.chats),
-    onFinish: async (lastMessage: Message) => {
+    onFinish: (lastMessage: Message) => {
       if (isMicrophoneUsed) {
         textToSpeech(lastMessage.content)
         resetMicrophoneUsed()

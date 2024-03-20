@@ -11,7 +11,15 @@ export async function arrayBufferToBase64(buffer: ArrayBuffer): Promise<string> 
   return await Promise.resolve(btoa(base64String))
 }
 
-const customDocumentIntelligenceObject = (modelId?: string, resultId?: string) => {
+type DocumentIntelligenceObject = {
+  analyzeDocumentUrl: string
+  analyzeResultUrl: string
+  diHeaders: {
+    "Content-Type": string
+    "api-key": string
+  }
+}
+const customDocumentIntelligenceObject = (modelId?: string, resultId?: string): DocumentIntelligenceObject => {
   const apiVersion = "2023-07-31"
   const analyzeDocumentUrl = `${process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT}/formrecognizer/documentModels/${modelId}:analyze?api-version=${apiVersion}&locale=en-GB`
   const analyzeResultUrl = `${process.env.AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT}/formrecognizer/documentModels/${modelId}/analyzeResults/${resultId}?api-version=${apiVersion}`

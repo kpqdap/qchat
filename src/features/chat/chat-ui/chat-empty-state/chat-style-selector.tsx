@@ -4,7 +4,7 @@ import { Brush, CircleDot, Scale } from "lucide-react"
 import { TooltipProvider } from "@/features/ui/tooltip-provider"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import { FC } from "react"
-import { ConversationStyle } from "../../models"
+import { ConversationStyle } from "@/features/chat/models"
 import { useChatContext } from "../chat-context"
 
 interface Prop {

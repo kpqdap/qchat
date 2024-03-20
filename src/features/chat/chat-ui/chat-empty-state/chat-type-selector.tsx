@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/features/ui/tabs"
 import { AudioLines, FileText, MessageCircle } from "lucide-react"
 import { TooltipProvider } from "@/features/ui/tooltip-provider"
 import * as Tooltip from "@radix-ui/react-tooltip"
-import { ChatType } from "../../models"
+import { ChatType } from "@/features/chat/models"
 import { useChatContext } from "../chat-context"
 import { useSession } from "next-auth/react"
 
@@ -72,7 +72,7 @@ export const ChatTypeSelector: FC<Prop> = props => {
             </Tabs>
           </div>
         </Tooltip.Trigger>
-        <Tooltip.Content side="top" className="bg-primary-foreground text-foreground rounded-md p-2 text-sm shadow-lg">
+        <Tooltip.Content side="top" className="rounded-md bg-primary-foreground p-2 text-sm text-foreground shadow-lg">
           <p>
             <strong>General</strong> - chats are turn by turn conversations with the QChat Assistant.
           </p>

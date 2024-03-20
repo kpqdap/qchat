@@ -42,7 +42,7 @@ export const MiniNewChat = (): JSX.Element => {
         className="size-[40px] gap-2 rounded-md p-1"
         variant="default"
         onClick={startNewChat}
-        onKeyDown={async e => e.key === "Enter" && startNewChat()}
+        onKeyDown={async e => e.key === "Enter" && (await startNewChat())}
       >
         <MessageSquarePlus size={40} strokeWidth={1.2} aria-hidden="true" />
       </Button>

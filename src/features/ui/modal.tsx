@@ -23,7 +23,7 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
   const textareaId = `chatMessageFeedback-${props.chatThreadId}`
   const textareaName = `chatMessageFeedback-${props.chatThreadId}`
 
-  async function handleFeedbackChange(): Promise<void> {
+  function handleFeedbackChange(): void {
     const textareaValue = textAreaRef.current?.value || ""
     if (!areTabsEnabled) {
       setTabsEnabled(true)
@@ -64,7 +64,7 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
             ref={textAreaRef}
             rows={6}
             className="bg-background w-full rounded border border-gray-300 p-4"
-            onChange={async () => handleFeedbackChange()}
+            onChange={() => handleFeedbackChange()}
           />
         </div>
         <FeedbackButtons areTabsEnabled={areTabsEnabled} onReasonChange={handleReasonChange} />

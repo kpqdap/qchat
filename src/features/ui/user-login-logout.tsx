@@ -17,22 +17,22 @@ export const UserComponent: React.FC = () => {
     <div>
       {session ? (
         <Button
-          onClick={async () => signOut({ callbackUrl: "/" })}
+          onClick={async () => await signOut({ callbackUrl: "/" })}
           className="flex items-center text-white"
           aria-label="Log out"
           variant="link"
         >
-          <LogOut className="mr-2 size-4 text-darkAltButton" aria-hidden="true" />
+          <LogOut className="text-darkAltButton mr-2 size-4" aria-hidden="true" />
           <Typography variant="span">Log out</Typography>
         </Button>
       ) : (
         <Button
-          onClick={async () => signIn(signInProvider, { callbackUrl: "/" })}
+          onClick={async () => await signIn(signInProvider, { callbackUrl: "/" })}
           className="flex items-center text-white"
           aria-label="Log in"
           variant="link"
         >
-          <LogIn className="mr-2 size-4 text-darkAltButton" aria-hidden="true" />
+          <LogIn className="text-darkAltButton mr-2 size-4" aria-hidden="true" />
           <Typography variant="span">Log in</Typography>
         </Button>
       )}

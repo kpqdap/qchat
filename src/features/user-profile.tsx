@@ -39,12 +39,12 @@ const UserProfile = (): ReactElement => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{session?.user?.name ?? "Anonymous"}</p>
-            <p className="text-xs leading-none text-muted-foreground">{session?.user?.email ?? "No email provided"}</p>
-            <p className="text-xs leading-none text-muted-foreground">{session?.user?.qchatAdmin ? "Admin" : ""}</p>
+            <p className="text-muted-foreground text-xs leading-none">{session?.user?.email ?? "No email provided"}</p>
+            <p className="text-muted-foreground text-xs leading-none">{session?.user?.qchatAdmin ? "Admin" : ""}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={async () => signOut({ callbackUrl: "/" })}>
+        <DropdownMenuItem onClick={async () => await signOut({ callbackUrl: "/" })}>
           <LogOut className="mr-2 size-4" />
           <span>Log out</span>
         </DropdownMenuItem>

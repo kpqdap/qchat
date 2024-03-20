@@ -7,10 +7,6 @@ export const metadata = {
   description: AI_NAME,
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <div className="bg-card/70 flex flex-1 overflow-hidden">{children}</div>
-    </>
-  )
+export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
+  return <div className="bg-card/70 flex flex-1 overflow-hidden">{children}</div>
 }

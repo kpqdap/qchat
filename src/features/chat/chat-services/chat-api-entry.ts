@@ -6,10 +6,10 @@ export const ChatAPIEntry = async (props: PromptGPTProps): Promise<Response> => 
   const dataChatTypes = ["data", "mssql", "audio"]
 
   if (props.chatType === "simple") {
-    return ChatAPISimple(props)
+    return await ChatAPISimple(props)
   } else if (dataChatTypes.includes(props.chatType)) {
-    return ChatAPIData(props)
+    return await ChatAPIData(props)
   } else {
-    return ChatAPISimple(props)
+    return await ChatAPISimple(props)
   }
 }
