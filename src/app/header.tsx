@@ -4,7 +4,7 @@ import { QgovMiniSvg } from "@/features/ui/qldgovminilogo"
 import Typography from "@/components/typography"
 import { UserComponent } from "@/features/ui/user-login-logout"
 import { MiniMenu } from "@/features/main-menu/mini-menu"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 
 const Sidebar: React.FC = () => {
   return (

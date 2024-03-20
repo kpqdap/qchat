@@ -60,7 +60,7 @@ const securityHeaders = [
 const nextConfig = {
   output: "standalone",
   compiler: {
-    removeConsole: true,
+    removeConsole: process.env.NODE_ENV !== "development",
   },
   logging: {
     fetches: {

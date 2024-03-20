@@ -1,10 +1,5 @@
 import { Message } from "ai"
 
-export const CHAT_DOCUMENT_ATTRIBUTE = "CHAT_DOCUMENT"
-export const CHAT_THREAD_ATTRIBUTE = "CHAT_THREAD"
-export const MESSAGE_ATTRIBUTE = "CHAT_MESSAGE"
-export const CHAT_UTILITY_ATTRIBUTE = "CHAT_UTILITY"
-
 export enum ConversationStyle {
   Creative = "creative",
   Balanced = "balanced",
@@ -126,10 +121,4 @@ export interface ChatUtilityModel {
   content: string
   role: ChatRole
   type: "CHAT_UTILITY"
-}
-
-export interface ServerActionResponse<T> {
-  success: boolean
-  error: string
-  response: T
 }

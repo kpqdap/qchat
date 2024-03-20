@@ -6,7 +6,7 @@ import { Suspense } from "react"
 
 export const dynamic = "force-dynamic"
 
-export default async function Home() {
+export default async function Home(): Promise<JSX.Element> {
   const content = await loadContent()
   return (
     <Card className="flex h-full flex-1 justify-center overflow-y-scroll">
@@ -22,7 +22,7 @@ export default async function Home() {
   )
 }
 
-const loadContent = async () => {
+const loadContent = async (): Promise<string> => {
   // if (process.env.NODE_ENV === "production") {
   //   const response = await fetch(
   //     "https://raw.githubusercontent.com/kpqdap/azurechat/main/src/app/change-log/update.md",

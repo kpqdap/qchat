@@ -2,7 +2,7 @@ import React from "react"
 import { MenuItem } from "@/components/menu"
 import { FileText, MessageCircle, Settings, HelpCircle } from "lucide-react"
 
-export const UserSettings = () => {
+export const UserSettings = (): React.JSX.Element => {
   return (
     <>
       <MenuItem href="/settings/details">

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ChatType } from "../../chat-services/models"
+import { ChatType } from "../../models"
 
 export interface FileState {
   showFileUpload: ChatType

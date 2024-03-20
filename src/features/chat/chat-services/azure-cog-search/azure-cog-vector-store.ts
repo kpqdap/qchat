@@ -1,4 +1,4 @@
-import { OpenAIEmbeddingInstance } from "@/features/common/openai"
+import { OpenAIEmbeddingInstance } from "@/services/open-ai"
 
 export interface AzureCogDocumentIndex {
   id: string
@@ -17,7 +17,7 @@ interface DocumentSearchResponseModel<TModel> {
   value: TModel[]
 }
 
-type DocumentSearchModel = {
+export type DocumentSearchModel = {
   "@search.score": number
 }
 

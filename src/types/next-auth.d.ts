@@ -11,6 +11,9 @@ declare module "next-auth" {
       userId: string
     } & DefaultSession["user"]
   }
+  interface Token {
+    qchatAdmin: boolean
+  }
   interface User {
     qchatAdmin: boolean
     tenantId: string

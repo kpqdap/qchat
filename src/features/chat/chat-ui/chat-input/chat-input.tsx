@@ -3,7 +3,7 @@ import { Textarea } from "@/features/ui/textarea"
 import { useChatContext } from "@/features/chat/chat-ui/chat-context"
 import { Loader, Send } from "lucide-react"
 import { FC, FormEvent, useRef, useMemo } from "react"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { ChatFileSlider } from "../chat-file/chat-file-slider"
 import { convertMarkdownToWordDocument } from "@/features/common/file-export"
 import ChatInputMenu from "./chat-input-menu"
@@ -41,7 +41,7 @@ const ChatInput: FC<Props> = () => {
     return formattedDate.split(",").join("_").split(" ").join("_").split(":").join("_")
   }
 
-  const exportDocument = async () => {
+  const exportDocument = async (): Promise<void> => {
     const fileName = AI_NAME + ` Export_${getFormattedDateTime()}.docx`
     const userName = await getNameInline()
     const chatThreadName = chatBody.chatThreadName || AI_NAME + ` Export_${getFormattedDateTime()}.docx`
@@ -56,11 +56,11 @@ const ChatInput: FC<Props> = () => {
     }
   }
 
-  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setInput(event.target.value)
   }
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (event.key === "Enter" && !event.shiftKey && !isModalOpen) {
       event.preventDefault()
       if (!isLoading) {
@@ -84,7 +84,7 @@ const ChatInput: FC<Props> = () => {
           value={input}
           placeholder="Send a message"
           aria-label="Send a message"
-          className="md:rows-4 rows-2 bg-background min-h-fit resize-none py-4 pr-[80px] shadow-sm"
+          className="md:rows-4 rows-2 min-h-fit resize-none bg-background py-4 pr-[80px] shadow-sm"
           onChange={onChange}
           onKeyDown={onKeyDown}
         />

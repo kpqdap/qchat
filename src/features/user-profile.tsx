@@ -1,5 +1,6 @@
 "use client"
 
+import React, { ReactElement } from "react"
 import { Avatar, AvatarImage } from "@/features/ui/avatar"
 import { Button } from "@/features/ui/button"
 import {
@@ -13,7 +14,7 @@ import {
 import { LogOut, UserCircle } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 
-const UserProfile = () => {
+const UserProfile = (): ReactElement => {
   const { data: session } = useSession()
 
   return (
@@ -21,7 +22,7 @@ const UserProfile = () => {
       <DropdownMenuTrigger asChild>
         <div className="flex flex-col items-stretch">
           <Button
-            className="rounded-full w-[40px] h-[40px] p-1 text-primary relative gap-2 justify-center"
+            className="font-primary relative size-[40px] justify-center gap-2 rounded-full p-1"
             variant={"outline"}
           >
             {session?.user?.image ? (
@@ -43,8 +44,8 @@ const UserProfile = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-          <LogOut className="mr-2 h-4 w-4" />
+        <DropdownMenuItem onClick={async () => signOut({ callbackUrl: "/" })}>
+          <LogOut className="mr-2 size-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

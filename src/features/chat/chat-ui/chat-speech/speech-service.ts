@@ -1,6 +1,15 @@
 "use server"
 
-export const GetSpeechToken = async () => {
+interface SpeechTokenResponse {
+  error: boolean
+  errorMessage: string
+  token: string
+  region: string
+  sttUrl: string
+  apimKey: string
+}
+
+export const GetSpeechToken = async (): Promise<SpeechTokenResponse> => {
   if (
     process.env.AZURE_SPEECH_REGION === undefined ||
     process.env.AZURE_SPEECH_KEY === undefined ||
@@ -24,9 +33,20 @@ export const GetSpeechToken = async () => {
     cache: "no-store",
   })
 
+  if (!response.ok) {
+    return {
+      error: true,
+      errorMessage: response.statusText || "Error fetching token",
+      token: "",
+      region: process.env.AZURE_SPEECH_REGION,
+      sttUrl: process.env.AZURE_SPEECH_STT_URL,
+      apimKey: process.env.AZURE_SPEECH_KEY,
+    }
+  }
+
   return {
-    error: response.status !== 200,
-    errorMessage: response.statusText,
+    error: false,
+    errorMessage: "",
     token: await response.text(),
     region: process.env.AZURE_SPEECH_REGION,
     sttUrl: process.env.AZURE_SPEECH_STT_URL,

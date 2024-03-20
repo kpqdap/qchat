@@ -18,10 +18,10 @@ export const ChatSelectedOptions: FC<Prop> = () => {
   return (
     <div className="hidden sm:block">
       <Tabs defaultValue="selected" aria-label="Selected Chat Options">
-        <TabsList className="grid w-full grid-cols-1 h-12 items-stretch" tabIndex={0}>
+        <TabsList className="grid h-12 w-full grid-cols-1 items-stretch" tabIndex={0}>
           <TabsTrigger
             value="selected"
-            className="flex gap-2 items-center justify-center"
+            className="flex items-center justify-center gap-2"
             disabled={true}
             aria-disabled="true"
           >

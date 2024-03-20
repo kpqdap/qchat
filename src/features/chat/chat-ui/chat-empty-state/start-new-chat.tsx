@@ -2,7 +2,7 @@
 
 import Typography from "@/components/typography"
 import { Card } from "@/features/ui/card"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 import { FC } from "react"
 import { NewChat } from "../../chat-menu/new-chat"
 import { Button } from "@/features/ui/button"

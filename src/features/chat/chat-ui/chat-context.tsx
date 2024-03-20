@@ -1,6 +1,6 @@
 "use client"
 
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 import { Message } from "ai"
 import { UseChatHelpers, useChat } from "ai/react"
 import React, { FC, createContext, useContext, useState } from "react"
@@ -11,7 +11,7 @@ import {
   ConversationStyle,
   ConversationSensitivity,
   PromptGPTBody,
-} from "../chat-services/models"
+} from "@/features/chat/models"
 import { transformCosmosToAIModel } from "../chat-services/utils"
 import { FileState, useFileState } from "./chat-file/use-file-state"
 import { SpeechToTextProps, useSpeechToText } from "./chat-speech/use-speech-to-text"
@@ -85,28 +85,28 @@ export const ChatProvider: FC<Prop> = props => {
   })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const openModal = () => setIsModalOpen(true)
-  const closeModal = () => setIsModalOpen(false)
+  const openModal = (): void => setIsModalOpen(true)
+  const closeModal = (): void => setIsModalOpen(false)
 
-  const setChatBody = (body: PromptGPTBody) => {
+  const setChatBody = (body: PromptGPTBody): void => {
     setBody(body)
   }
 
-  const onChatTypeChange = (value: ChatType) => {
+  const onChatTypeChange = (value: ChatType): void => {
     fileState.setShowFileUpload(value)
     fileState.setIsFileNull(true)
     setChatBody({ ...chatBody, chatType: value })
   }
 
-  const onConversationStyleChange = (value: ConversationStyle) => {
+  const onConversationStyleChange = (value: ConversationStyle): void => {
     setChatBody({ ...chatBody, conversationStyle: value })
   }
 
-  const onConversationSensitivityChange = (value: ConversationSensitivity) => {
+  const onConversationSensitivityChange = (value: ConversationSensitivity): void => {
     setChatBody({ ...chatBody, conversationSensitivity: value })
   }
 
-  function onError(error: Error) {
+  function onError(error: Error): void {
     showError(error.message, response.reload)
   }
 
@@ -135,7 +135,7 @@ export const ChatProvider: FC<Prop> = props => {
   )
 }
 
-export const useChatContext = () => {
+export const useChatContext = (): ChatContextProps => {
   const context = useContext(ChatContext)
   if (!context) {
     throw new Error("ChatContext is null")

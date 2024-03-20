@@ -1,4 +1,4 @@
-import { useGlobalMessageContext } from "@/features/global-message/global-message-context"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
 import {
   AudioConfig,
   AutoDetectSourceLanguageConfig,
@@ -28,7 +28,7 @@ export const useSpeechToText = (props: Props): SpeechToTextProps => {
 
   const { showError } = useGlobalMessageContext()
 
-  const startRecognition = async () => {
+  const startRecognition = async (): Promise<void> => {
     const token = await GetSpeechToken()
     const apimUrl = new URL(token.sttUrl)
 
@@ -60,12 +60,12 @@ export const useSpeechToText = (props: Props): SpeechToTextProps => {
     recognizer.startContinuousRecognitionAsync()
   }
 
-  const stopRecognition = () => {
+  const stopRecognition = (): void => {
     recognizerRef.current?.stopContinuousRecognitionAsync()
     setIsMicrophonePressed(false)
   }
 
-  const resetMicrophoneUsed = () => {
+  const resetMicrophoneUsed = (): void => {
     setIsMicrophoneUsed(false)
   }
 

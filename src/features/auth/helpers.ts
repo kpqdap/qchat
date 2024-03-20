@@ -1,5 +1,6 @@
 import { createHash } from "crypto"
 import { getServerSession } from "next-auth"
+// import { RedirectToPage } from "../common/navigation-helpers"
 import { options } from "./auth-api"
 
 export const userSession = async (): Promise<UserModel | null> => {
@@ -8,6 +9,14 @@ export const userSession = async (): Promise<UserModel | null> => {
     return session.user as UserModel
   }
   return null
+}
+
+export const getCurrentUser = async (): Promise<UserModel> => {
+  const user = await userSession()
+  if (user) {
+    return user
+  }
+  throw new Error("User not found")
 }
 
 export const userHashedId = async (): Promise<string> => {
@@ -33,6 +42,13 @@ export const getContextPrompt = async (): Promise<string> => {
   }
   throw new Error("Context Prompt not found")
 }
+
+// export const redirectIfAuthenticated = async (): Promise<void> => {
+//   const user = await userSession()
+//   if (user) {
+//     RedirectToPage("chat")
+//   }
+// }
 
 export type UserModel = {
   name: string

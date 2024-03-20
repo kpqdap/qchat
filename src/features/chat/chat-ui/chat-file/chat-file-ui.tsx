@@ -12,7 +12,7 @@ export const ChatFileUI: FC = () => {
   const { onSubmit } = useFileSelection({ id })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const getAcceptedFileType = (chatType: string) => {
+  const getAcceptedFileType = (chatType: string): string => {
     switch (chatType) {
       case "data":
         return ".pdf"
@@ -67,7 +67,7 @@ export const ChatFileUI: FC = () => {
           )}
         </Button>
       </form>
-      <p id="file-upload-description" className="text-sm text-muted-foreground">
+      <p id="file-upload-description" className="text-muted-foreground text-sm">
         {uploadButtonLabel || "Select a file to upload."}
       </p>
       {chatBody.chatType === "audio" && offenderId != null && (

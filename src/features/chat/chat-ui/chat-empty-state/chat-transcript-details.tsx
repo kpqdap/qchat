@@ -7,13 +7,13 @@ interface OffenderTranscriptFormProps {
   chatThreadId: string
 }
 
-export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormProps) => {
+export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormProps): JSX.Element => {
   const [offenderId, setOffenderId] = useState("")
   const [submitting, setSubmitting] = useState(false)
-  const [isIdSaved, setIsIdSaved] = useState(false) // New state to track if ID is saved
+  const [isIdSaved, setIsIdSaved] = useState(false)
   const [message, setMessage] = useState("")
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }): Promise<void> => {
     event.preventDefault()
     setSubmitting(true)
     setMessage("")
@@ -21,10 +21,10 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
     try {
       await AssociateOffenderWithChatThread(chatThreadId, offenderId)
       setMessage(`Offender ID ${offenderId} saved.`)
-      setIsIdSaved(true) // Set isIdSaved to true upon successful save
+      setIsIdSaved(true)
     } catch (_error) {
       setMessage("Failed to save offender ID.")
-      setIsIdSaved(false) // Ensure isIdSaved is false if saving fails
+      setIsIdSaved(false)
     } finally {
       setSubmitting(false)
     }
@@ -33,17 +33,15 @@ export const OffenderTranscriptForm = ({ chatThreadId }: OffenderTranscriptFormP
   return (
     <div className="bg-background p-5">
       {isIdSaved ? (
-        // Display the saved offender ID if it's saved
         <div className="text-sm text-muted-foreground">Offender ID {offenderId} saved.</div>
       ) : (
-        // Render the form to input and submit an offender ID if not saved
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-wrap items-center grid-cols-3 gap-[15px]">
-            <Label.Root htmlFor="offenderID" className="leading-[35px] text-sm text-muted-foreground">
+          <div className="flex grid-cols-3 flex-wrap items-center gap-[15px]">
+            <Label.Root htmlFor="offenderID" className="text-sm leading-[35px] text-muted-foreground">
               Offender&apos;s Identification Number:
             </Label.Root>
             <input
-              className="bg-inputBackground text-sm text-muted-foreground shadow-blackA6 inline-flex h-[35px] w-[200px] appearance-none items-center justify-center rounded-[4px] px-[10px] leading-none shadow-[0_0_0_1px] outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary selection:text-foreground selection:bg-accent"
+              className="bg-inputBackground shadow-blackA6 inline-flex h-[35px] w-[200px] appearance-none items-center justify-center rounded-[4px] px-[10px] text-sm leading-none text-muted-foreground shadow-[0_0_0_1px] outline-none selection:bg-accent selection:text-foreground focus:ring-2 focus:ring-primary focus:ring-offset-2"
               type="text"
               id="offenderID"
               name="offenderID"
