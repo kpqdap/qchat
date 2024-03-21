@@ -41,6 +41,7 @@ async function generateChatCategory(chatMessage: string): Promise<string> {
     "Decision Support and Advisory",
     "Educational and Training Services",
     "Operational Efficiency and Automation",
+    "Finance and Banking",
     "Public Engagement and Services",
     "Innovation and Development",
     "Creative Assistance",
@@ -53,14 +54,17 @@ async function generateChatCategory(chatMessage: string): Promise<string> {
     const category = await GenericChatAPI(apiName, {
       messages: [
         {
-          role: "user",
-          content: `Categorise this chat session inside double quotes ""${chatMessage}"" into only one of the following 
-                categories: ${categories.join(", ")} based on my query`,
+          role: "system",
+          content: `Please categorise this chat session: "${chatMessage}" into only one of the following specified categories based on the content of the query. The category selected must strictly be one of the following: ${categories.join(", ")}. Ensure the response aligns with these predefined categories to maintain consistency.`,
         },
       ],
     })
 
-    return category || "Uncategorised"
+    if (category && categories.includes(category)) {
+      return category
+    } else {
+      return "Uncategorised"
+    }
   } catch (_e) {
     return "Uncategorised"
   }
