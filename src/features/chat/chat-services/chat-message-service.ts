@@ -1,7 +1,6 @@
-import { ChatMessageModel, ChatSentiment } from "@/features/chat/models"
+import { ChatMessageModel, ChatRecordType, ChatSentiment } from "@/features/chat/models"
 import { uniqueId } from "@/lib/utils"
 import { ChatCompletionMessage } from "openai/resources"
-import { MESSAGE_ATTRIBUTE } from "@/features/chat/constants"
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
 import { SqlQuerySpec } from "@azure/cosmos"
 import { HistoryContainer } from "@/features/common/services/cosmos"
@@ -17,7 +16,7 @@ export const FindAllChatMessagesForCurrentUser = async (
       query:
         "SELECT * FROM root r WHERE r.type=@type AND r.chatThreadId=@chatThreadId AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
       parameters: [
-        { name: "@type", value: MESSAGE_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Message },
         { name: "@chatThreadId", value: chatThreadId },
         { name: "@isDeleted", value: false },
         { name: "@userId", value: userId },
@@ -48,7 +47,7 @@ export const FindTopChatMessagesForCurrentUser = async (
       query:
         "SELECT TOP @top * FROM root r WHERE r.type=@type AND r.chatThreadId=@chatThreadId AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
       parameters: [
-        { name: "@type", value: MESSAGE_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Message },
         { name: "@chatThreadId", value: chatThreadId },
         { name: "@isDeleted", value: false },
         { name: "@userId", value: userId },
@@ -80,7 +79,7 @@ export const FindChatMessageForCurrentUser = async (
       query:
         "SELECT * FROM root r WHERE r.type=@type AND r.chatThreadId=@chatThreadId AND r.id=@id AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.userId=@userId",
       parameters: [
-        { name: "@type", value: MESSAGE_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Message },
         { name: "@chatThreadId", value: chatThreadId },
         { name: "@id", value: messageId },
         { name: "@isDeleted", value: false },
@@ -112,7 +111,7 @@ export const UpsertChatMessage = async (
     const modelToSave: ChatMessageModel = {
       id: uniqueId(),
       createdAt: new Date(),
-      type: MESSAGE_ATTRIBUTE,
+      type: ChatRecordType.Message,
       isDeleted: false,
       content: message.content ?? "",
       role: mapChatCompletionRoleToChatRole(message.role),
@@ -157,7 +156,7 @@ export const AddChatMessage = async (
     const modelToSave: ChatMessageModel = {
       id: uniqueId(),
       createdAt: new Date(),
-      type: MESSAGE_ATTRIBUTE,
+      type: ChatRecordType.Message,
       isDeleted: false,
       content: message.content ?? "",
       role: mapChatCompletionRoleToChatRole(message.role),

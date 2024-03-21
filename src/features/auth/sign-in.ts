@@ -7,14 +7,11 @@ import { AdapterUser } from "next-auth/adapters"
 export class UserSignInHandler {
   static async handleSignIn(user: User | AdapterUser, userGroups: string[] = []): Promise<boolean> {
     try {
-      // Group Admins
       const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(string => string.toLowerCase().trim())
       const tenantResponse = await GetTenantById(user.tenantId)
 
-      // Creates or updates the user
       const userRecord = await getsertUser(userGroups, user)
 
-      // Validate if the tenant exists or create one
       if (tenantResponse.status === "ERROR" || tenantResponse.status === "UNAUTHORIZED") throw tenantResponse
       if (tenantResponse.status === "NOT_FOUND") {
         const now = new Date()
@@ -22,7 +19,7 @@ export class UserSignInHandler {
         const tenantRecord: TenantRecord = {
           tenantId: user.tenantId,
           primaryDomain: domain,
-          requiresGroupLogin: true, // Create tenant with group login required
+          requiresGroupLogin: true,
           id: user.tenantId,
           email: user.upn,
           supportEmail: `support@${domain}`,

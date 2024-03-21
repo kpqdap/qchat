@@ -4,6 +4,7 @@ import { getCurrentUser, getTenantId, userHashedId, userSession } from "@/featur
 import { uniqueId } from "@/lib/utils"
 import {
   ChatMessageModel,
+  ChatRecordType,
   ChatRole,
   ChatSentiment,
   ChatThreadModel,
@@ -13,7 +14,7 @@ import {
   PromptGPTProps,
 } from "@/features/chat/models"
 import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
-import { CHAT_THREAD_ATTRIBUTE, DEFAULT_MONTHS_AGO, MESSAGE_ATTRIBUTE } from "@/features/chat/constants"
+import { DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
 import { HistoryContainer } from "@/features/common/services/cosmos"
 import { ServerActionResponseAsync } from "@/features/common/server-action-response"
 import { SqlQuerySpec } from "@azure/cosmos"
@@ -29,7 +30,7 @@ export const FindAllChatThreadForCurrentUser = async (): ServerActionResponseAsy
       query:
         "SELECT * FROM root r WHERE r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
       parameters: [
-        { name: "@type", value: CHAT_THREAD_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Thread },
         { name: "@isDeleted", value: false },
         { name: "@userId", value: userId },
         { name: "@tenantId", value: tenantId },
@@ -64,7 +65,7 @@ export const FindChatThreadForCurrentUser = async (
         "SELECT * FROM root r WHERE r.id=@id AND r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt",
       parameters: [
         { name: "@id", value: chatThreadId },
-        { name: "@type", value: CHAT_THREAD_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Thread },
         { name: "@isDeleted", value: false },
         { name: "@userId", value: userId },
         { name: "@tenantId", value: tenantId },
@@ -223,7 +224,7 @@ export const CreateChatThread = async (): ServerActionResponseAsync<ChatThreadMo
       chatType: ChatType.Simple,
       conversationStyle: ConversationStyle.Precise,
       conversationSensitivity: ConversationSensitivity.Official,
-      type: CHAT_THREAD_ATTRIBUTE,
+      type: ChatRecordType.Thread,
       systemPrompt: "",
       contextPrompt: "",
       metaPrompt: "",
@@ -293,7 +294,7 @@ export const InitChatSession = async (
     userId: userId,
     tenantId: tenantId,
     context: "",
-    type: MESSAGE_ATTRIBUTE,
+    type: ChatRecordType.Message,
     feedback: "",
     sentiment: ChatSentiment.Neutral,
     reason: "",
@@ -323,7 +324,7 @@ export const FindChatThreadByTitleAndEmpty = async (
       query:
         "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.name=@name AND r.isDeleted=@isDeleted AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
       parameters: [
-        { name: "@type", value: CHAT_THREAD_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Thread },
         { name: "@name", value: title },
         { name: "@isDeleted", value: false },
         { name: "@userId", value: userId },

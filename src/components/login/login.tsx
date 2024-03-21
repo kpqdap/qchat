@@ -4,10 +4,9 @@ import { AI_NAME } from "@/features/theme/theme-config"
 import { signIn } from "next-auth/react"
 import { Button } from "@/features/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/features/ui/card"
+import { signInProvider } from "@/app-global"
 
 export const LogIn: React.FC = () => {
-  const signInProvider = process.env.NODE_ENV === "development" ? "QChatDevelopers" : "azure-ad"
-
   return (
     <div className="flex h-screen items-center justify-center">
       <Card className="flex min-w-[300px] flex-col gap-2">

@@ -5,8 +5,7 @@ import { useSession, signIn, signOut } from "next-auth/react"
 import { LogIn, LogOut } from "lucide-react"
 import Typography from "@/components/typography"
 import { Button } from "@/features/ui/button"
-
-const signInProvider = process.env.NODE_ENV === "development" ? "QChatDevelopers" : "azure-ad"
+import { signInProvider } from "@/app-global"
 
 export const UserComponent: React.FC = () => {
   const { data: session, status } = useSession({ required: false })

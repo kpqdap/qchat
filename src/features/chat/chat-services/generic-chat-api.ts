@@ -4,8 +4,8 @@ import { OpenAIInstance } from "@/features/common/services/open-ai"
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
 import { translator } from "./chat-translator-service"
 import { ItemDefinition } from "@azure/cosmos"
-import { CHAT_UTILITY_ATTRIBUTE } from "../constants"
 import { HistoryContainer } from "@/features/common/services/cosmos"
+import { ChatRecordType } from "../models"
 
 export interface Message {
   role: "function" | "system" | "user" | "assistant"
@@ -39,7 +39,7 @@ async function logAPIUsage<T>(apiName: string, apiParams: unknown, apiResult: T)
     promptTokens: usage?.prompt_tokens,
     completionTokens: usage?.completion_tokens,
     totalTokens: usage?.total_tokens,
-    type: CHAT_UTILITY_ATTRIBUTE,
+    type: ChatRecordType.Utility,
   }
   const container = await HistoryContainer()
   await container.items.create(logEntry)

@@ -3,12 +3,12 @@
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
 import { uniqueId } from "@/lib/utils"
 import { AzureCogDocumentIndex, indexDocuments } from "./azure-cog-search/azure-cog-vector-store"
-import { ChatDocumentModel } from "@/features/chat/models"
+import { ChatDocumentModel, ChatRecordType } from "@/features/chat/models"
 import { chunkDocumentWithOverlap } from "./text-chunk"
 import { isNotNullOrEmpty } from "./utils"
 import { arrayBufferToBase64, customBeginAnalyzeDocument } from "./chat-document-helper"
 import { speechToTextRecognizeOnce } from "./chat-audio-helper"
-import { CHAT_DOCUMENT_ATTRIBUTE, DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
+import { DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
 import { SqlQuerySpec } from "@azure/cosmos"
 import { ServerActionResponseAsync } from "@/features/common/server-action-response"
 import { HistoryContainer } from "@/features/common/services/cosmos"
@@ -124,7 +124,7 @@ export const IndexDocuments = async (
       id: uniqueId(),
       userId,
       createdAt: new Date(),
-      type: CHAT_DOCUMENT_ATTRIBUTE,
+      type: ChatRecordType.Document,
       isDeleted: false,
       tenantId,
       name: fileName,
@@ -159,7 +159,7 @@ export const FindAllChatDocumentsForCurrentUser = async (
         "SELECT * FROM root r WHERE r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
       parameters: [
         { name: "@chatThreadId", value: chatThreadId },
-        { name: "@type", value: CHAT_DOCUMENT_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Document },
         { name: "@isDeleted", value: false },
         { name: "@userId", value: userId },
         { name: "@tenantId", value: tenantId },

@@ -1,7 +1,7 @@
 import { getTenantId } from "@/features/auth/helpers"
-import { ChatMessageModel, ChatThreadModel } from "@/features/chat/models"
+import { ChatMessageModel, ChatRecordType, ChatThreadModel } from "@/features/chat/models"
 import { ServerActionResponseAsync } from "../common/server-action-response"
-import { CHAT_THREAD_ATTRIBUTE, DEFAULT_DAYS_AGO } from "../chat/constants"
+import { DEFAULT_DAYS_AGO } from "../chat/constants"
 import { xDaysAgo } from "../common/date-helper"
 import { HistoryContainer } from "../common/services/cosmos"
 import { SqlQuerySpec } from "@azure/cosmos"
@@ -20,7 +20,7 @@ export const FindAllChatThreadsForReporting = async (
       ORDER BY r.createdAt DESC 
       OFFSET ${pageNumber * pageSize} LIMIT ${pageSize}`,
       parameters: [
-        { name: "@type", value: CHAT_THREAD_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Thread },
         { name: "@isDeleted", value: false },
         { name: "@tenantId", value: tenantId },
         { name: "@sevenDaysAgo", value: xDaysAgo(DEFAULT_DAYS_AGO) },
@@ -46,7 +46,7 @@ export const FindChatThreadById = async (chatThreadId: string): ServerActionResp
     const query: SqlQuerySpec = {
       query: "SELECT * FROM root r WHERE r.type=@type AND r.tenantId=@tenantId AND r.id=@id",
       parameters: [
-        { name: "@type", value: CHAT_THREAD_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Thread },
         { name: "@tenantId", value: tenantId },
         { name: "@id", value: chatThreadId },
       ],
@@ -71,7 +71,7 @@ export const FindAllChatsInThread = async (chatThreadId: string): ServerActionRe
     const query: SqlQuerySpec = {
       query: "SELECT * FROM root r WHERE r.type=@type AND r.tenantId=@tenantId AND r.chatThreadId = @chatThreadId",
       parameters: [
-        { name: "@type", value: CHAT_THREAD_ATTRIBUTE },
+        { name: "@type", value: ChatRecordType.Thread },
         { name: "@tenantId", value: tenantId },
         { name: "@chatThreadId", value: chatThreadId },
       ],

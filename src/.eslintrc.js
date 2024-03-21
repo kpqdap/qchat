@@ -37,6 +37,17 @@ module.exports = {
     "no-magic-numbers": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "tailwindcss/no-custom-classname": [
+      "warn",
+      {
+        callees: ["classnames", "clsx", "ctl", "cva", "tv"], // Ensure cva is included
+        config: "src/tailwind.config.js", // Adjusted to match your project structure
+        cssFiles: ["src/app/**/*.css"], // Focus on your CSS files, adjust the pattern as needed
+        cssFilesRefreshRate: 5000, // Default, adjust based on performance needs
+        skipClassAttribute: false, // Keep this false to lint class attributes
+        whitelist: ["destructive", "success"],
+      },
+    ],
     "@typescript-eslint/no-parameter-properties": 0,
     "@typescript-eslint/no-floating-promises": ["error"],
     "@typescript-eslint/array-type": [0, "generic"],

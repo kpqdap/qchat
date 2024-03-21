@@ -9,7 +9,7 @@ interface FeedbackButtonsProps {
 
 const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ areTabsEnabled, onReasonChange }) => {
   return (
-    <div className="reason-buttons p-4">
+    <div className="p-4">
       <Tabs defaultValue={""} onValueChange={onReasonChange}>
         <TabsList className="grid h-12 w-full grid-cols-3 items-stretch">
           <TabsTrigger

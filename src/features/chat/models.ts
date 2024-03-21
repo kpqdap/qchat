@@ -38,6 +38,13 @@ export enum ChatSentiment {
   Negative = "negative",
 }
 
+export enum ChatRecordType {
+  Document = "CHAT_DOCUMENT",
+  Message = "CHAT_MESSAGE",
+  Thread = "CHAT_THREAD",
+  Utility = "CHAT_UTILITY",
+}
+
 export interface ChatMessageModel {
   id: string
   createdAt: Date
@@ -48,8 +55,8 @@ export interface ChatMessageModel {
   content: string
   role: ChatRole
   context: string
-  type: "CHAT_MESSAGE"
-  feedback: string
+  type: ChatRecordType.Message
+  feedback: FeedbackType
   sentiment: ChatSentiment
   reason: string
   systemPrompt: string
@@ -71,7 +78,7 @@ export interface ChatThreadModel {
   conversationSensitivity: ConversationSensitivity
   conversationStyle: ConversationStyle
   chatOverFileName: string
-  type: "CHAT_THREAD"
+  type: ChatRecordType.Thread
   offenderId?: string
   isDisabled: boolean
   systemPrompt?: string
@@ -107,7 +114,7 @@ export interface ChatDocumentModel {
   tenantId: string
   isDeleted: boolean
   createdAt: Date
-  type: "CHAT_DOCUMENT"
+  type: ChatRecordType.Document
 }
 
 export interface ChatUtilityModel {
@@ -120,5 +127,5 @@ export interface ChatUtilityModel {
   createdAt: Date
   content: string
   role: ChatRole
-  type: "CHAT_UTILITY"
+  type: ChatRecordType.Utility
 }
