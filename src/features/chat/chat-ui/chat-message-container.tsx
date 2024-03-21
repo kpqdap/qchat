@@ -5,18 +5,15 @@ import ChatRow from "@/components/chat/chat-row"
 import { useSession } from "next-auth/react"
 import { useChatContext } from "./chat-context"
 import { ChatHeader } from "./chat-header"
-import { ChatRole } from "../chat-services/models"
+import { ChatRole } from "../models"
 import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor"
-import { AI_NAME } from "@/features/theme/customise"
+import { AI_NAME } from "@/features/theme/theme-config"
 
 interface Props {
-  chatId: string
-  sentiment?: string
   chatThreadId: string
-  contentSafetyWarning?: string
 }
 
-export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId, contentSafetyWarning }) => {
+export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId }) => {
   const { data: session } = useSession()
   const router = useRouter()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -35,7 +32,7 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId, contentSaf
       <div className="flex justify-center p-4">
         <ChatHeader />
       </div>
-      <div className="pb-[80px] flex flex-col justify-end flex-1">
+      <div className="flex flex-1 flex-col justify-end pb-[80px]">
         {messages.map((message, index) => (
           <ChatRow
             chatMessageId={message.id}
@@ -43,8 +40,11 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId, contentSaf
             message={message.content}
             type={message.role as ChatRole}
             key={index}
-            chatThreads={chatThreadId}
-            contentSafetyWarning={contentSafetyWarning}
+            chatThreadId={chatThreadId}
+            contentSafetyWarning={undefined}
+            feedback={undefined}
+            sentiment={undefined}
+            reason={undefined}
           />
         ))}
         {isLoading && <ChatLoading />}

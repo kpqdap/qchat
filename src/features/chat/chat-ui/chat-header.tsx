@@ -11,8 +11,8 @@ export const ChatHeader: FC<Prop> = () => {
   return (
     <div className="flex flex-col gap-2">
       <ChatSelectedOptions />
-      <div className="flex gap-2 h-2">
-        <p className="text-sm" tabIndex={0}>
+      <div className="flex h-2 gap-2">
+        <p className="items-center text-sm" tabIndex={0}>
           {chatBody.chatOverFileName}
         </p>
       </div>

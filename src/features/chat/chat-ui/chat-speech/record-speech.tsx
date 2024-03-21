@@ -11,11 +11,11 @@ export const RecordSpeech: FC<Prop> = props => {
   const { speech } = useChatContext()
   const { startRecognition, stopRecognition, isMicrophonePressed } = speech
 
-  const handleMouseDown = async () => {
+  const handleMouseDown = async (): Promise<void> => {
     await startRecognition()
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (): void => {
     stopRecognition()
   }
 

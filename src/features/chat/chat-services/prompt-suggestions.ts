@@ -33,7 +33,8 @@ export const getPromptSuggestions = async (input: string): Promise<string[]> => 
 
     return [cleanedPrompt]
   } catch (e) {
-    console.log(e)
+    // TODO handle error
+    console.error(e)
     return [""]
   }
 }

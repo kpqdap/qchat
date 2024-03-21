@@ -6,7 +6,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:tailwindcss/recommended",
-    "plugin:prettier/recommended",
+    "plugin:prettier/recommended", // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
   plugins: ["@typescript-eslint", "react-hooks", "tailwindcss"],
   parser: "@typescript-eslint/parser",
@@ -37,6 +37,17 @@ module.exports = {
     "no-magic-numbers": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "tailwindcss/no-custom-classname": [
+      "warn",
+      {
+        callees: ["classnames", "clsx", "ctl", "cva", "tv"], // Ensure cva is included
+        config: "src/tailwind.config.js", // Adjusted to match your project structure
+        cssFiles: ["src/app/**/*.css"], // Focus on your CSS files, adjust the pattern as needed
+        cssFilesRefreshRate: 5000, // Default, adjust based on performance needs
+        skipClassAttribute: false, // Keep this false to lint class attributes
+        whitelist: ["destructive", "success"],
+      },
+    ],
     "@typescript-eslint/no-parameter-properties": 0,
     "@typescript-eslint/no-floating-promises": ["error"],
     "@typescript-eslint/array-type": [0, "generic"],

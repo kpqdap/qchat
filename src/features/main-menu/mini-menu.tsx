@@ -6,15 +6,9 @@ import { useSession, signIn, signOut } from "next-auth/react"
 import { useMiniMenuContext } from "./mini-menu-context"
 import { Menu, X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
 import { useTheme } from "next-themes"
-import { Theme } from "../theme/customise"
 import { UrlObject } from "url"
 import { cn } from "@/lib/utils"
-
-const getSignInProvider = (): "QChatDevelopers" | "azure-ad" => {
-  return process.env.NODE_ENV === "development" ? "QChatDevelopers" : "azure-ad"
-}
-
-export default getSignInProvider
+import { signInProvider } from "@/app-global"
 
 interface MiniMenuItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
   href: UrlObject | string
@@ -46,6 +40,8 @@ export const MiniMenu: React.FC = () => {
   const { data: session } = useSession({ required: false })
   const { theme, setTheme } = useTheme()
 
+  const toggleTheme = (): void => setTheme(theme === "light" ? "dark" : "light")
+
   const menuItems = [
     { name: "Home", href: "/chat", icon: Home, ariaLabel: "Navigate to home page" },
     { name: "Prompt Guides", href: "/prompt-guide", icon: Bookmark, ariaLabel: "Navigate to prompt guides" },
@@ -53,11 +49,6 @@ export const MiniMenu: React.FC = () => {
     // { name: "What's New", href: '/whats-new', icon: Bell, ariaLabel: "Navigate to what's new page" },
     // { name: 'Settings', href: '/settings', icon: UserCog, ariaLabel: 'Navigate to settings' },
   ]
-
-  const toggleTheme = (): void => {
-    const newTheme = theme === Theme.Light ? Theme.Dark : Theme.Light
-    setTheme(newTheme)
-  }
 
   const handleMenuClose = (): void => {
     if (isMenuOpen) {
@@ -69,7 +60,7 @@ export const MiniMenu: React.FC = () => {
     <>
       <div
         onClick={toggleMenu}
-        className="text-darkAltButton hover:bg-background border-accent relative flex h-full cursor-pointer flex-col items-center border-l-2 p-4 hover:underline"
+        className="border-accent text-darkAltButton hover:bg-background relative flex h-full cursor-pointer flex-col items-center border-l-2 p-4 hover:underline"
         aria-expanded="false"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         role="button"
@@ -108,12 +99,12 @@ export const MiniMenu: React.FC = () => {
                 handleMenuClose()
               }}
               className="text-link hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
-              aria-label={theme === Theme.Dark ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
               role="button"
               tabIndex={0}
             >
-              {theme === Theme.Dark ? <Sun className="mr-2 size-4" /> : <Moon className="mr-2 size-4" />}
-              {theme === Theme.Dark ? "Light Mode" : "Dark Mode"}
+              {theme === "dark" ? <Sun className="mr-2 size-4" /> : <Moon className="mr-2 size-4" />}
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </div>
             {session ? (
               <div
@@ -132,7 +123,7 @@ export const MiniMenu: React.FC = () => {
             ) : (
               <div
                 onClick={async () => {
-                  await signIn(getSignInProvider())
+                  await signIn(signInProvider)
                   handleMenuClose()
                 }}
                 className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"

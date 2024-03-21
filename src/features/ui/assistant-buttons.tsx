@@ -35,7 +35,7 @@ export const AssistantButtons: React.FC<AssistantButtonsProps> = ({
   }
 
   return (
-    <div className="container flex w-full p-2 gap-4">
+    <div className="container flex w-full gap-4 p-2">
       <Button
         aria-label="Copy text"
         variant={"ghost"}

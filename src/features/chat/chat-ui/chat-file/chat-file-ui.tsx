@@ -12,7 +12,7 @@ export const ChatFileUI: FC = () => {
   const { onSubmit } = useFileSelection({ id })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const getAcceptedFileType = (chatType: string) => {
+  const getAcceptedFileType = (chatType: string): string => {
     switch (chatType) {
       case "data":
         return ".pdf"

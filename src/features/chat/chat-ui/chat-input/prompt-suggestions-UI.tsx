@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getPromptSuggestions } from "../../chat-services/prompt-suggestions"
+import { getPromptSuggestions } from "@/features/chat/chat-services/prompt-suggestions"
 import React from "react"
 
 interface PromptSuggestionProps {
@@ -18,7 +18,7 @@ export const PromptSuggestion: React.FC<PromptSuggestionProps> = ({ newInputValu
       .catch(_err => setSuggestions([]))
   }, [newInputValue])
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = (suggestion: string): void => {
     onSelect(suggestion)
     onHide()
   }

@@ -44,7 +44,7 @@ export const NavBar: React.FC = () => {
               </a>
             </div>
           ))}
-          <div className="min:h-[40px] col-span-6 flex justify-end">
+          <div className="min:h-[40px] col-span-6 flex items-center justify-end">
             <ThemeSwitch />
           </div>
         </div>

@@ -4,36 +4,43 @@ interface Props {
   buttonRef: React.RefObject<HTMLButtonElement>
 }
 
-export const useChatInputDynamicHeight = (props: Props) => {
+interface UseChatInputDynamicHeightReturn {
+  rows: number
+  resetRows: () => void
+  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void
+  onKeyUp: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void
+}
+
+export const useChatInputDynamicHeight = (props: Props): UseChatInputDynamicHeightReturn => {
   const maxRows = 5
   const [rows, setRows] = useState(1)
+  const [keysPressed, setKeysPressed] = useState<Set<string>>(new Set())
 
-  const [keysPressed, setKeysPressed] = useState(new Set())
-
-  const onKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     keysPressed.delete(event.key)
-    setKeysPressed(keysPressed)
+    setKeysPressed(new Set([...keysPressed]))
   }
 
-  const setRowsToMax = (rows: number) => {
+  const setRowsToMax = (rows: number): void => {
     if (rows < maxRows) {
       setRows(rows + 1)
     }
   }
 
-  const resetRows = () => {
+  const resetRows = (): void => {
     setRows(1)
   }
 
-  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setRowsToMax(event.target.value.split("\n").length - 1)
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
+    setRowsToMax(event.target.value.split("\n").length)
   }
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     setKeysPressed(keysPressed.add(event.key))
 
     if (keysPressed.has("Enter") && keysPressed.has("Shift")) {
-      setRowsToMax(rows + 1)
+      setRowsToMax(rows)
     }
 
     if (

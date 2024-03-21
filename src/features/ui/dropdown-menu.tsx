@@ -4,6 +4,7 @@ import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "./button"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 
@@ -11,9 +12,9 @@ const DropdownMenuTrigger: React.FC<
   React.PropsWithChildren<React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>>
 > = ({ children, ...props }) => (
   <DropdownMenuPrimitive.Trigger asChild {...props}>
-    <button className="flex cursor-pointer select-none items-center rounded-md px-2 py-1.5 text-sm font-medium text-left text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    <Button variant={"dropdownTrigger"} ariaLabel="DropdownMenu">
       {children}
-    </button>
+    </Button>
   </DropdownMenuPrimitive.Trigger>
 )
 
@@ -41,7 +42,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     {...props}
   >
     {children}
-    <ChevronRight className="ml-auto h-4 w-4" />
+    <ChevronRight className="ml-auto size-4" />
   </DropdownMenuPrimitive.SubTrigger>
 ))
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
@@ -111,7 +112,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     {...props}
     role="menuitemcheckbox"
   >
-    <span className="mr-2">{checked ? <Check className="h-5 w-5 text-indigo-600" /> : null}</span>
+    <span className="mr-2">{checked ? <Check className="size-5 text-indigo-600" /> : null}</span>
     {children}
   </DropdownMenuPrimitive.CheckboxItem>
 ))
@@ -132,7 +133,7 @@ const DropdownMenuRadioItem = React.forwardRef<
     role="menuitemradio"
   >
     <span className="mr-2">
-      <Circle className="h-5 w-5 text-indigo-600" />
+      <Circle className="size-5 text-indigo-600" />
     </span>
     {children}
   </DropdownMenuPrimitive.RadioItem>
@@ -162,7 +163,7 @@ const DropdownMenuSeparator = React.forwardRef<
 
 DropdownMenuSeparator.displayName = "DropdownMenuSeparator"
 
-const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
+const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element => {
   return <span className={cn("ml-auto text-xs tracking-widest opacity-60", className)} {...props} />
 }
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"

@@ -7,7 +7,7 @@ import React from "react"
 const Home: React.FC = () => {
   const router = useRouter()
 
-  const handleRedirectHome = async () => {
+  const handleRedirectHome = async (): Promise<void> => {
     try {
       await router.push("/")
       router.refresh()

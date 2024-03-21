@@ -3,11 +3,12 @@ import Typography from "@/components/typography"
 import { FeedbackTextarea } from "./feedback-textarea"
 import FeedbackButtons from "./feedback-reasons"
 import { Button } from "./button"
-import { CreateUserFeedbackChatId } from "@/features/chat/chat-services/chat-service"
-import { ChatSentiment } from "@/features/chat/chat-services/models"
+import { ChatSentiment } from "@/features/chat/models"
+import { CreateUserFeedback } from "../chat/chat-services/chat-message-service"
 
 interface ModalProps {
   chatThreadId: string
+  chatMessageId: string
   open: boolean
   onClose: () => void
   onSubmit: (chatMessageId: string, feedback: string, reason: string, chatThreadId: string) => void
@@ -22,7 +23,7 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
   const textareaId = `chatMessageFeedback-${props.chatThreadId}`
   const textareaName = `chatMessageFeedback-${props.chatThreadId}`
 
-  async function handleFeedbackChange(): Promise<void> {
+  function handleFeedbackChange(): void {
     const textareaValue = textAreaRef.current?.value || ""
     if (!areTabsEnabled) {
       setTabsEnabled(true)
@@ -30,14 +31,14 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
     setFeedback(textareaValue)
   }
 
-  const handleReasonChange = (reason: string) => {
+  const handleReasonChange = (reason: string): void => {
     setReason(reason)
   }
 
   async function handleSubmit(): Promise<void> {
-    props.onSubmit(props.chatThreadId, feedback, reason, props.chatThreadId)
+    props.onSubmit(props.chatMessageId, feedback, reason, props.chatThreadId)
     setFeedback("")
-    await CreateUserFeedbackChatId(props.chatThreadId, feedback, ChatSentiment.Negative, reason, props.chatThreadId)
+    await CreateUserFeedback(props.chatMessageId, feedback, ChatSentiment.Negative, reason, props.chatThreadId)
     props.onClose()
   }
 
@@ -46,9 +47,9 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
       role="dialog"
       aria-modal="true"
       aria-labelledby="feedbackHeading"
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${props.open ? "block" : "hidden"}`}
+      className={`fixed inset-0 flex items-center justify-center bg-black ${props.open ? "block" : "hidden"}`}
     >
-      <div className="bg-background w-full max-w-lg mx-auto rounded-lg p-4 overflow-hidden">
+      <div className="bg-background mx-auto w-full max-w-lg overflow-hidden rounded-lg p-4">
         <div className="mb-4">
           <Typography id="feedbackHeading" variant="h4" className="text-primary">
             Submit your feedback
@@ -62,12 +63,12 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
             placeholder="Please provide any additional details about the message or your feedback, our team will not reply directly but it will assist us in improving our service."
             ref={textAreaRef}
             rows={6}
-            className="w-full p-4 bg-background border border-gray-300 rounded"
+            className="bg-background w-full rounded border border-gray-300 p-4"
             onChange={() => handleFeedbackChange()}
           />
         </div>
         <FeedbackButtons areTabsEnabled={areTabsEnabled} onReasonChange={handleReasonChange} />
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="mt-4 flex justify-center gap-2">
           <Button variant="default" onClick={handleSubmit}>
             Submit
           </Button>

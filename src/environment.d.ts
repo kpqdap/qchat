@@ -2,7 +2,7 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       ADMIN_EMAIL_ADDRESS: string
-      APPLICATIONINSIGHTS_CONNECTION_STRING: string
+      ANALYZE: string
       AZURE_AD_AUTHORIZATION_ENDPOINT: string
       AZURE_AD_CLIENT_ID: string
       AZURE_AD_CLIENT_SECRET: string
@@ -39,9 +39,10 @@ declare global {
       AZURE_TRANSLATOR_URL: string
       FEATURE_FILEEXPORT: string
       FEATURE_QUASYMODO: string
-      FEATURE_TRANSCRIBE_TENANTS: string
+      NEXT_PUBLIC_FEATURE_TRANSCRIBE_TENANTS: string
       MAX_DOCUMENT_SIZE: string
-      NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING: string
+      NEXT_PUBLIC_API_URL: string
+      NEXT_PUBLIC_AZURE_APPLICATIONINSIGHTS_CONNECTION_STRING: string
       NEXT_PUBLIC_FEATURE_TRANSLATOR: string
       NEXTAUTH_SECRET: string
       NEXTAUTH_URL: string

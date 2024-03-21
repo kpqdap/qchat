@@ -1,13 +1,13 @@
+import { ServerActionResponseAsync } from "@/features/common/server-action-response"
 import createClient, { ErrorResponseOutput, TranslatedTextItemOutput } from "@azure-rest/ai-translation-text"
 
 export function getBooleanEnv(variable: string): boolean {
   return process.env[variable]?.toLowerCase() === "true"
 }
 
-export async function translator(input: string): Promise<string> {
-  if (!getBooleanEnv("NEXT_PUBLIC_FEATURE_TRANSLATOR") || typeof input !== "string") {
-    return input
-  }
+export async function translator(input: string): ServerActionResponseAsync<string> {
+  if (!getBooleanEnv("NEXT_PUBLIC_FEATURE_TRANSLATOR") || typeof input !== "string")
+    return { status: "OK", response: input }
 
   const codeBlockPattern = /(```[\s\S]*?```)/g
   const codeBlocks: string[] = []
@@ -26,10 +26,10 @@ export async function translator(input: string): Promise<string> {
       result = result.replace(`__codeblock_${index}__`, codeBlock)
     })
 
-    return result
+    return { status: "OK", response: result }
   } catch (error) {
-    console.log(error)
-    return input
+    console.error(error)
+    return { status: "ERROR", errors: [{ message: "Translation failed" }] }
   }
 }
 

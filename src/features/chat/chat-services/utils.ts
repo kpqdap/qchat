@@ -1,5 +1,5 @@
 import { Message } from "ai"
-import { ChatMessageModel, ConversationStyle } from "./models"
+import { ChatMessageModel, ConversationStyle } from "../models"
 
 export const transformCosmosToAIModel = (chats: Array<ChatMessageModel>): Array<Message> => {
   return chats.map(chat => {
@@ -8,11 +8,14 @@ export const transformCosmosToAIModel = (chats: Array<ChatMessageModel>): Array<
       content: chat.content,
       id: chat.id,
       createdAt: chat.createdAt,
+      feedback: chat.feedback,
+      sentiment: chat.sentiment,
+      reason: chat.reason,
     }
   })
 }
 
-export const transformConversationStyleToTemperature = (conversationStyle: ConversationStyle) => {
+export const transformConversationStyleToTemperature = (conversationStyle: ConversationStyle): number => {
   switch (conversationStyle) {
     case "precise":
       return 0
@@ -25,6 +28,6 @@ export const transformConversationStyleToTemperature = (conversationStyle: Conve
   }
 }
 
-export const isNotNullOrEmpty = (value?: string) => {
+export const isNotNullOrEmpty = (value?: string): boolean => {
   return value !== null && value !== undefined && value !== ""
 }

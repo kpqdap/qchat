@@ -21,7 +21,7 @@ export const CitationSlider: FC<SliderProps> = props => {
   const chatThreadId = chatContext.id
   const [node, formAction] = useFormState(CitationAction, null)
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (): void => {
     const formData = new FormData()
     formData.append("index", props.index.toString())
     formData.append("id", props.id)
@@ -52,12 +52,12 @@ export const CitationSlider: FC<SliderProps> = props => {
           <SheetHeader>
             <SheetTitle id={"Section" + props.order}>Citation for Section {props.order}</SheetTitle>
           </SheetHeader>
-          <div className="text-sm text-muted-foreground">{node}</div>
+          <div className="text-muted-foreground text-sm">{node}</div>
           <br></br>
           <SheetHeader>
             <SheetTitle id="citationSheetTitle">Understanding Citations</SheetTitle>
           </SheetHeader>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             <br></br>
             <p>
               The citation presented is a specific snippet from your document, selected by QChat through

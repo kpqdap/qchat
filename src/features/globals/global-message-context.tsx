@@ -14,8 +14,8 @@ interface MessageProp {
   description: string
 }
 
-export const GlobalMessageProvider = ({ children }: { children: React.ReactNode }) => {
-  const showError = (error: string, reload?: () => void) => {
+export const GlobalMessageProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+  const showError = (error: string, reload?: () => void): void => {
     toast({
       variant: "destructive",
       description: error,
@@ -32,7 +32,7 @@ export const GlobalMessageProvider = ({ children }: { children: React.ReactNode 
     })
   }
 
-  const showSuccess = (message: MessageProp) => {
+  const showSuccess = (message: MessageProp): void => {
     toast(message)
   }
 
@@ -48,7 +48,7 @@ export const GlobalMessageProvider = ({ children }: { children: React.ReactNode 
   )
 }
 
-export const useGlobalMessageContext = () => {
+export const useGlobalMessageContext = (): GlobalMessageProps => {
   const context = useContext(GlobalMessageContext)
   if (!context) {
     throw new Error("GlobalErrorContext is null")

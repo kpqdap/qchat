@@ -1,19 +1,24 @@
 import { getToken } from "next-auth/jwt"
 import { NextRequest, NextResponse } from "next/server"
 
+const LOGIN_PAGE = "/login"
+const UNAUTHORISED_PAGE = "/unauthorised"
+
 const requireAuth: string[] = [
-  "/chat",
+  "/admin",
   "/api",
+  "/chat",
+  "/persona",
+  "/prompt",
+  "/prompt-guide",
   "/reporting",
   "/settings",
   "/tenant",
-  "/admin",
-  "/prompt-guide",
-  "/what's-new",
-  "/persona",
-  "/prompt",
+  "/terms",
+  "/whats-new",
 ]
-const requireAdmin: string[] = ["/reporting", "/admin", "/settings", "/tenant"]
+
+const requireAdmin: string[] = ["/admin", "/reporting", "/settings", "/tenant"]
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (process.env.NODE_ENV === "development") {
@@ -26,19 +31,16 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     const token = await getToken({ req: request })
 
     if (!token) {
-      const url = new URL("/login", request.url)
-      return NextResponse.redirect(url)
+      return NextResponse.redirect(new URL(LOGIN_PAGE, request.url))
     }
 
     const now = Math.floor(Date.now() / 1000)
     if (token.exp && typeof token.exp === "number" && token.exp < now) {
-      const url = new URL("/login", request.url)
-      return NextResponse.redirect(url)
+      return NextResponse.redirect(new URL(LOGIN_PAGE, request.url))
     }
 
     if (requireAdmin.some(path => pathname.startsWith(path)) && !token.qchatAdmin) {
-      const url = new URL("/unauthorised", request.url)
-      return NextResponse.rewrite(url)
+      return NextResponse.rewrite(new URL(UNAUTHORISED_PAGE, request.url))
     }
   }
 
@@ -57,7 +59,8 @@ export const config = {
     "/reporting/:path*",
     "/settings/:path*",
     "/tenant/:path*",
+    "/terms/:path*",
     "/unauthorised/:path*",
-    "/what's-new/:path*",
+    "/whats-new/:path*",
   ],
 }

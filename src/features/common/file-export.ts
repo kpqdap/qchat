@@ -243,7 +243,7 @@ export const convertMarkdownToWordDocument = async (
   aiName: string,
   userName: string,
   chatThreadName: string
-) => {
+): Promise<void> => {
   const renderer = new CustomRenderer()
   marked.use({ renderer })
 
@@ -263,7 +263,7 @@ export const convertMarkdownToWordDocument = async (
       style: "MyCustomHeading1",
     })
 
-    const processedContent = await processCitationsInText(message.content)
+    const processedContent = processCitationsInText(message.content)
     const content = await marked.parse(processedContent)
     const contentParagraphs = createParagraphFromHtml(content)
 
@@ -297,7 +297,7 @@ export const convertMarkdownToWordDocument = async (
     })
 }
 
-const processCitationsInText = (text: string) => {
+const processCitationsInText = (text: string): string => {
   const citationPattern = /{% citation[^\n]*/g
   const processedText = text.replace(citationPattern, "-- References were removed for privacy reasons --")
   return processedText

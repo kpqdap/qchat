@@ -10,7 +10,7 @@ import {
   AudioLines,
 } from "lucide-react"
 
-export const getSensitivityIcon = (value: string) => {
+export const getSensitivityIcon = (value: string): JSX.Element | null => {
   switch (value) {
     case "official":
       return <Shield size={20} aria-label="Official" />
@@ -23,7 +23,7 @@ export const getSensitivityIcon = (value: string) => {
   }
 }
 
-export const getStyleIcon = (value: string) => {
+export const getStyleIcon = (value: string): JSX.Element | null => {
   switch (value) {
     case "creative":
       return <Brush size={20} aria-label="Creative" />
@@ -36,7 +36,7 @@ export const getStyleIcon = (value: string) => {
   }
 }
 
-export const getTypeIcon = (value: string) => {
+export const getTypeIcon = (value: string): JSX.Element | null => {
   switch (value) {
     case "simple":
       return <MessageCircle size={20} aria-label="General" />
@@ -49,7 +49,7 @@ export const getTypeIcon = (value: string) => {
   }
 }
 
-export const formatSensitivityValue = (value: string) => {
+export const formatSensitivityValue = (value: string): string => {
   const sensitivityMap: { [key: string]: string } = {
     official: "Official",
     sensitive: "Sensitive",
@@ -58,7 +58,7 @@ export const formatSensitivityValue = (value: string) => {
   return sensitivityMap[value] || value
 }
 
-export const formatStyleValue = (value: string) => {
+export const formatStyleValue = (value: string): string => {
   const styleMap: { [key: string]: string } = {
     creative: "Creative",
     balanced: "Balanced",
@@ -67,7 +67,7 @@ export const formatStyleValue = (value: string) => {
   return styleMap[value] || value
 }
 
-export const formatTypeValue = (value: string) => {
+export const formatTypeValue = (value: string): string => {
   const typeMap: { [key: string]: string } = {
     simple: "General",
     data: "Data",

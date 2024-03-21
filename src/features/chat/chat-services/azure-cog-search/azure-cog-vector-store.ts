@@ -1,4 +1,4 @@
-import { OpenAIEmbeddingInstance } from "@/features/common/openai"
+import { OpenAIEmbeddingInstance } from "@/services/open-ai"
 
 export interface AzureCogDocumentIndex {
   id: string
@@ -17,7 +17,7 @@ interface DocumentSearchResponseModel<TModel> {
   value: TModel[]
 }
 
-type DocumentSearchModel = {
+export type DocumentSearchModel = {
   "@search.score": number
 }
 
@@ -150,7 +150,7 @@ export const deleteDocuments = async (chatThreadId: string, userId: string, tena
   })
 }
 
-export const embedDocuments = async (documents: Array<AzureCogDocumentIndex>) => {
+export const embedDocuments = async (documents: Array<AzureCogDocumentIndex>): Promise<void> => {
   const openai = OpenAIEmbeddingInstance()
 
   try {
@@ -173,7 +173,7 @@ const baseIndexUrl = (): string => {
   return `${process.env.QGAIP_APIM_BASE}/indexes/${process.env.AZURE_SEARCH_INDEX_NAME}`
 }
 
-const fetcher = async (url: string, init?: RequestInit) => {
+const fetcher = async (url: string, init?: RequestInit): Promise<unknown> => {
   const response = await fetch(url, {
     ...init,
     cache: "no-store",

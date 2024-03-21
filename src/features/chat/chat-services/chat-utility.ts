@@ -1,6 +1,6 @@
 "use server"
 import "server-only"
-import { ChatThreadModel } from "./models"
+import { ChatThreadModel } from "../models"
 import { UpsertChatThread } from "./chat-thread-service"
 import { GenericChatAPI } from "./generic-chat-api"
 
@@ -22,7 +22,8 @@ async function generateChatName(chatMessage: string): Promise<string> {
     if (name) {
       return name.replace(/^"+|"+$/g, "")
     } else {
-      console.log("Error: Unexpected response structure from OpenAI API.")
+      // TODO handle error
+      console.error("Error: Unexpected response structure from OpenAI API.")
     }
 
     return name || "New Chat by Error"
@@ -32,7 +33,7 @@ async function generateChatName(chatMessage: string): Promise<string> {
   }
 }
 
-export async function generateChatCategory(chatMessage: string): Promise<string> {
+async function generateChatCategory(chatMessage: string): Promise<string> {
   const apiName = "generateChatCategory"
   const categories = [
     "Information Processing and Management",
@@ -65,16 +66,19 @@ export async function generateChatCategory(chatMessage: string): Promise<string>
   }
 }
 
-export async function updateChatThreadIfUncategorised(
+export async function UpdateChatThreadIfUncategorised(
   chatThread: ChatThreadModel,
   content: string
 ): Promise<ChatThreadModel> {
   try {
     if (chatThread.chatCategory === "Uncategorised") {
-      chatThread.chatCategory = await generateChatCategory(content)
-      chatThread.name = await generateChatName(content)
-      chatThread.previousChatName = await StoreOriginalChatName(chatThread.name)
-      await UpsertChatThread(chatThread)
+      const [chatCategory, name, previousChatName] = await Promise.all([
+        generateChatCategory(content),
+        generateChatName(content),
+        StoreOriginalChatName(chatThread.name),
+      ])
+      const response = await UpsertChatThread({ ...chatThread, chatCategory, name, previousChatName })
+      if (response.status !== "OK") throw new Error(response.errors.join(", "))
     }
     return chatThread
   } catch (e) {
@@ -83,7 +87,7 @@ export async function updateChatThreadIfUncategorised(
   }
 }
 
-export async function StoreOriginalChatName(currentChatName: string) {
+function StoreOriginalChatName(currentChatName: string): string {
   let previousChatName: string = ""
   if (currentChatName !== previousChatName) {
     previousChatName = currentChatName
