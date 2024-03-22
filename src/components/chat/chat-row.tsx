@@ -2,7 +2,7 @@
 
 import React, { FC, useState } from "react"
 import { useChatContext } from "@/features/chat/chat-ui/chat-context"
-import { ChatRole, ChatSentiment } from "@/features/chat/models"
+import { ChatRole, ChatSentiment, FeedbackType } from "@/features/chat/models"
 import Typography from "../typography"
 import Modal from "@/features/ui/modal"
 import { Markdown } from "../markdown/markdown"
@@ -35,7 +35,7 @@ export const ChatRow: FC<ChatRowProps> = props => {
         setThumbsUpClicked(prevState => !prevState)
         setThumbsDownClicked(false)
         setIsIconChecked(false)
-        CreateUserFeedback(props.chatMessageId, "", ChatSentiment.Positive, "", props.chatThreadId)
+        CreateUserFeedback(props.chatMessageId, FeedbackType.None, ChatSentiment.Positive, "", props.chatThreadId)
           .then(res => console.log(res))
           .catch(err => console.error(err))
         break
