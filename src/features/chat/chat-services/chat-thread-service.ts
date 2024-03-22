@@ -11,6 +11,7 @@ import {
   ChatType,
   ConversationSensitivity,
   ConversationStyle,
+  FeedbackType,
   PromptGPTProps,
 } from "@/features/chat/models"
 import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
@@ -295,7 +296,7 @@ export const InitChatSession = async (
     tenantId: tenantId,
     context: "",
     type: ChatRecordType.Message,
-    feedback: "",
+    feedback: FeedbackType.None,
     sentiment: ChatSentiment.Neutral,
     reason: "",
     systemPrompt: "",

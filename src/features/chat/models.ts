@@ -20,9 +20,11 @@ export enum ChatType {
 }
 
 export enum FeedbackType {
+  None = "",
   HarmfulUnsafe = "harmful / unsafe",
   Untrue = "untrue",
   Unhelpful = "unhelpful",
+  Inaccurate = "inaccurate",
 }
 
 export enum ChatRole {
