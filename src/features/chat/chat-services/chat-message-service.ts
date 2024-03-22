@@ -1,4 +1,4 @@
-import { ChatMessageModel, ChatRecordType, ChatSentiment } from "@/features/chat/models"
+import { ChatMessageModel, ChatRecordType, ChatSentiment, FeedbackType } from "@/features/chat/models"
 import { uniqueId } from "@/lib/utils"
 import { ChatCompletionMessage } from "openai/resources"
 import { getTenantId, userHashedId } from "@/features/auth/helpers"
@@ -120,7 +120,7 @@ export const UpsertChatMessage = async (
       tenantId,
       context: citations,
       systemPrompt: process.env.SYSTEM_PROMPT ?? "",
-      feedback: "",
+      feedback: FeedbackType.None,
       sentiment: ChatSentiment.Neutral,
       reason: "",
       contentSafetyWarning: "",
@@ -165,7 +165,7 @@ export const AddChatMessage = async (
       tenantId,
       context: citations,
       systemPrompt: process.env.SYSTEM_PROMPT ?? "",
-      feedback: "",
+      feedback: FeedbackType.None,
       sentiment: ChatSentiment.Neutral,
       reason: "",
       contentSafetyWarning: "",
@@ -193,7 +193,7 @@ export const AddChatMessage = async (
 
 export const CreateUserFeedback = async (
   messageId: string,
-  feedback: string,
+  feedback: FeedbackType,
   sentiment: ChatSentiment,
   reason: string,
   chatThreadId: string

@@ -3,8 +3,9 @@ import Typography from "@/components/typography"
 import { FeedbackTextarea } from "./feedback-textarea"
 import FeedbackButtons from "./feedback-reasons"
 import { Button } from "./button"
-import { ChatSentiment } from "@/features/chat/models"
+import { ChatSentiment, FeedbackType } from "@/features/chat/models"
 import { CreateUserFeedback } from "../chat/chat-services/chat-message-service"
+import { showError } from "../globals/global-message-store"
 
 interface ModalProps {
   chatThreadId: string
@@ -15,30 +16,31 @@ interface ModalProps {
 }
 
 export default function Modal(props: ModalProps): ReturnType<FC> {
-  const [feedback, setFeedback] = useState<string>("")
-  const [reason, setReason] = useState("")
+  const [feedbackType, setFeedbackType] = useState<FeedbackType>(FeedbackType.None)
+  const [feedbackReason, setFeedbackReason] = useState("")
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [areTabsEnabled, setTabsEnabled] = useState<boolean>(false)
 
   const textareaId = `chatMessageFeedback-${props.chatThreadId}`
   const textareaName = `chatMessageFeedback-${props.chatThreadId}`
 
-  function handleFeedbackChange(): void {
+  function handleFeedbackReasonChange(): void {
     const textareaValue = textAreaRef.current?.value || ""
-    if (!areTabsEnabled) {
-      setTabsEnabled(true)
-    }
-    setFeedback(textareaValue)
-  }
-
-  const handleReasonChange = (reason: string): void => {
-    setReason(reason)
+    if (!areTabsEnabled) setTabsEnabled(true)
+    setFeedbackReason(textareaValue)
   }
 
   async function handleSubmit(): Promise<void> {
-    props.onSubmit(props.chatMessageId, feedback, reason, props.chatThreadId)
-    setFeedback("")
-    await CreateUserFeedback(props.chatMessageId, feedback, ChatSentiment.Negative, reason, props.chatThreadId)
+    props.onSubmit(props.chatMessageId, feedbackType, feedbackReason, props.chatThreadId)
+    const response = await CreateUserFeedback(
+      props.chatMessageId,
+      feedbackType,
+      ChatSentiment.Negative,
+      feedbackReason,
+      props.chatThreadId
+    )
+    if (response.status !== "OK") showError("Failed to submit feedback")
+    setFeedbackReason("")
     props.onClose()
   }
 
@@ -64,10 +66,10 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
             ref={textAreaRef}
             rows={6}
             className="bg-background w-full rounded border border-gray-300 p-4"
-            onChange={() => handleFeedbackChange()}
+            onChange={handleFeedbackReasonChange}
           />
         </div>
-        <FeedbackButtons areTabsEnabled={areTabsEnabled} onReasonChange={handleReasonChange} />
+        <FeedbackButtons areTabsEnabled={areTabsEnabled} onFeedbackTypeChange={setFeedbackType} />
         <div className="mt-4 flex justify-center gap-2">
           <Button variant="default" onClick={handleSubmit}>
             Submit
