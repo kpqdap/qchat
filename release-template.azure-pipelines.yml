@@ -1,1 +1,83 @@
 # Release template for Azure DevOps
+variables:
+  Version.Revision: $[counter(format('{0:yyyyMMdd}', pipeline.startTime), 0)]
+  VersionMajor: 1
+  VersionMinor: 0
+  BuildPlatform: 'Any CPU'
+  BuildConfiguration: 'Release'
+  PoolName: "QGGPT_Pool"
+
+name: '$(Build.DefinitionName) $(VersionMajor).$(VersionMinor).$(Date:yy)$(DayOfYear).$(Version.Revision)'
+
+resources:
+  pipelines:
+    - pipeline: QChatReleaseTest
+      source: 'QChat Release Test'
+      trigger:
+        branches:
+          include:
+            # - main
+            - features/release-pipeline
+
+trigger:
+# - main
+  - features/release-pipeline
+
+pool:
+  name: $(PoolName)
+
+stages:
+  - stage: DevEnvironment
+    displayName: "🧪 - Deploy Dev"
+    variables:
+      - group: dev-az-qggpt-variables
+    jobs:
+      - deployment: DeployToDev
+        displayName: "Deploy to Development Environment"
+        environment: "Dev"
+
+      - job: BuildJob
+        displayName: "Build Job"
+        pool:
+          name: $(poolName)
+        steps:
+          - checkout: self
+            clean: true
+
+          - task: Docker@2
+            displayName: "Build and Push Docker image"
+            inputs:
+              containerRegistry: "$(CONTAINER_REGISTRY)"
+              repository: "$(REPOSITORY)"
+              command: "build"
+              Dockerfile: "src/dockerfile"
+              buildContext: "src"
+              arguments: --build-arg BUILD_ID=$(Build.BuildId)
+              tags: "$(Build.BuildId)"
+
+      - job: DeployJob
+        displayName: "Deploy Job"
+        pool:
+          name: $(poolName)
+        dependsOn: BuildJob
+        condition: succeeded()
+        steps:
+          - task: Docker@2
+            displayName: "Push Docker Image to Dev Registry"
+            inputs:
+              containerRegistry: "$(CONTAINER_REGISTRY)"
+              repository: "$(REPOSITORY)"
+              command: "push"
+              tags: "$(Build.BuildId)"
+          - task: AzureRmWebAppDeployment@4
+            displayName: "Deploy to Development Web App"
+            inputs:
+              ConnectionType: "AzureRM"
+              azureSubscription: "$(Dev_Service_Connection)"
+              appType: "webAppContainer"
+              WebAppName: "$(WEBAPPNAME)"
+              DockerNamespace: $(DOCKER_NAMESPACE)
+              DockerRepository: "$(REPOSITORY)"
+              DockerImageTag: "$(Build.BuildId)"
+              AppSettings: "$(appSettings)"
+        
