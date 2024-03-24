@@ -45,7 +45,14 @@ module.exports = {
         cssFiles: ["src/app/**/*.css"], // Focus on your CSS files, adjust the pattern as needed
         cssFilesRefreshRate: 5000, // Default, adjust based on performance needs
         skipClassAttribute: false, // Keep this false to lint class attributes
-        whitelist: ["destructive", "success"],
+        whitelist: [
+          "destructive",
+          "success",
+          "text-foreground",
+          "bg-background",
+          "text-muted-foreground",
+          "border-accent",
+        ],
       },
     ],
     "@typescript-eslint/no-parameter-properties": 0,
