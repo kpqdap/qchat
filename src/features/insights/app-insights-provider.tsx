@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { AppInsightsContext, IAppInsightsContext } from "./app-insights-context"
+import { AppInsightsContext, defaultContextValue, IAppInsightsContext } from "./app-insights-context" // Ensure defaultAppInsights is imported
 import { createAppInsights } from "./app-insights"
 
 type AppInsightsProviderProps = {
@@ -7,11 +7,17 @@ type AppInsightsProviderProps = {
 }
 
 export const AppInsightsProvider: React.FunctionComponent<AppInsightsProviderProps> = ({ children }) => {
-  const [appInsights, setAppInsights] = useState<IAppInsightsContext | null>(null)
+  const [appInsights, setAppInsights] = useState<IAppInsightsContext>(defaultContextValue) // Use default value directly
 
   useEffect(() => {
-    const ai = createAppInsights()
-    if (ai) setAppInsights(ai)
+    const initialize = async (): Promise<void> => {
+      const ai = await createAppInsights() // Assuming createAppInsights might be async
+      if (ai) {
+        setAppInsights(ai) // Successfully initialized
+      } // No else needed since we have a default
+    }
+
+    initialize().catch(error => console.error("Failed to initialize AppInsights:", error))
   }, [])
 
   return <AppInsightsContext.Provider value={appInsights}>{children}</AppInsightsContext.Provider>
