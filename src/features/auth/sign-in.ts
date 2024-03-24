@@ -20,7 +20,7 @@ export class UserSignInHandler {
     try {
       const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(string => string.toLowerCase().trim())
       const tenantResponse = await GetTenantById(user.tenantId)
-
+      //need to refactor this correctly as its not creating tenant and then logging failed user login
       const userRecord = await getsertUser(userGroups, user)
 
       if (tenantResponse.status === "ERROR" || tenantResponse.status === "UNAUTHORIZED") {

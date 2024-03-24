@@ -78,30 +78,32 @@ export const options: NextAuthOptions = {
   providers: [...configureIdentityProvider()],
   callbacks: {
     async signIn({ user }) {
-      if (!user?.tenantId || !user?.upn) return false
+      if (!user?.tenantId || !user?.upn) {
+        return false
+      }
 
       try {
         const groups = user?.secGroups ?? []
         const signInCallbackResponse = await UserSignInHandler.handleSignIn(user, groups)
-        console.log("Error in signIn callback", signInCallbackResponse)
         if (!signInCallbackResponse) {
           return `/error?error=${encodeURIComponent("AccessDenied")}`
-        } else if (typeof signInCallbackResponse === "string") {
+        }
+        if (typeof signInCallbackResponse === "string") {
           return signInCallbackResponse
-        } else {
-          if (signInCallbackResponse.errorCode === ErrorType.NoTenant) {
+        }
+        if (signInCallbackResponse.success === true) {
+          return true
+        }
+        switch (signInCallbackResponse.errorCode) {
+          case ErrorType.NoTenant:
             return `/login-error?error=${encodeURIComponent(ErrorType.NoTenant)}`
-          } else if (signInCallbackResponse.errorCode === ErrorType.NotAuthorised) {
+          case ErrorType.NotAuthorised:
             return `/login-error?error=${encodeURIComponent(ErrorType.NotAuthorised)}`
-          } else if (
-            signInCallbackResponse.errorCode === ErrorType.SignInFailed ||
-            (signInCallbackResponse.success === false && signInCallbackResponse.errorCode === "signInFailed")
-          ) {
+          case ErrorType.SignInFailed:
             return `/login-error?error=${encodeURIComponent(ErrorType.SignInFailed)}`
-          } else {
+          default:
             console.error("Error in signIn callback", signInCallbackResponse)
             return false
-          }
         }
       } catch (error) {
         console.error("Error in signIn callback", error)
