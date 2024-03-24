@@ -29,7 +29,7 @@ const MiniMenuItem: React.FC<MiniMenuItemProps> = ({ href, icon: Icon, name, ari
       <Icon className="mr-2 size-4" aria-hidden="true" />
       {name}
       <Link href={href} passHref>
-        <span style={{ display: "none" }}></span>
+        <span className="hidden"></span>
       </Link>
     </div>
   )
