@@ -4,6 +4,12 @@ import AzureADProvider from "next-auth/providers/azure-ad"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
 
+export enum ErrorType {
+  NoTenant = "noTenant",
+  NotAuthorised = "notAuthorised",
+  SignInFailed = "signInFailed",
+}
+
 export interface AuthToken extends JWT {
   qchatAdmin?: boolean
   exp: number
@@ -18,6 +24,8 @@ const configureIdentityProvider = (): Provider[] => {
   if (process.env.AZURE_AD_CLIENT_ID && process.env.AZURE_AD_CLIENT_SECRET && process.env.AZURE_AD_TENANT_ID) {
     providers.push(
       AzureADProvider({
+        name: "Queensland Government Single Sign On",
+        style: { logo: "", text: "#ffffff", bg: "#09549f" },
         clientId: process.env.AZURE_AD_CLIENT_ID,
         clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
         tenantId: process.env.AZURE_AD_TENANT_ID,
@@ -69,11 +77,32 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
-    async signIn({ user }): Promise<boolean> {
+    async signIn({ user }) {
       if (!user?.tenantId || !user?.upn) return false
+
       try {
         const groups = user?.secGroups ?? []
-        return await UserSignInHandler.handleSignIn(user, groups)
+        const signInCallbackResponse = await UserSignInHandler.handleSignIn(user, groups)
+        console.log("Error in signIn callback", signInCallbackResponse)
+        if (!signInCallbackResponse) {
+          return `/error?error=${encodeURIComponent("AccessDenied")}`
+        } else if (typeof signInCallbackResponse === "string") {
+          return signInCallbackResponse
+        } else {
+          if (signInCallbackResponse.errorCode === ErrorType.NoTenant) {
+            return `/login-error?error=${encodeURIComponent(ErrorType.NoTenant)}`
+          } else if (signInCallbackResponse.errorCode === ErrorType.NotAuthorised) {
+            return `/login-error?error=${encodeURIComponent(ErrorType.NotAuthorised)}`
+          } else if (
+            signInCallbackResponse.errorCode === ErrorType.SignInFailed ||
+            (signInCallbackResponse.success === false && signInCallbackResponse.errorCode === "signInFailed")
+          ) {
+            return `/login-error?error=${encodeURIComponent(ErrorType.SignInFailed)}`
+          } else {
+            console.error("Error in signIn callback", signInCallbackResponse)
+            return false
+          }
+        }
       } catch (error) {
         console.error("Error in signIn callback", error)
         return false
@@ -100,6 +129,17 @@ export const options: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 8 * 60 * 60,
   },
+  pages: {
+    error: "/login-error",
+  },
+  theme: {
+    colorScheme: "dark",
+    brandColor: "#09549f",
+    logo: "/ai-icon.png",
+    buttonText: "Single sign-on in with your Queensland Government Account",
+  },
+  useSecureCookies: true,
+  debug: process.env.NODE_ENV === "development" ? true : false,
 }
 
 export const handlers = NextAuth(options)

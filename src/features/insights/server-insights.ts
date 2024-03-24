@@ -7,4 +7,5 @@ appInsights
   .setAutoCollectDependencies(true)
   .setAutoCollectConsole(true, true)
   .setUseDiskRetryCaching(true)
+  .samplingPercentage(33)
   .start()

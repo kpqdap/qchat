@@ -60,6 +60,7 @@ const securityHeaders = [
 const nextConfig = {
   output: "standalone",
   compiler: {
+    styledComponents: true,
     removeConsole: process.env.NODE_ENV !== "development",
   },
   logging: {
@@ -87,6 +88,11 @@ const nextConfig = {
       {
         source: "/logout",
         destination: "/api/auth/signout",
+        permanent: true,
+      },
+      {
+        source: "/support",
+        destination: "https://dis-qgcdg.atlassian.net/servicedesk/customer/portal/2",
         permanent: true,
       },
     ]

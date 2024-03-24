@@ -4,15 +4,32 @@ import { hashValue } from "./helpers"
 import { User } from "next-auth"
 import { AdapterUser } from "next-auth/adapters"
 
+enum ErrorType {
+  NoTenant = "noTenant",
+  NotAuthorised = "notAuthorised",
+  SignInFailed = "signInFailed",
+}
+
+export type SignInResponse = {
+  success: boolean
+  errorCode?: ErrorType
+}
+
 export class UserSignInHandler {
-  static async handleSignIn(user: User | AdapterUser, userGroups: string[] = []): Promise<boolean> {
+  static async handleSignIn(user: User | AdapterUser, userGroups: string[] = []): Promise<SignInResponse> {
     try {
       const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(string => string.toLowerCase().trim())
       const tenantResponse = await GetTenantById(user.tenantId)
 
       const userRecord = await getsertUser(userGroups, user)
 
-      if (tenantResponse.status === "ERROR" || tenantResponse.status === "UNAUTHORIZED") throw tenantResponse
+      if (tenantResponse.status === "ERROR" || tenantResponse.status === "UNAUTHORIZED") {
+        return {
+          success: false,
+          errorCode: ErrorType.NotAuthorised,
+        }
+      }
+
       if (tenantResponse.status === "NOT_FOUND") {
         const now = new Date()
         const domain = user.upn?.split("@")[1] || ""
@@ -37,19 +54,25 @@ export class UserSignInHandler {
           history: [`${now}: Tenant created by user ${user.upn} on failed login.`],
         }
         const tenant = await CreateTenant(tenantRecord)
-        if (tenant.status !== "OK") throw tenant
+        if (tenant.status !== "OK") {
+          return { success: false, errorCode: ErrorType.NoTenant }
+        }
 
         const userUpdate = {
           ...updateFailedLogin(userRecord),
           groups: [],
         }
         const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
-        if (updatedUser.status !== "OK") throw updatedUser
+        if (updatedUser.status !== "OK") {
+          return { success: false, errorCode: ErrorType.NoTenant }
+        }
 
-        return false
+        return { success: true }
       }
 
-      if (tenantResponse.status !== "OK") return false
+      if (tenantResponse.status !== "OK") {
+        return { success: false, errorCode: ErrorType.NotAuthorised }
+      }
       const tenant = tenantResponse.response
 
       if (!tenant.requiresGroupLogin || isUserInRequiredGroups(userGroups, tenant.groups || [])) {
@@ -58,8 +81,13 @@ export class UserSignInHandler {
           groups: userGroups,
         }
         const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
-        if (updatedUser.status !== "OK") throw updatedUser
-        return true
+        if (updatedUser.status !== "OK") {
+          return {
+            success: false,
+            errorCode: ErrorType.NotAuthorised,
+          }
+        }
+        return { success: true }
       }
 
       const userUpdate = {
@@ -67,11 +95,13 @@ export class UserSignInHandler {
         groups: userGroups,
       }
       const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
-      if (updatedUser.status !== "OK") throw updatedUser
-      return false
+      if (updatedUser.status !== "OK") {
+        return { success: false, errorCode: ErrorType.NotAuthorised }
+      }
+      return { success: false, errorCode: ErrorType.NotAuthorised }
     } catch (error) {
       console.error("Error handling sign-in:", error)
-      return false
+      return { success: false }
     }
   }
 }
@@ -95,6 +125,7 @@ const getsertUser = async (userGroups: string[], user: User | AdapterUser): Prom
   try {
     const now = new Date()
     const existingUserResponse = await GetUserByUpn(user.tenantId, user.upn ?? "")
+
     if (existingUserResponse.status === "NOT_FOUND") {
       const createUserResponse = await CreateUser({
         id: hashValue(user.upn),
@@ -113,10 +144,18 @@ const getsertUser = async (userGroups: string[], user: User | AdapterUser): Prom
         last_failed_login: null,
         history: [`${now}: User created.`],
       })
-      if (createUserResponse.status !== "OK") throw createUserResponse
+
+      if (createUserResponse.status !== "OK") {
+        throw new Error("User creation failed")
+      }
+
       return createUserResponse.response
     }
-    if (existingUserResponse.status !== "OK") throw existingUserResponse
+
+    if (existingUserResponse.status !== "OK") {
+      throw new Error("User retrieval failed")
+    }
+
     return existingUserResponse.response
   } catch (error) {
     console.error("Error upserting user:", error)
