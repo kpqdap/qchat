@@ -9,9 +9,11 @@ import { signInProvider } from "@/app-global"
 
 export const UserComponent: React.FC = () => {
   const { data: session, status } = useSession({ required: false })
+
   if (status === "loading") {
-    return <div>Loading...</div>
+    return <div className="flex h-[32px] w-full items-center justify-center opacity-50">Loading...</div>
   }
+
   return (
     <div>
       {session ? (
@@ -21,7 +23,7 @@ export const UserComponent: React.FC = () => {
           aria-label="Log out"
           variant="link"
         >
-          <LogOut className="text-darkAltButton mr-2 size-4" aria-hidden="true" />
+          <LogOut className="text-darkAltButton mr-2" size={20} aria-hidden="true" />
           <Typography variant="span">Log out</Typography>
         </Button>
       ) : (
@@ -31,7 +33,7 @@ export const UserComponent: React.FC = () => {
           aria-label="Log in"
           variant="link"
         >
-          <LogIn className="text-darkAltButton mr-2 size-4" aria-hidden="true" />
+          <LogIn className="text-darkAltButton mr-2" size={20} aria-hidden="true" />
           <Typography variant="span">Log in</Typography>
         </Button>
       )}

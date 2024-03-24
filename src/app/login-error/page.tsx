@@ -20,16 +20,16 @@ const ErrorPage: React.FC = () => {
     switch (errorType) {
       case ErrorType.NoTenant:
         message = `It looks like your agency is not yet set up for using ${AI_NAME}, please contact your Agency IT Support Team or CIO to discuss using QChat.`
-        setDisplaySupportButton(true)
+        setDisplaySupportButton(false)
         break
       case ErrorType.NotAuthorised:
         message = `Your Agency is using ${AI_NAME}, however, it appears as if you are not in one of the permitted groups, please contact your agency IT support team to request additional details or how to gain access. `
-        setDisplaySupportButton(true)
+        setDisplaySupportButton(false)
         break
       case ErrorType.SignInFailed:
       default:
         message = `Currently, access to ${AI_NAME} is only available to onboarded agencies, if you are seeing this warning it usually means your agency has not completed their setup. If you believe your agency has been setup and continue to receive these errors, please contact your agency IT support team.`
-        setDisplaySupportButton(false)
+        setDisplaySupportButton(true)
         break
     }
 
@@ -38,6 +38,12 @@ const ErrorPage: React.FC = () => {
 
   const handleSupportRedirect = (): void => {
     void router.push("/support")
+  }
+
+  // New function to redirect to the ForGov URL
+  const handleForGovRedirect = (): void => {
+    window.location.href =
+      "https://www.forgov.qld.gov.au/information-and-communication-technology/qchat/qchat-assistant"
   }
 
   return (
@@ -53,6 +59,9 @@ const ErrorPage: React.FC = () => {
               Contact QChat Support
             </Button>
           )}
+          <Button className="max-w-[300px]" onClick={handleForGovRedirect}>
+            Find out more about QChat on ForGov
+          </Button>
         </CardContent>
       </Card>
     </div>

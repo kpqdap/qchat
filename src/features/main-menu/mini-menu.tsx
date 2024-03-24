@@ -4,7 +4,7 @@ import React from "react"
 import Link from "next/link"
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useMiniMenuContext } from "./mini-menu-context"
-import { Menu, X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
+import { X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
 import { useTheme } from "next-themes"
 import { UrlObject } from "url"
 import { cn } from "@/lib/utils"
@@ -61,7 +61,7 @@ export const MiniMenu: React.FC = () => {
     <>
       <div
         onClick={toggleMenu}
-        className="border-accent text-darkAltButton hover:bg-background relative flex h-full cursor-pointer flex-col items-center border-l-2 p-4 hover:underline"
+        className="border-accent text-darkAltButton hover:bg-background h-full cursor-pointer flex-col items-center justify-center hover:underline"
         aria-expanded="false"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         role="button"
@@ -70,7 +70,7 @@ export const MiniMenu: React.FC = () => {
         {isMenuOpen ? (
           <X className="hover:bg-link items-center" aria-hidden="true" />
         ) : (
-          <Menu size={16} className="text-darkAltButton" aria-hidden="true" />
+          <div className="text-darkAltButton pl-2" aria-hidden="true" />
         )}
         Menu
       </div>

@@ -14,7 +14,7 @@ export default async function Home(): Promise<JSX.Element> {
         <Suspense fallback={"Getting version"}>
           <VersionDisplay />
         </Suspense>
-        <div className="prose prose-slate max-w-4xl break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 ">
+        <div className="prose prose-slate dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 max-w-4xl break-words ">
           <Markdown content={content} />
         </div>
       </div>
