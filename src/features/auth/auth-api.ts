@@ -102,11 +102,11 @@ export const options: NextAuthOptions = {
           case ErrorType.SignInFailed:
             return `/login-error?error=${encodeURIComponent(ErrorType.SignInFailed)}`
           default:
-            console.error("Error in signIn callback", signInCallbackResponse)
+            // console.error("Error in signIn callback", signInCallbackResponse)
             return false
         }
-      } catch (error) {
-        console.error("Error in signIn callback", error)
+      } catch (_error) {
+        // console.error("Error in signIn callback", error)
         return false
       }
     },
