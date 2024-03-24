@@ -16,6 +16,7 @@ interface MiniMenuItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
   name: string
   ariaLabel: string
   onClick: () => void
+  //not working as expected
 }
 
 const MiniMenuItem: React.FC<MiniMenuItemProps> = ({ href, icon: Icon, name, ariaLabel, onClick, ...props }) => {
@@ -28,7 +29,7 @@ const MiniMenuItem: React.FC<MiniMenuItemProps> = ({ href, icon: Icon, name, ari
     <div className={menuItemClass} onClick={onClick} role="button" tabIndex={0} aria-label={ariaLabel}>
       <Icon className="mr-2 size-4" aria-hidden="true" />
       {name}
-      <Link href={href} passHref>
+      <Link href={href} passHref={true}>
         <span className="hidden"></span>
       </Link>
     </div>
