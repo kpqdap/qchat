@@ -1,4 +1,4 @@
-# Understanding mistakes in QChat: a simple guide ✨
+# Understanding facts in QChat: a simple guide ✨
 
 This guide is designed to help you navigate through the occasional inaccuracies you might encounter while using QChat, our friendly writing assistant.
 
@@ -8,7 +8,7 @@ Imagine QChat as a keen but sometimes overenthusiastic friend who attempts to fi
 
 ## Why do mistakes happen? 🧐
 
-QChat absorbs vast amounts of text to predict and generate responses based on patterns. However, it doesn't truly "understand" this information. So, when it tries to provide details without complete data, it might make incorrect guesses.
+QChat absorbs vast amounts of text to predict and generate responses based on patterns. However, it doesn't truly "understand" this information. So, when it tries to provide details without complete data, it might make incorrect guesses. But the remainder of the text is still largely valuable, we can simply let it know the facts to change and we're off to the races.
 
 ## Example: mixing up details 📝
 

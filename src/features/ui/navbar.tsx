@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { HomeIcon, BookMarked, HeartHandshake } from "lucide-react"
+import { CloudUpload, HomeIcon, BookMarked, HeartHandshake, SpellCheck2 } from "lucide-react"
 import Typography from "@/components/typography"
 import { ThemeSwitch } from "@/features/theme/theme-switch"
 import { useSession } from "next-auth/react"
@@ -22,7 +22,7 @@ export const NavBar: React.FC = () => {
         {" "}
         <div className="container mx-auto hidden md:block">
           <div className="grid grid-cols-12 gap-2">
-            {[...Array(3)].map((_, index) => (
+            {[...Array(5)].map((_, index) => (
               <div key={index} className="relative col-span-2 flex items-center space-x-2">
                 <div className="flex w-full animate-pulse items-center justify-center py-2">
                   <div className="mr-2 h-9 w-5 rounded bg-gray-300"></div>
@@ -38,8 +38,16 @@ export const NavBar: React.FC = () => {
 
   const links: LinkItem[] = [
     { name: "Home", href: "/", icon: HomeIcon },
-    { name: "Prompt Guides", href: "/prompt-guide", icon: BookMarked, condition: status => status === "authenticated" },
+    { name: "Prompt Guide", href: "/prompt-guide", icon: BookMarked, condition: status => status === "authenticated" },
+    { name: "What's new", href: "/whats-new", icon: CloudUpload, condition: status => status === "authenticated" },
+    {
+      name: "Factual Errors",
+      href: "/hallucinations",
+      icon: SpellCheck2,
+      condition: status => status === "authenticated",
+    },
     { name: "Terms of Use", href: "/terms", icon: HeartHandshake, condition: status => status === "authenticated" },
+
     // Further links can be added with or without conditions
   ]
 
@@ -62,7 +70,7 @@ export const NavBar: React.FC = () => {
               </a>
             </div>
           ))}
-          <div className="col-span-6 flex min-h-[40px] items-center justify-end">
+          <div className="col-span-2 flex min-h-[40px] items-center justify-end">
             <ThemeSwitch />
           </div>
         </div>
