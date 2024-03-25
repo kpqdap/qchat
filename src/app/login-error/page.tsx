@@ -36,7 +36,6 @@ const ErrorPage: React.FC = () => {
     void router.push("/support")
   }
 
-  // New function to redirect to the ForGov URL
   const handleForGovRedirect = (): void => {
     window.location.href =
       "https://www.forgov.qld.gov.au/information-and-communication-technology/qchat/qchat-assistant"
