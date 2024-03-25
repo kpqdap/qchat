@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import ChatLoading from "@/components/chat/chat-loading"
-import ChatRow from "@/components/chat/chat-row"
+import ChatRow, { ChatRowProps } from "@/components/chat/chat-row"
 import { useSession } from "next-auth/react"
 import { useChatContext } from "./chat-context"
 import { ChatHeader } from "./chat-header"
@@ -33,18 +33,18 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId }) => {
         <ChatHeader />
       </div>
       <div className="flex flex-1 flex-col justify-end pb-[80px]">
-        {messages.map((message, index) => (
+        {messages.map(message => (
           <ChatRow
+            key={message.id}
             chatMessageId={message.id}
             name={message.role === ChatRole.User ? session?.user?.name || "" : AI_NAME}
             message={message.content}
             type={message.role as ChatRole}
-            key={index}
             chatThreadId={chatThreadId}
             contentSafetyWarning={undefined}
-            feedback={undefined}
-            sentiment={undefined}
-            reason={undefined}
+            feedback={(message as any as ChatRowProps).feedback}
+            sentiment={(message as any as ChatRowProps).sentiment}
+            reason={(message as any as ChatRowProps).reason}
           />
         ))}
         {isLoading && <ChatLoading />}
