@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardDescription } from "@/features/ui/card"
 import { Button } from "@/features/ui/button"
 import { AI_NAME } from "@/features/theme/theme-config"
-import { ErrorType } from "@/features/auth/sign-in"
+import { SignInErrorType } from "@/features/auth/sign-in"
 
 const ErrorPage: React.FC = () => {
   const router = useRouter()
@@ -14,15 +14,15 @@ const ErrorPage: React.FC = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
-    const errorType = urlParams.get("error") as ErrorType | null
+    const errorType = urlParams.get("error") as SignInErrorType | null
 
     let message = ""
     switch (errorType) {
-      case ErrorType.NotAuthorised:
+      case SignInErrorType.NotAuthorised:
         message = `Your Agency may not yet be using ${AI_NAME}, if they are, it appears as if you are not in one of the permitted groups, please contact your agency IT support team to request additional details or how to gain access. `
         setDisplaySupportButton(false)
         break
-      case ErrorType.SignInFailed:
+      case SignInErrorType.SignInFailed:
       default:
         message = `Currently, access to ${AI_NAME} is only available to onboarded agencies, if you are seeing this warning it usually means your agency has not completed their setup. If you believe your agency has been setup and continue to receive these errors, please contact your agency IT support team.`
         setDisplaySupportButton(true)

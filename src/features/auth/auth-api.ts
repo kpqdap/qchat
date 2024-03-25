@@ -3,7 +3,7 @@ import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/azure-ad"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
-import { ErrorType } from "./sign-in"
+import { SignInErrorType } from "./sign-in"
 
 export interface AuthToken extends JWT {
   qchatAdmin?: boolean
@@ -80,14 +80,14 @@ export const options: NextAuthOptions = {
       try {
         const groups = user?.secGroups ?? []
         const signInCallbackResponse = await UserSignInHandler.handleSignIn(user, groups)
-        if (signInCallbackResponse.success === true) {
+        if (signInCallbackResponse.success) {
           return true
         }
         switch (signInCallbackResponse.errorCode) {
-          case ErrorType.NotAuthorised:
-            return `/login-error?error=${encodeURIComponent(ErrorType.NotAuthorised)}`
-          case ErrorType.SignInFailed:
-            return `/login-error?error=${encodeURIComponent(ErrorType.SignInFailed)}`
+          case SignInErrorType.NotAuthorised:
+            return `/login-error?error=${encodeURIComponent(SignInErrorType.NotAuthorised)}`
+          case SignInErrorType.SignInFailed:
+            return `/login-error?error=${encodeURIComponent(SignInErrorType.SignInFailed)}`
           default:
             return false
         }
@@ -126,7 +126,7 @@ export const options: NextAuthOptions = {
     buttonText: "Single sign-on in with your Queensland Government Account",
   },
   useSecureCookies: true,
-  debug: process.env.NODE_ENV === "development" ? true : false,
+  debug: process.env.NODE_ENV === "development",
 }
 
 export const handlers = NextAuth(options)

@@ -4,15 +4,21 @@ import { hashValue } from "./helpers"
 import { User } from "next-auth"
 import { AdapterUser } from "next-auth/adapters"
 
-export enum ErrorType {
+export enum SignInErrorType {
   NotAuthorised = "notAuthorised",
   SignInFailed = "signInFailed",
 }
 
-export type SignInResponse = {
-  success: boolean
-  errorCode?: ErrorType
+type SignInSuccess = {
+  success: true
 }
+
+type SignInError = {
+  success: false
+  errorCode: SignInErrorType
+}
+
+export type SignInResponse = SignInSuccess | SignInError
 
 export class UserSignInHandler {
   static async handleSignIn(user: User | AdapterUser, userGroups: string[] = []): Promise<SignInResponse> {
@@ -24,7 +30,7 @@ export class UserSignInHandler {
       if (tenantResponse.status === "ERROR" || tenantResponse.status === "UNAUTHORIZED") {
         return {
           success: false,
-          errorCode: ErrorType.NotAuthorised,
+          errorCode: SignInErrorType.NotAuthorised,
         }
       }
 
@@ -61,7 +67,7 @@ export class UserSignInHandler {
         const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
         if (updatedUser.status !== "OK") throw updatedUser
 
-        return { success: false, errorCode: ErrorType.NotAuthorised }
+        return { success: false, errorCode: SignInErrorType.NotAuthorised }
       }
 
       if (tenantResponse.status !== "OK") throw tenantResponse
@@ -83,10 +89,10 @@ export class UserSignInHandler {
       }
       const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
       if (updatedUser.status !== "OK") throw updatedUser
-      return { success: false, errorCode: ErrorType.NotAuthorised }
+      return { success: false, errorCode: SignInErrorType.NotAuthorised }
     } catch (error) {
       console.error("Error handling sign-in:", error)
-      return { success: false, errorCode: ErrorType.SignInFailed }
+      return { success: false, errorCode: SignInErrorType.SignInFailed }
     }
   }
 }
