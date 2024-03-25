@@ -109,6 +109,15 @@ stages:
               repository: "$(REPOSITORY)"
               tags: "$(Build.BuildId)"
 
+          - task: AzurePowerShell@5
+            displayName: "Prune agent docker images"
+            inputs:
+              azureSubscription: "$(CONTAINER_REGISTRY)"
+              ScriptType: "InlineScript"
+              Inline: 'docker image prune -af --filter "until=48h"'
+              errorActionPreference: "continue"
+              azurePowerShellVersion: "LatestVersion"
+
   - stage: Development
     displayName: "🧪🚀 - Development Stage"
     dependsOn: Build
