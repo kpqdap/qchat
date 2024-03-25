@@ -3,12 +3,7 @@ import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/azure-ad"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
-
-export enum ErrorType {
-  NoTenant = "noTenant",
-  NotAuthorised = "notAuthorised",
-  SignInFailed = "signInFailed",
-}
+import { ErrorType } from "./sign-in"
 
 export interface AuthToken extends JWT {
   qchatAdmin?: boolean
@@ -85,28 +80,18 @@ export const options: NextAuthOptions = {
       try {
         const groups = user?.secGroups ?? []
         const signInCallbackResponse = await UserSignInHandler.handleSignIn(user, groups)
-        if (!signInCallbackResponse) {
-          return `/error?error=${encodeURIComponent("AccessDenied")}`
-        }
-        if (typeof signInCallbackResponse === "string") {
-          return signInCallbackResponse
-        }
         if (signInCallbackResponse.success === true) {
           return true
         }
         switch (signInCallbackResponse.errorCode) {
-          case ErrorType.NoTenant:
-            return `/login-error?error=${encodeURIComponent(ErrorType.NoTenant)}`
           case ErrorType.NotAuthorised:
             return `/login-error?error=${encodeURIComponent(ErrorType.NotAuthorised)}`
           case ErrorType.SignInFailed:
             return `/login-error?error=${encodeURIComponent(ErrorType.SignInFailed)}`
           default:
-            // console.error("Error in signIn callback", signInCallbackResponse)
             return false
         }
       } catch (_error) {
-        // console.error("Error in signIn callback", error)
         return false
       }
     },

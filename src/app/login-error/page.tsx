@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardDescription } from "@/features/ui/card"
 import { Button } from "@/features/ui/button"
 import { AI_NAME } from "@/features/theme/theme-config"
-import { ErrorType } from "@/features/auth/auth-api"
+import { ErrorType } from "@/features/auth/sign-in"
 
 const ErrorPage: React.FC = () => {
   const router = useRouter()
@@ -18,12 +18,8 @@ const ErrorPage: React.FC = () => {
 
     let message = ""
     switch (errorType) {
-      case ErrorType.NoTenant:
-        message = `It looks like your agency is not yet set up for using ${AI_NAME}, please contact your Agency IT Support Team or CIO to discuss using QChat.`
-        setDisplaySupportButton(false)
-        break
       case ErrorType.NotAuthorised:
-        message = `Your Agency is using ${AI_NAME}, however, it appears as if you are not in one of the permitted groups, please contact your agency IT support team to request additional details or how to gain access. `
+        message = `Your Agency may not yet be using ${AI_NAME}, if they are, it appears as if you are not in one of the permitted groups, please contact your agency IT support team to request additional details or how to gain access. `
         setDisplaySupportButton(false)
         break
       case ErrorType.SignInFailed:
