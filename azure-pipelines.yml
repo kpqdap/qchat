@@ -48,7 +48,7 @@ variables:
       -AZURE_TRANSLATOR_URL "$(AZURE_TRANSLATOR_URL)"
       -FEATURE_FILEEXPORT "$(FEATURE_FILEEXPORT)"
       -FEATURE_QUASYMODO "$(FEATURE_QUASYMODO)"
-      -FEATURE_TRANSCRIBE_TENANTS "$(FEATURE_TRANSCRIBE_TENANTS)"
+      -NEXT_PUBLIC_FEATURE_TRANSCRIBE_TENANTS "$(NEXT_PUBLIC_FEATURE_TRANSCRIBE_TENANTS)"
       -MAX_DOCUMENT_SIZE "$(MAX_DOCUMENT_SIZE)"
       -NEXTAUTH_SECRET "$(NEXTAUTH_SECRET)"
       -NEXTAUTH_URL "$(NEXTAUTH_URL)"
@@ -105,7 +105,7 @@ stages:
               command: "build"
               Dockerfile: "src/dockerfile"
               buildContext: "src"
-              arguments: --build-arg BUILD_ID=$(Build.BuildId)
+              arguments: --build-arg BUILD_ID=$(Build.BuildId) --build-arg APPLICATION_INSIGHTS=$(NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING) --build-arg FEATURE_TRANSCRIBE_TENANTS=$(NEXT_PUBLIC_FEATURE_TRANSCRIBE_TENANTS) --build-arg FEATURE_TRANSLATOR=$(NEXT_PUBLIC_FEATURE_TRANSLATOR) --build-arg PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL)
               repository: "$(REPOSITORY)"
               tags: "$(Build.BuildId)"
 
