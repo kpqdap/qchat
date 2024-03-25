@@ -131,14 +131,14 @@ const getsertUser = async (userGroups: string[], user: User | AdapterUser): Prom
       })
 
       if (createUserResponse.status !== "OK") {
-        throw new Error("User creation failed")
+        throw createUserResponse
       }
 
       return createUserResponse.response
     }
 
     if (existingUserResponse.status !== "OK") {
-      throw new Error("User retrieval failed")
+      throw existingUserResponse
     }
 
     return existingUserResponse.response
