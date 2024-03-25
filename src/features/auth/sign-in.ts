@@ -4,8 +4,7 @@ import { hashValue } from "./helpers"
 import { User } from "next-auth"
 import { AdapterUser } from "next-auth/adapters"
 
-enum ErrorType {
-  NoTenant = "noTenant",
+export enum ErrorType {
   NotAuthorised = "notAuthorised",
   SignInFailed = "signInFailed",
 }
@@ -20,7 +19,6 @@ export class UserSignInHandler {
     try {
       const groupAdmins = process.env.ADMIN_EMAIL_ADDRESS?.split(",").map(string => string.toLowerCase().trim())
       const tenantResponse = await GetTenantById(user.tenantId)
-      //need to refactor this correctly as its not creating tenant and then logging failed user login
       const userRecord = await getsertUser(userGroups, user)
 
       if (tenantResponse.status === "ERROR" || tenantResponse.status === "UNAUTHORIZED") {
@@ -53,26 +51,20 @@ export class UserSignInHandler {
           serviceTier: null,
           history: [`${now}: Tenant created by user ${user.upn} on failed login.`],
         }
-        const tenant = await CreateTenant(tenantRecord)
-        if (tenant.status !== "OK") {
-          return { success: false, errorCode: ErrorType.NoTenant }
-        }
+        const tenant = await CreateTenant(tenantRecord, user.upn)
+        if (tenant.status !== "OK") throw tenant
 
         const userUpdate = {
           ...updateFailedLogin(userRecord),
           groups: [],
         }
         const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
-        if (updatedUser.status !== "OK") {
-          return { success: false, errorCode: ErrorType.NoTenant }
-        }
+        if (updatedUser.status !== "OK") throw updatedUser
 
-        return { success: true }
-      }
-
-      if (tenantResponse.status !== "OK") {
         return { success: false, errorCode: ErrorType.NotAuthorised }
       }
+
+      if (tenantResponse.status !== "OK") throw tenantResponse
       const tenant = tenantResponse.response
 
       if (!tenant.requiresGroupLogin || isUserInRequiredGroups(userGroups, tenant.groups || [])) {
@@ -81,12 +73,7 @@ export class UserSignInHandler {
           groups: userGroups,
         }
         const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
-        if (updatedUser.status !== "OK") {
-          return {
-            success: false,
-            errorCode: ErrorType.NotAuthorised,
-          }
-        }
+        if (updatedUser.status !== "OK") throw updatedUser
         return { success: true }
       }
 
@@ -95,13 +82,11 @@ export class UserSignInHandler {
         groups: userGroups,
       }
       const updatedUser = await UpdateUser(user.tenantId, user.userId, userUpdate)
-      if (updatedUser.status !== "OK") {
-        return { success: false, errorCode: ErrorType.NotAuthorised }
-      }
+      if (updatedUser.status !== "OK") throw updatedUser
       return { success: false, errorCode: ErrorType.NotAuthorised }
     } catch (error) {
       console.error("Error handling sign-in:", error)
-      return { success: false }
+      return { success: false, errorCode: ErrorType.SignInFailed }
     }
   }
 }
