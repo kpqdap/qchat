@@ -130,16 +130,11 @@ const getsertUser = async (userGroups: string[], user: User | AdapterUser): Prom
         history: [`${now}: User created.`],
       })
 
-      if (createUserResponse.status !== "OK") {
-        throw createUserResponse
-      }
-
+      if (createUserResponse.status !== "OK") throw createUserResponse
       return createUserResponse.response
     }
 
-    if (existingUserResponse.status !== "OK") {
-      throw existingUserResponse
-    }
+    if (existingUserResponse.status !== "OK") throw existingUserResponse
 
     return existingUserResponse.response
   } catch (error) {
