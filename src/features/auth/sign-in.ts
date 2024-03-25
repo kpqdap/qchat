@@ -129,13 +129,10 @@ const getsertUser = async (userGroups: string[], user: User | AdapterUser): Prom
         last_failed_login: null,
         history: [`${now}: User created.`],
       })
-
       if (createUserResponse.status !== "OK") throw createUserResponse
       return createUserResponse.response
     }
-
     if (existingUserResponse.status !== "OK") throw existingUserResponse
-
     return existingUserResponse.response
   } catch (error) {
     console.error("Error upserting user:", error)
