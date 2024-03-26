@@ -1,7 +1,6 @@
 name: "📦 - Publish Artifact"
 
 trigger: none
-
 variables:
   - name: poolName
     value: "QGGPT_Pool"
