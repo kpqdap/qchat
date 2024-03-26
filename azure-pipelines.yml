@@ -1,3 +1,5 @@
+name: 📦 - Publish Artifact
+
 trigger:
   branches:
     include:
