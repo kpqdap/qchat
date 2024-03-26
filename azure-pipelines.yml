@@ -8,6 +8,10 @@ pr:
     include:
       - main
 
+variables:
+  - name: poolName
+    value: "QGGPT_Pool"
+
 stages:
   - stage: PublishArtifact
     displayName: "📦 - Publish Artifact"
