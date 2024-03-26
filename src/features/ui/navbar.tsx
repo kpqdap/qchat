@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CloudUpload, HomeIcon, BookMarked, HeartHandshake, SpellCheck2 } from "lucide-react"
+import { CloudUpload, HomeIcon, BookMarked, SpellCheck2 } from "lucide-react"
 import Typography from "@/components/typography"
 import { ThemeSwitch } from "@/features/theme/theme-switch"
 import { useSession } from "next-auth/react"
@@ -18,7 +18,7 @@ export const NavBar: React.FC = () => {
 
   if (status === "loading") {
     return (
-      <nav aria-label="Main navigation" className="border-accent bg-backgroundShade m:h-[44px] border-b-4">
+      <nav aria-label="Main navigation" className="m:h-[44px] border-accent bg-backgroundShade border-b-4">
         {" "}
         <div className="container mx-auto hidden md:block">
           <div className="grid grid-cols-12 gap-2">
@@ -46,15 +46,13 @@ export const NavBar: React.FC = () => {
       icon: SpellCheck2,
       condition: status => status === "authenticated",
     },
-    { name: "Terms of Use", href: "/terms", icon: HeartHandshake, condition: status => status === "authenticated" },
-
     // Further links can be added with or without conditions
   ]
 
   const visibleLinks = links.filter(link => !link.condition || (link.condition && link.condition(status)))
 
   return (
-    <nav aria-label="Main navigation" className="border-accent bg-backgroundShade m:h-[44px] block border-b-4">
+    <nav aria-label="Main navigation" className="m:h-[44px] border-accent bg-backgroundShade block border-b-4">
       <div className="container mx-auto hidden md:block">
         <div dir="ltr" className="grid grid-cols-12 gap-2">
           {visibleLinks.map((link, index) => (
