@@ -1,19 +1,10 @@
-name: 📦 - Publish Artifact
+name: "📦 - Publish Artifact"
 
-trigger:
-  branches:
-    include:
-      - main
-
-pr:
-  branches:
-    include:
-      - main
+trigger: none
 
 variables:
   - name: poolName
     value: "QGGPT_Pool"
-
 stages:
   - stage: PublishArtifact
     displayName: "📦 - Publish Artifact"
