@@ -89,6 +89,11 @@ const nextConfig = {
         destination: "/api/auth/signout",
         permanent: true,
       },
+      {
+        source: "/support",
+        destination: "https://dis-qgcdg.atlassian.net/servicedesk/customer/portal/2",
+        permanent: true,
+      },
     ]
   },
   headers() {

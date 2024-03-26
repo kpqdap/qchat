@@ -4,7 +4,7 @@ import React from "react"
 import Link from "next/link"
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useMiniMenuContext } from "./mini-menu-context"
-import { Menu, X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
+import { CloudUpload, SpellCheck2, X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
 import { useTheme } from "next-themes"
 import { UrlObject } from "url"
 import { cn } from "@/lib/utils"
@@ -16,6 +16,7 @@ interface MiniMenuItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
   name: string
   ariaLabel: string
   onClick: () => void
+  //not working as expected
 }
 
 const MiniMenuItem: React.FC<MiniMenuItemProps> = ({ href, icon: Icon, name, ariaLabel, onClick, ...props }) => {
@@ -28,8 +29,8 @@ const MiniMenuItem: React.FC<MiniMenuItemProps> = ({ href, icon: Icon, name, ari
     <div className={menuItemClass} onClick={onClick} role="button" tabIndex={0} aria-label={ariaLabel}>
       <Icon className="mr-2 size-4" aria-hidden="true" />
       {name}
-      <Link href={href} passHref>
-        <span style={{ display: "none" }}></span>
+      <Link href={href} passHref={true}>
+        <span className="hidden"></span>
       </Link>
     </div>
   )
@@ -44,9 +45,16 @@ export const MiniMenu: React.FC = () => {
 
   const menuItems = [
     { name: "Home", href: "/chat", icon: Home, ariaLabel: "Navigate to home page" },
-    { name: "Prompt Guides", href: "/prompt-guide", icon: Bookmark, ariaLabel: "Navigate to prompt guides" },
+    { name: "Prompt Guide", href: "/prompt-guide", icon: Bookmark, ariaLabel: "Navigate to prompt guide" },
+    { name: "What's New", href: "/whats-new", icon: CloudUpload, ariaLabel: "Navigate to what's new page" },
+    {
+      name: "Factual Errors",
+      href: "/hallucinations",
+      icon: SpellCheck2,
+      ariaLabel: "Help with factual errors",
+    },
     { name: "Terms of Use", href: "/terms", icon: HeartHandshake, ariaLabel: "Navigate to terms of use" },
-    // { name: "What's New", href: '/whats-new', icon: Bell, ariaLabel: "Navigate to what's new page" },
+
     // { name: 'Settings', href: '/settings', icon: UserCog, ariaLabel: 'Navigate to settings' },
   ]
 
@@ -60,7 +68,7 @@ export const MiniMenu: React.FC = () => {
     <>
       <div
         onClick={toggleMenu}
-        className="border-accent text-darkAltButton hover:bg-background relative flex h-full cursor-pointer flex-col items-center border-l-2 p-4 hover:underline"
+        className="border-accent text-darkAltButton hover:bg-background h-full cursor-pointer flex-col items-center justify-center hover:underline"
         aria-expanded="false"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         role="button"
@@ -69,7 +77,7 @@ export const MiniMenu: React.FC = () => {
         {isMenuOpen ? (
           <X className="hover:bg-link items-center" aria-hidden="true" />
         ) : (
-          <Menu size={16} className="text-darkAltButton" aria-hidden="true" />
+          <div className="text-darkAltButton pl-2" aria-hidden="true" />
         )}
         Menu
       </div>
