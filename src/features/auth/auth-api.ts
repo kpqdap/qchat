@@ -3,6 +3,7 @@ import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/azure-ad"
 import { JWT } from "next-auth/jwt"
 import { UserSignInHandler } from "./sign-in"
+import { SignInErrorType } from "./sign-in"
 
 export interface AuthToken extends JWT {
   qchatAdmin?: boolean
@@ -18,6 +19,8 @@ const configureIdentityProvider = (): Provider[] => {
   if (process.env.AZURE_AD_CLIENT_ID && process.env.AZURE_AD_CLIENT_SECRET && process.env.AZURE_AD_TENANT_ID) {
     providers.push(
       AzureADProvider({
+        name: "Queensland Government Single Sign On",
+        style: { logo: "", text: "#ffffff", bg: "#09549f" },
         clientId: process.env.AZURE_AD_CLIENT_ID,
         clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
         tenantId: process.env.AZURE_AD_TENANT_ID,
@@ -69,13 +72,26 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [...configureIdentityProvider()],
   callbacks: {
-    async signIn({ user }): Promise<boolean> {
-      if (!user?.tenantId || !user?.upn) return false
+    async signIn({ user }) {
+      if (!user?.tenantId || !user?.upn) {
+        return false
+      }
+
       try {
         const groups = user?.secGroups ?? []
-        return await UserSignInHandler.handleSignIn(user, groups)
-      } catch (error) {
-        console.error("Error in signIn callback", error)
+        const signInCallbackResponse = await UserSignInHandler.handleSignIn(user, groups)
+        if (signInCallbackResponse.success) {
+          return true
+        }
+        switch (signInCallbackResponse.errorCode) {
+          case SignInErrorType.NotAuthorised:
+            return `/login-error?error=${encodeURIComponent(SignInErrorType.NotAuthorised)}`
+          case SignInErrorType.SignInFailed:
+            return `/login-error?error=${encodeURIComponent(SignInErrorType.SignInFailed)}`
+          default:
+            return false
+        }
+      } catch (_error) {
         return false
       }
     },
@@ -100,6 +116,17 @@ export const options: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 8 * 60 * 60,
   },
+  pages: {
+    error: "/login-error",
+  },
+  theme: {
+    colorScheme: "dark",
+    brandColor: "#09549f",
+    logo: "/ai-icon.png",
+    buttonText: "Single sign-on in with your Queensland Government Account",
+  },
+  useSecureCookies: true,
+  debug: process.env.NODE_ENV === "development",
 }
 
 export const handlers = NextAuth(options)

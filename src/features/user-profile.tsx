@@ -21,10 +21,7 @@ const UserProfile = (): ReactElement => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex flex-col items-stretch">
-          <Button
-            className="font-primary relative size-[40px] justify-center gap-2 rounded-full p-1"
-            variant={"outline"}
-          >
+          <Button className="relative size-[40px] justify-center gap-2 rounded-full p-1" variant={"outline"}>
             {session?.user?.image ? (
               <Avatar className="">
                 <AvatarImage src={session.user.image} alt={session.user.name ?? "You"} />

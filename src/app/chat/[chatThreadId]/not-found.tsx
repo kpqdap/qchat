@@ -7,7 +7,7 @@ export default function NotFound(): JSX.Element {
       <div className="container mx-auto flex size-full max-w-xl items-center justify-center gap-2">
         <div className="flex flex-1 flex-col items-start gap-5">
           <h2 className="text-4xl font-bold"> Uh-oh! 404</h2>
-          <p className="text-muted-foreground text-sm">How about we start a new chat?</p>
+          <p className="text-sm text-muted-foreground">How about we start a new chat?</p>
           <NewChat />
         </div>
       </div>

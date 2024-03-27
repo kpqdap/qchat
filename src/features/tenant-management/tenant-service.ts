@@ -76,20 +76,19 @@ export const CheckGroupsForTenant = async (
   }
 }
 
-export const CreateTenant = async (tenant: TenantRecord): ServerActionResponseAsync<void> => {
+export const CreateTenant = async (tenant: TenantRecord, userUpn: string): ServerActionResponseAsync<void> => {
   try {
     if (!tenant.tenantId) throw new Error("Tenant must have a tenantId to be created.")
 
     const container = await TenantContainer()
-    const currentUser = await userHashedId()
 
     await container.items.create<TenantRecord>({
       ...tenant,
       id: tenant.tenantId,
       dateCreated: new Date().toISOString(),
       dateUpdated: new Date().toISOString(),
-      createdBy: currentUser,
-      modifiedBy: currentUser,
+      createdBy: userUpn,
+      modifiedBy: userUpn,
       requiresGroupLogin: tenant.requiresGroupLogin,
     })
     return {

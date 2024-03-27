@@ -21,8 +21,8 @@ export default function Modal(props: ModalProps): ReturnType<FC> {
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [areTabsEnabled, setTabsEnabled] = useState<boolean>(false)
 
-  const textareaId = `chatMessageFeedback-${props.chatThreadId}`
-  const textareaName = `chatMessageFeedback-${props.chatThreadId}`
+  const textareaId = `chatMessageFeedback-${props.chatMessageId}`
+  const textareaName = `chatMessageFeedback-${props.chatMessageId}`
 
   function handleFeedbackReasonChange(): void {
     const textareaValue = textAreaRef.current?.value || ""
