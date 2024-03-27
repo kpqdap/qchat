@@ -59,6 +59,8 @@ export const ChatAPISimple = async (props: PromptGPTProps): Promise<Response> =>
       stream: true,
     })
 
+    // this is an issue?
+
     const stream = OpenAIStream(response, {
       async onCompletion(completion: string) {
         try {
