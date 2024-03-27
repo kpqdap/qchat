@@ -27,14 +27,14 @@ export const dynamic = "force-dynamic"
 
 export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
   return (
-    <html lang="en" className="size-full overflow-hidden text-sm">
-      <body className={cn(notoSans.className, "flex h-full w-full min-w-[400px] flex-col bg-background")}>
+    <html lang="en" suppressHydrationWarning className="size-full overflow-hidden text-sm">
+      <body className={cn(notoSans.className, "flex size-full min-w-[400px] flex-col bg-background")}>
         <GlobalConfigProvider>
           <Providers>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <Header />
               <NavBar />
-              <main className="bg-background h-5/6 w-full">{children}</main>
+              <main className="bg-background size-full overflow-auto">{children}</main>
               <Toaster />
             </ThemeProvider>
           </Providers>

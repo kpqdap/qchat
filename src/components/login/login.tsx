@@ -8,7 +8,7 @@ import { signInProvider } from "@/app-global"
 
 export const LogIn: React.FC = () => {
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex h-full items-center justify-center">
       <Card className="flex min-w-[300px] flex-col gap-2">
         <CardHeader className="gap-2">
           <CardTitle className="flex gap-2 text-2xl">

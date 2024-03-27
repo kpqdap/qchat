@@ -28,11 +28,11 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId }) => {
   }, [isLoading, router])
 
   return (
-    <div className="h-full overflow-y-auto bg-altBackground" ref={scrollRef}>
-      <div className="flex justify-center p-4">
+    <div className="bg-altBackground h-full overflow-y-auto" ref={scrollRef}>
+      <div className="flex h-auto justify-center p-4">
         <ChatHeader />
       </div>
-      <div className="flex flex-1 flex-col justify-end pb-[80px]">
+      <div className="flex h-auto flex-1 flex-col justify-end pb-[80px]">
         {messages.map(message => (
           <ChatRow
             key={message.id}

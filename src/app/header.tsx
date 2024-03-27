@@ -27,13 +27,13 @@ const Sidebar: React.FC = () => {
 
 export const Header: React.FC = () => {
   return (
-    <header className="xs:h-full flex size-full flex-col sm:h-1/6">
-      <div className="bg-darkbackground h-full text-white sm:h-3/6 md:h-2/6">
-        <div className="mx-auto flex h-full items-center justify-between">
+    <header className="xs:h-[32px] flex w-full flex-col sm:h-[98px]">
+      <div className="bg-darkbackground h-[32px] text-white">
+        <div className="mx-auto flex h-full items-center justify-between px-8 py-2">
           <div className="block md:hidden lg:hidden">
             <QgovMiniSvg />
           </div>
-          <div className="container mx-auto hidden w-full grid-cols-3 items-center md:grid">
+          <div className="container mx-auto hidden h-[32px] w-full grid-cols-3 items-center md:grid">
             <Typography variant="span" aria-label="Site domain: qchat.ai.qld.gov.au" className="col-span-2">
               qchat.ai.qld.gov.au
             </Typography>
@@ -41,12 +41,12 @@ export const Header: React.FC = () => {
               <UserComponent />
             </div>
           </div>
-          <div className="block h-full grid-cols-4 flex-col md:hidden ">
+          <div className="block h-[32px] grid-cols-4 flex-col py-2 md:hidden ">
             <MiniMenu />
           </div>
         </div>
       </div>
-      <div className="bg-altBackground hidden h-3/6 py-2 sm:block md:h-4/6">
+      <div className="bg-altBackground block py-2 sm:h-[66px]">
         <div className="container mx-auto flex items-center">
           <Sidebar />
         </div>

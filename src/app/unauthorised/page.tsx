@@ -20,7 +20,6 @@ const Home: React.FC = () => {
     <Card className="items-top justify-left flex h-full flex-1 p-10">
       <div className="flex flex-col">
         {" "}
-        {/* Ensure flex direction is explicitly set */}
         <h1 className="text-xl font-semibold">You are not authorised to view this page</h1>
         <p className="mt-5">
           Please{" "}

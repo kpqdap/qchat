@@ -12,7 +12,7 @@ interface Prop {
   disable: boolean
 }
 
-const tenants = process.env.FEATURE_TRANSCRIBE_TENANTS?.split(",") || []
+const tenants = process.env.NEXT_PUBLIC_FEATURE_TRANSCRIBE_TENANTS?.split(",") || []
 
 export const ChatTypeSelector: FC<Prop> = props => {
   const { chatBody, onChatTypeChange } = useChatContext()
@@ -72,7 +72,7 @@ export const ChatTypeSelector: FC<Prop> = props => {
             </Tabs>
           </div>
         </Tooltip.Trigger>
-        <Tooltip.Content side="top" className="rounded-md bg-primary-foreground p-2 text-sm text-foreground shadow-lg">
+        <Tooltip.Content side="top" className="bg-primary-foreground text-foreground rounded-md p-2 text-sm shadow-lg">
           <p>
             <strong>General</strong> - chats are turn by turn conversations with the QChat Assistant.
           </p>
