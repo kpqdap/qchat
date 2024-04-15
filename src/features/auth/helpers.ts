@@ -1,6 +1,7 @@
 import { createHash } from "crypto"
+
 import { getServerSession } from "next-auth"
-// import { RedirectToPage } from "../common/navigation-helpers"
+
 import { options } from "./auth-api"
 
 export const userSession = async (): Promise<UserModel | null> => {
@@ -42,13 +43,6 @@ export const getContextPrompt = async (): Promise<string> => {
   }
   throw new Error("Context Prompt not found")
 }
-
-// export const redirectIfAuthenticated = async (): Promise<void> => {
-//   const user = await userSession()
-//   if (user) {
-//     RedirectToPage("chat")
-//   }
-// }
 
 export type UserModel = {
   name: string

@@ -1,5 +1,6 @@
 import { Message } from "ai"
-import { ChatMessageModel, ConversationStyle } from "../models"
+
+import { ChatMessageModel, ConversationStyle } from "@/features/chat/models"
 
 export const transformCosmosToAIModel = (chats: Array<ChatMessageModel>): Array<Message> => {
   return chats.map(chat => {
@@ -11,6 +12,7 @@ export const transformCosmosToAIModel = (chats: Array<ChatMessageModel>): Array<
       feedback: chat.feedback,
       sentiment: chat.sentiment,
       reason: chat.reason,
+      contentFilterResult: chat.contentFilterResult,
     }
   })
 }

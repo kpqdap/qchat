@@ -1,6 +1,4 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/features/ui/card"
-// import PromptForm from "@/components/ui/form";
-// import { Dialog } from "@radix-ui/react-dialog";
 
 export const dynamic = "force-dynamic"
 

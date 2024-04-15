@@ -1,18 +1,20 @@
 "use server"
 
-import { getTenantId, userHashedId } from "@/features/auth/helpers"
-import { uniqueId } from "@/lib/utils"
-import { AzureCogDocumentIndex, indexDocuments } from "./azure-cog-search/azure-cog-vector-store"
-import { ChatDocumentModel, ChatRecordType } from "@/features/chat/models"
-import { chunkDocumentWithOverlap } from "./text-chunk"
-import { isNotNullOrEmpty } from "./utils"
-import { arrayBufferToBase64, customBeginAnalyzeDocument } from "./chat-document-helper"
-import { speechToTextRecognizeOnce } from "./chat-audio-helper"
-import { DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
 import { SqlQuerySpec } from "@azure/cosmos"
+
+import { getTenantId, userHashedId } from "@/features/auth/helpers"
+import { DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
+import { ChatDocumentModel, ChatRecordType } from "@/features/chat/models"
+import { xMonthsAgo } from "@/features/common/date-helper"
 import { ServerActionResponseAsync } from "@/features/common/server-action-response"
 import { HistoryContainer } from "@/features/common/services/cosmos"
-import { xMonthsAgo } from "@/features/common/date-helper"
+import { uniqueId } from "@/lib/utils"
+
+import { AzureCogDocumentIndex, indexDocuments } from "./azure-cog-search/azure-cog-vector-store"
+import { speechToTextRecognizeOnce } from "./chat-audio-helper"
+import { arrayBufferToBase64, customBeginAnalyzeDocument } from "./chat-document-helper"
+import { chunkDocumentWithOverlap } from "./text-chunk"
+import { isNotNullOrEmpty } from "./utils"
 
 const MAX_DOCUMENT_SIZE = process.env.MAX_DOCUMENT_SIZE as unknown as number
 
@@ -156,7 +158,7 @@ export const FindAllChatDocumentsForCurrentUser = async (
     const [userId, tenantId] = await Promise.all([userHashedId(), getTenantId()])
     const query: SqlQuerySpec = {
       query:
-        "SELECT * FROM root r WHERE r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
+        "SELECT * FROM root r WHERE r.chatThreadId=@chatThreadId AND r.type=@type AND r.isDeleted=@isDeleted AND r.userId=@userId AND r.tenantId=@tenantId AND r.createdAt >= @createdAt ORDER BY r.createdAt DESC",
       parameters: [
         { name: "@chatThreadId", value: chatThreadId },
         { name: "@type", value: ChatRecordType.Document },

@@ -1,5 +1,5 @@
-import { getToken } from "next-auth/jwt"
 import { NextRequest, NextResponse } from "next/server"
+import { getToken } from "next-auth/jwt"
 
 const LOGIN_PAGE = "/login"
 const UNAUTHORISED_PAGE = "/unauthorised"
@@ -52,6 +52,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/api/chat/:path*",
+    "/api/cosmos/:path*",
     "/api/images/:path*",
     "/chat/:path*",
     "/hallucinations/:path*",

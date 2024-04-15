@@ -1,14 +1,15 @@
 "use client"
 
-import { Button } from "@/features/ui/button"
 import { MessageSquarePlus } from "lucide-react"
 import { useRouter } from "next/navigation"
+
 import {
   CreateChatThread,
   FindChatThreadByTitleAndEmpty,
   UpdateChatThreadCreatedAt,
-} from "../chat-services/chat-thread-service"
+} from "@/features/chat/chat-services/chat-thread-service"
 import { useGlobalMessageContext } from "@/features/globals/global-message-context"
+import { Button } from "@/features/ui/button"
 
 export const MiniNewChat = (): JSX.Element => {
   const router = useRouter()
@@ -34,7 +35,7 @@ export const MiniNewChat = (): JSX.Element => {
   }
 
   return (
-    <div className="absolute right-4 top-4 lg:hidden">
+    <div className="absolute right-4 top-4 z-50 lg:hidden">
       <Button
         aria-label="Start a new chat"
         role="button"

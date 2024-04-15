@@ -1,7 +1,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
+import { JWT } from "next-auth/jwt"
 import { Provider } from "next-auth/providers"
 import AzureADProvider from "next-auth/providers/azure-ad"
-import { JWT } from "next-auth/jwt"
+
 import { UserSignInHandler } from "./sign-in"
 import { SignInErrorType } from "./sign-in"
 
@@ -101,6 +102,7 @@ export const options: NextAuthOptions = {
         authToken.qchatAdmin = user.qchatAdmin ?? false
         authToken.tenantId = user.tenantId ?? ""
         authToken.upn = user.upn ?? ""
+        authToken.userId = user.userId ?? ""
       }
       return authToken
     },
@@ -109,6 +111,7 @@ export const options: NextAuthOptions = {
       session.user.qchatAdmin = authToken.qchatAdmin ?? false
       session.user.tenantId = authToken.tenantId ? String(authToken.tenantId) : ""
       session.user.upn = authToken.upn ? String(authToken.upn) : ""
+      session.user.userId = authToken.userId ? String(authToken.userId) : ""
       return session
     },
   },

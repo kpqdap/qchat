@@ -1,9 +1,12 @@
 "use client"
 
-import { useGlobalMessageContext } from "@/features/globals/global-message-context"
-import { Message } from "ai"
+import { ChatRequestOptions, CreateMessage, Message } from "ai"
 import { UseChatHelpers, useChat } from "ai/react"
-import React, { FC, createContext, useContext, useState } from "react"
+import { useRouter } from "next/navigation"
+import React, { FC, FormEvent, createContext, useContext, useRef, useState } from "react"
+
+import { DataItem, maxContentFilterTriggerCountAllowed } from "@/features/chat/chat-services/chat-api"
+import { transformCosmosToAIModel } from "@/features/chat/chat-services/utils"
 import {
   ChatMessageModel,
   ChatThreadModel,
@@ -11,12 +14,14 @@ import {
   ConversationStyle,
   ConversationSensitivity,
   PromptGPTBody,
+  CreateCompletionMessage,
 } from "@/features/chat/models"
-import { transformCosmosToAIModel } from "../chat-services/utils"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
+import { uniqueId } from "@/lib/utils"
+
 import { FileState, useFileState } from "./chat-file/use-file-state"
 import { SpeechToTextProps, useSpeechToText } from "./chat-speech/use-speech-to-text"
 import { TextToSpeechProps, useTextToSpeech } from "./chat-speech/use-text-to-speech"
-import { useRouter } from "next/navigation"
 
 interface ChatContextProps extends UseChatHelpers {
   id: string
@@ -31,6 +36,7 @@ interface ChatContextProps extends UseChatHelpers {
   openModal?: () => void
   closeModal?: () => void
   offenderId?: string
+  chatThreadLocked: boolean
 }
 
 const ChatContext = createContext<ChatContextProps | null>(null)
@@ -70,6 +76,10 @@ export const ChatProvider: FC<Prop> = props => {
   const { textToSpeech } = speechSynthesizer
   const { isMicrophoneUsed, resetMicrophoneUsed } = speechRecognizer
 
+  const [nextId, setNextId] = useState<string | undefined>(undefined)
+  const nextIdRef = useRef(nextId)
+  nextIdRef.current = nextId
+
   const response = useChat({
     onError,
     id: props.id,
@@ -82,6 +92,16 @@ export const ChatProvider: FC<Prop> = props => {
       }
       Router.refresh()
     },
+    generateId: () => {
+      if (nextIdRef.current) {
+        const returnValue = nextIdRef.current
+        setNextId(undefined)
+        return returnValue
+      }
+
+      return uniqueId()
+    },
+    sendExtraMessageFields: true,
   })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -110,10 +130,43 @@ export const ChatProvider: FC<Prop> = props => {
     showError(error.message, response.reload)
   }
 
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>, options: ChatRequestOptions = {}): Promise<void> => {
+    e.preventDefault()
+    if (!response.input) return
+
+    const nextCompletionId = uniqueId()
+    setNextId(nextCompletionId)
+
+    await response.append(
+      {
+        id: uniqueId(),
+        completionId: nextCompletionId,
+        content: response.input,
+        role: "user",
+      } as CreateMessage & CreateCompletionMessage,
+      options
+    )
+
+    response.setInput("")
+  }
+
   return (
     <ChatContext.Provider
       value={{
         ...response,
+        messages: response.messages.map(message => {
+          const dataItem = (response.data as DataItem[])?.find(data => data.id === message.id)
+
+          return {
+            ...message,
+            ...(dataItem as Message),
+          }
+        }),
+        chatThreadLocked: [
+          props.chatThread.contentFilterTriggerCount ?? 0,
+          ...((response.data as DataItem[]) ?? []).map(message => message.contentFilterTriggerCount ?? 0),
+        ].some(count => count >= maxContentFilterTriggerCountAllowed),
+        handleSubmit,
         setChatBody,
         chatBody,
         onChatTypeChange,

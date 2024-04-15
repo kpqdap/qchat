@@ -1,16 +1,17 @@
 "use client"
-import React, { FC, useState, useEffect, useRef } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { useGlobalMessageContext } from "@/features/globals/global-message-context"
-import { Button } from "@/features/ui/button"
-import { MenuItem } from "@/components/menu"
 import { FileText, MessageCircle, Trash, Pencil, AudioLines } from "lucide-react"
-import { ChatThreadModel } from "../models"
+import { useParams, useRouter } from "next/navigation"
+import React, { FC, useState, useEffect, useRef } from "react"
+
+import { MenuItem } from "@/components/menu"
+import Typography from "@/components/typography"
 import {
   UpdateChatThreadTitle,
   SoftDeleteChatThreadForCurrentUser,
 } from "@/features/chat/chat-services/chat-thread-service"
-import Typography from "@/components/typography"
+import { ChatThreadModel } from "@/features/chat/models"
+import { useGlobalMessageContext } from "@/features/globals/global-message-context"
+import { Button } from "@/features/ui/button"
 
 interface Prop {
   menuItems: Array<ChatThreadModel>
@@ -51,16 +52,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
 
   return (
     <div
-      className={`bg-opacity/50 fixed inset-0 z-50 flex items-center justify-center bg-black ${isOpen ? "block" : "hidden"}`}
+      className={`bg-opacity/50 fixed inset-0 z-80 flex items-center justify-center bg-black ${isOpen ? "block" : "hidden"}`}
     >
-      <div className="bg-altBackground mx-auto w-full max-w-lg overflow-hidden rounded-lg p-4">
+      <div className="mx-auto w-full max-w-lg overflow-hidden rounded-lg bg-altBackground p-4">
         <div className="mb-4">
           <Typography variant="h4" className="text-foreground">
             Edit Chat Name
           </Typography>
         </div>
         <div className="mb-4">
-          <label htmlFor="newChatName" className="text-foreground block text-sm font-medium">
+          <label htmlFor="newChatName" className="block text-sm font-medium text-foreground">
             New Chat Name
           </label>
           <input
@@ -70,11 +71,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
             onChange={e => setNewName(e.target.value)}
             maxLength={120}
             ref={inputRef}
-            className="border-altBackground bg-background mt-1 w-full rounded-md p-2 shadow-sm"
+            className="mt-1 w-full rounded-md border-altBackground bg-background p-2 shadow-sm"
             autoComplete="off"
           />
           {newName.length > 30 && newName.length <= 120 && (
-            <p className="text-accent mt-2 text-sm">Name exceeds 30 characters. Consider shortening it.</p>
+            <p className="mt-2 text-sm text-accent">Name exceeds 30 characters. Consider shortening it.</p>
           )}
           {newName.length > 120 && (
             <p className="mt-2 text-sm text-red-500">Name exceeds 120 characters. Please shorten your chat name.</p>
@@ -95,10 +96,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave, focusAfterClose 
 }
 
 export const MenuItems: FC<Prop> = ({ menuItems }) => {
-  const { id } = useParams()
+  const { chatThreadId } = useParams()
   const router = useRouter()
   const { showError } = useGlobalMessageContext()
-  const params = useParams()
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
 
   const sendData = async (threadID: string): Promise<void> => {
@@ -119,7 +119,6 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
     if (newName.trim() !== "" && selectedThreadId) {
       try {
         await UpdateChatThreadTitle(selectedThreadId, newName)
-        window.location.reload()
       } catch (e) {
         showError("" + e)
       } finally {
@@ -133,33 +132,33 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
     <>
       {menuItems.map(thread => (
         <MenuItem
-          href={`/chat/${thread.id}`}
-          isSelected={params.id === thread.id}
-          key={thread.id}
+          href={`/chat/${thread.chatThreadId}`}
+          isSelected={chatThreadId === thread.chatThreadId}
+          key={thread.chatThreadId}
           className="hover:item group relative justify-between"
         >
           {thread.chatType === "data" ? (
-            <FileText size={16} className={id === thread.id ? " text-brand" : ""} />
+            <FileText size={16} className={chatThreadId === thread.chatThreadId ? " text-brand" : ""} />
           ) : thread.chatType === "audio" ? (
-            <AudioLines size={16} className={id === thread.id ? " text-brand" : ""} />
+            <AudioLines size={16} className={chatThreadId === thread.chatThreadId ? " text-brand" : ""} />
           ) : (
-            <MessageCircle size={16} className={id === thread.id ? " text-brand" : ""} />
+            <MessageCircle size={16} className={chatThreadId === thread.chatThreadId ? " text-brand" : ""} />
           )}
           <span className="flex flex-1 items-center gap-2 overflow-hidden">
             <span className="truncate">{thread.name}</span>
           </span>
-          {selectedThreadId !== thread.id && (
+          {selectedThreadId !== thread.chatThreadId && (
             <Button
               className="invisible group-hover:visible"
               size="sm"
               variant="default"
               aria-label={`Edit ${thread.name}`}
-              onClick={() => handleOpenModal(thread.id)}
+              onClick={() => handleOpenModal(thread.chatThreadId)}
             >
               <Pencil size={16} />
             </Button>
           )}
-          {selectedThreadId === thread.id && (
+          {selectedThreadId === thread.chatThreadId && (
             <Modal isOpen={true} onClose={handleCloseModal} onSave={handleSaveModal} focusAfterClose={null} />
           )}
           <Button
@@ -171,7 +170,7 @@ export const MenuItems: FC<Prop> = ({ menuItems }) => {
               e.preventDefault()
               const yesDelete = confirm("Are you sure you want to delete this chat?")
               if (yesDelete) {
-                await sendData(thread.id)
+                await sendData(thread.chatThreadId)
               }
             }}
           >

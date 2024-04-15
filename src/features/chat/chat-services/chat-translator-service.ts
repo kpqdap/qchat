@@ -1,8 +1,20 @@
-import { ServerActionResponseAsync } from "@/features/common/server-action-response"
 import createClient, { ErrorResponseOutput, TranslatedTextItemOutput } from "@azure-rest/ai-translation-text"
+
+import { ServerActionResponseAsync } from "@/features/common/server-action-response"
 
 export function getBooleanEnv(variable: string): boolean {
   return process.env[variable]?.toLowerCase() === "true"
+}
+
+export const extractCitations = (context: string): { text: string; citations: string[] } => {
+  const citationRegex = /({% citation items=.*?)%}/g
+  const citations: string[] = []
+  let cleanText = context.replace(citationRegex, (match, citation) => {
+    citations.push(citation.trim())
+    return match
+  })
+  cleanText = cleanText.replace(/{% citation items=.*?%}/g, "").trim()
+  return { text: cleanText, citations }
 }
 
 export async function translator(input: string): ServerActionResponseAsync<string> {

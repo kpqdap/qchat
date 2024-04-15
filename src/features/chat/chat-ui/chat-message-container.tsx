@@ -1,13 +1,15 @@
-import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { useEffect, useRef } from "react"
+
 import ChatLoading from "@/components/chat/chat-loading"
 import ChatRow from "@/components/chat/chat-row"
-import { useSession } from "next-auth/react"
+import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor"
+import { ChatRole } from "@/features/chat/models"
+import { AI_NAME } from "@/features/theme/theme-config"
+
 import { useChatContext } from "./chat-context"
 import { ChatHeader } from "./chat-header"
-import { ChatRole } from "../models"
-import { useChatScrollAnchor } from "@/components/hooks/use-chat-scroll-anchor"
-import { AI_NAME } from "@/features/theme/theme-config"
 
 interface Props {
   chatThreadId: string
@@ -28,23 +30,20 @@ export const ChatMessageContainer: React.FC<Props> = ({ chatThreadId }) => {
   }, [isLoading, router])
 
   return (
-    <div className="bg-altBackground h-full overflow-y-auto" ref={scrollRef}>
+    <div className="h-full overflow-y-auto bg-altBackground" ref={scrollRef}>
       <div className="flex h-auto justify-center p-4">
         <ChatHeader />
       </div>
-      <div className="flex h-auto flex-1 flex-col justify-end pb-[80px]">
+      <div className="flex flex-1 flex-col justify-end pb-[80px]">
         {messages.map((message, index) => (
           <ChatRow
+            key={message.id}
             chatMessageId={message.id}
             name={message.role === ChatRole.User ? session?.user?.name || "" : AI_NAME}
-            message={message.content}
+            message={message}
             type={message.role as ChatRole}
-            key={index}
             chatThreadId={chatThreadId}
-            contentSafetyWarning={undefined}
-            feedback={undefined}
-            sentiment={undefined}
-            reason={undefined}
+            showAssistantButtons={index === messages.length - 1 ? !isLoading : true}
           />
         ))}
         {isLoading && <ChatLoading />}

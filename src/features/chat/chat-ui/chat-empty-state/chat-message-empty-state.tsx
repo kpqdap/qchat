@@ -1,13 +1,16 @@
 import { FC } from "react"
-import { useChatContext } from "../chat-context"
-import { ChatFileUI } from "../chat-file/chat-file-ui"
-import { ChatStyleSelector } from "./chat-style-selector"
+
+import { FindChatThreadForCurrentUser, UpsertChatThread } from "@/features/chat/chat-services/chat-thread-service"
+import { useChatContext } from "@/features/chat/chat-ui/chat-context"
+import { ChatFileUI } from "@/features/chat/chat-ui/chat-file/chat-file-ui"
+import { showError } from "@/features/globals/global-message-store"
+import { Card } from "@/features/ui/card"
+
+import { EasterEgg } from "./chat-easter-egg"
 import { ChatSensitivitySelector } from "./chat-sensitivity-selector"
+import { ChatStyleSelector } from "./chat-style-selector"
 import { ChatTypeSelector } from "./chat-type-selector"
 import { PromptButton } from "./prompt-buttons-UI"
-import { Card } from "@/features/ui/card"
-import { EasterEgg } from "./chat-easter-egg"
-import { FindChatThreadForCurrentUser, UpsertChatThread } from "@/features/chat/chat-services/chat-thread-service"
 
 interface Prop {}
 
@@ -21,7 +24,7 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
       const upseted = await UpsertChatThread({ ...threadResponse.response, selectedPrompt: prompt })
       if (upseted.status !== "OK") throw upseted
     } catch (error) {
-      console.error("Prompt button not selected", error)
+      showError("Prompt button not selected" + error)
     }
   }
 
@@ -33,15 +36,15 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
       <Card className="col-span-5 flex flex-col gap-2 p-5 ">
         <EasterEgg />
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-text">Set the Sensitivity of your chat</p>
+          <p className="text-sm">Set the Sensitivity of your chat</p>
           <ChatSensitivitySelector disable={false} />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-text">Choose a conversation style</p>
+          <p className="text-sm">Choose a conversation style</p>
           <ChatStyleSelector disable={false} />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-text">How would you like to chat?</p>
+          <p className="text-sm">How would you like to chat?</p>
           <ChatTypeSelector disable={false} />
         </div>
         {showFileUpload === "data" || showFileUpload === "audio" ? (
@@ -51,7 +54,7 @@ export const ChatMessageEmptyState: FC<Prop> = () => {
         )}
         <div className="flex flex-col gap-1">
           <br />
-          <p className="text-sm text-text">Try a suggested starter prompt...</p>
+          <p className="text-sm">Try a suggested starter prompt...</p>
           <PromptButton onPromptSelected={handlePromptSelected} selectedPrompt={input} />
         </div>
       </Card>
