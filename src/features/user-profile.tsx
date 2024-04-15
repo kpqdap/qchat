@@ -1,6 +1,9 @@
 "use client"
 
+import { LogOut, UserCircle } from "lucide-react"
+import { signOut, useSession } from "next-auth/react"
 import React, { ReactElement } from "react"
+
 import { Avatar, AvatarImage } from "@/features/ui/avatar"
 import { Button } from "@/features/ui/button"
 import {
@@ -11,8 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/features/ui/dropdown-menu"
-import { LogOut, UserCircle } from "lucide-react"
-import { signOut, useSession } from "next-auth/react"
 
 const UserProfile = (): ReactElement => {
   const { data: session } = useSession()
@@ -36,8 +37,8 @@ const UserProfile = (): ReactElement => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{session?.user?.name ?? "Anonymous"}</p>
-            <p className="text-muted-foreground text-xs leading-none">{session?.user?.email ?? "No email provided"}</p>
-            <p className="text-muted-foreground text-xs leading-none">{session?.user?.qchatAdmin ? "Admin" : ""}</p>
+            <p className="text-xs leading-none text-muted-foreground">{session?.user?.email ?? "No email provided"}</p>
+            <p className="text-xs leading-none text-muted-foreground">{session?.user?.qchatAdmin ? "Admin" : ""}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

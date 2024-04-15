@@ -1,14 +1,17 @@
 "use client"
 
-import React from "react"
+import { UrlObject } from "url"
+
+import { CloudUpload, SpellCheck2, X, LogIn, LogOut, Moon, Sun, Home, Bookmark } from "lucide-react"
 import Link from "next/link"
 import { useSession, signIn, signOut } from "next-auth/react"
-import { useMiniMenuContext } from "./mini-menu-context"
-import { CloudUpload, SpellCheck2, X, LogIn, LogOut, Moon, Sun, Home, HeartHandshake, Bookmark } from "lucide-react"
 import { useTheme } from "next-themes"
-import { UrlObject } from "url"
-import { cn } from "@/lib/utils"
+import React from "react"
+
 import { signInProvider } from "@/app-global"
+import { cn } from "@/lib/utils"
+
+import { useMiniMenuContext } from "./mini-menu-context"
 
 interface MiniMenuItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
   href: UrlObject | string
@@ -53,8 +56,6 @@ export const MiniMenu: React.FC = () => {
       icon: SpellCheck2,
       ariaLabel: "Help with factual errors",
     },
-    { name: "Terms of Use", href: "/terms", icon: HeartHandshake, ariaLabel: "Navigate to terms of use" },
-
     // { name: 'Settings', href: '/settings', icon: UserCog, ariaLabel: 'Navigate to settings' },
   ]
 
@@ -68,25 +69,25 @@ export const MiniMenu: React.FC = () => {
     <>
       <div
         onClick={toggleMenu}
-        className="border-accent text-darkAltButton hover:bg-background h-full cursor-pointer flex-col items-center justify-center hover:underline"
+        className="h-full cursor-pointer flex-col items-center justify-center border-accent text-darkAltButton hover:bg-background hover:underline"
         aria-expanded="false"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         role="button"
         tabIndex={0}
       >
         {isMenuOpen ? (
-          <X className="hover:bg-link items-center" aria-hidden="true" />
+          <X className="items-center hover:bg-link" aria-hidden="true" />
         ) : (
-          <div className="text-darkAltButton pl-2" aria-hidden="true" />
+          <div className="pl-2 text-darkAltButton" aria-hidden="true" />
         )}
         Menu
       </div>
       {isMenuOpen && (
-        <div className="bg-altBackground text-link fixed inset-0 z-[99999]" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[99999] bg-altBackground text-link" role="dialog" aria-modal="true">
           <div className="absolute right-0 top-0 m-4 h-2/6">
             <div
               onClick={toggleMenu}
-              className="hover:bg-accent hover:text-accent-foreground size-[32px] cursor-pointer p-1"
+              className="size-[32px] cursor-pointer p-1 hover:bg-accent hover:text-accent-foreground"
               aria-label="Close menu"
               role="button"
               tabIndex={0}
@@ -106,7 +107,7 @@ export const MiniMenu: React.FC = () => {
                 toggleTheme()
                 handleMenuClose()
               }}
-              className="text-link hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
+              className="flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm text-link hover:bg-accent hover:text-accent-foreground"
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
               role="button"
               tabIndex={0}
@@ -120,7 +121,7 @@ export const MiniMenu: React.FC = () => {
                   await signOut({ callbackUrl: "/" })
                   handleMenuClose()
                 }}
-                className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
+                className="flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
                 aria-label="Logout"
                 role="button"
                 tabIndex={0}
@@ -134,7 +135,7 @@ export const MiniMenu: React.FC = () => {
                   await signIn(signInProvider)
                   handleMenuClose()
                 }}
-                className="hover:bg-accent hover:text-accent-foreground flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm"
+                className="flex cursor-pointer items-center whitespace-nowrap px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
                 aria-label="Login"
                 role="button"
                 tabIndex={0}

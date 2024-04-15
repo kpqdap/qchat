@@ -1,11 +1,14 @@
-import { ChatMessageModel, ChatRecordType, ChatSentiment, FeedbackType } from "@/features/chat/models"
-import { uniqueId } from "@/lib/utils"
-import { ChatCompletionMessage } from "openai/resources"
-import { getTenantId, userHashedId } from "@/features/auth/helpers"
+"use server"
+
 import { SqlQuerySpec } from "@azure/cosmos"
-import { HistoryContainer } from "@/features/common/services/cosmos"
+import { ChatCompletionMessage } from "openai/resources"
+
+import { getTenantId, userHashedId } from "@/features/auth/helpers"
+import { ChatMessageModel, ChatRecordType, ChatSentiment, FeedbackType } from "@/features/chat/models"
+import { mapChatCompletionRoleToChatRole } from "@/features/common/mapping-helper"
 import { ServerActionResponseAsync } from "@/features/common/server-action-response"
-import { mapChatCompletionRoleToChatRole, mapOpenAIChatMessages } from "@/features/common/mapping-helper"
+import { HistoryContainer } from "@/features/common/services/cosmos"
+import { uniqueId } from "@/lib/utils"
 
 export const FindAllChatMessagesForCurrentUser = async (
   chatThreadId: string
@@ -40,7 +43,7 @@ export const FindAllChatMessagesForCurrentUser = async (
 export const FindTopChatMessagesForCurrentUser = async (
   chatThreadId: string,
   top = 30
-): ServerActionResponseAsync<ChatCompletionMessage[]> => {
+): ServerActionResponseAsync<ChatMessageModel[]> => {
   try {
     const [userId, tenantId] = await Promise.all([userHashedId(), getTenantId()])
     const query: SqlQuerySpec = {
@@ -59,7 +62,7 @@ export const FindTopChatMessagesForCurrentUser = async (
     const result = await container.items.query<ChatMessageModel>(query).fetchAll()
     return {
       status: "OK",
-      response: mapOpenAIChatMessages(result.resources),
+      response: result.resources,
     }
   } catch (error) {
     return {
@@ -101,64 +104,26 @@ export const FindChatMessageForCurrentUser = async (
   }
 }
 
-export const UpsertChatMessage = async (
-  chatThreadId: string,
-  message: ChatCompletionMessage,
-  citations: string = ""
-): ServerActionResponseAsync<ChatMessageModel> => {
-  try {
-    const [userId, tenantId] = await Promise.all([userHashedId(), getTenantId()])
-    const modelToSave: ChatMessageModel = {
-      id: uniqueId(),
-      createdAt: new Date(),
-      type: ChatRecordType.Message,
-      isDeleted: false,
-      content: message.content ?? "",
-      role: mapChatCompletionRoleToChatRole(message.role),
-      chatThreadId,
-      userId,
-      tenantId,
-      context: citations,
-      systemPrompt: process.env.SYSTEM_PROMPT ?? "",
-      feedback: FeedbackType.None,
-      sentiment: ChatSentiment.Neutral,
-      reason: "",
-      contentSafetyWarning: "",
-    }
-    const container = await HistoryContainer()
-    const { resource } = await container.items.upsert<ChatMessageModel>(modelToSave)
-
-    if (!resource) {
-      return {
-        status: "ERROR",
-        errors: [{ message: "Failed to save chat message" }],
-      }
-    }
-    return {
-      status: "OK",
-      response: resource,
-    }
-  } catch (error) {
-    return {
-      status: "ERROR",
-      errors: [{ message: `${error}` }],
-    }
-  }
+export type ChatCompletionMessageTranslated = ChatCompletionMessage & {
+  originalCompletion?: string
+  contentFilterResult?: unknown
 }
 
-export const AddChatMessage = async (
+export const UpsertChatMessage = async (
   chatThreadId: string,
-  message: ChatCompletionMessage,
+  message: ChatCompletionMessageTranslated,
+  messageId?: string,
   citations: string = ""
 ): ServerActionResponseAsync<ChatMessageModel> => {
   try {
     const [userId, tenantId] = await Promise.all([userHashedId(), getTenantId()])
     const modelToSave: ChatMessageModel = {
-      id: uniqueId(),
+      id: messageId ?? uniqueId(),
       createdAt: new Date(),
       type: ChatRecordType.Message,
       isDeleted: false,
       content: message.content ?? "",
+      originalCompletion: message.originalCompletion ?? "",
       role: mapChatCompletionRoleToChatRole(message.role),
       chatThreadId,
       userId,
@@ -168,7 +133,7 @@ export const AddChatMessage = async (
       feedback: FeedbackType.None,
       sentiment: ChatSentiment.Neutral,
       reason: "",
-      contentSafetyWarning: "",
+      contentFilterResult: message.contentFilterResult,
     }
     const container = await HistoryContainer()
     const { resource } = await container.items.upsert<ChatMessageModel>(modelToSave)
@@ -218,5 +183,45 @@ export const CreateUserFeedback = async (
   return {
     status: "OK",
     response: resource,
+  }
+}
+
+export const migrateChatMessagesForCurrentUser = async (
+  userId: string,
+  tenantId: string
+): ServerActionResponseAsync<ChatMessageModel[]> => {
+  try {
+    const query: SqlQuerySpec = {
+      query: "SELECT * FROM c WHERE c.userId=@userId AND c.tenantId=@tenantId AND c.threadId != null",
+      parameters: [
+        { name: "@userId", value: userId },
+        { name: "@tenantId", value: tenantId },
+      ],
+    }
+
+    const container = await HistoryContainer()
+    const { resources } = await container.items
+      .query<ChatMessageModel>(query, {
+        partitionKey: [tenantId, userId],
+      })
+      .fetchAll()
+
+    for (const resource of resources) {
+      await container.item(resource.id, [tenantId, userId]).patch([
+        { op: "add", path: "/chatThreadId", value: resource.threadId },
+        { op: "remove", path: "/threadId", value: null },
+      ])
+    }
+
+    return {
+      status: "OK",
+      response: resources,
+    }
+  } catch (error) {
+    console.error("Error occurred during chat message migration: ", error)
+    return {
+      status: "ERROR",
+      errors: [{ message: '"Updating your chat messages failed, please contact support"' }],
+    }
   }
 }

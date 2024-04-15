@@ -1,9 +1,11 @@
-import { Button } from "@/features/ui/button"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/features/ui/sheet"
 import { FC } from "react"
 import { useFormState } from "react-dom"
+
+import { useChatContext } from "@/features/chat/chat-ui/chat-context"
+import { Button } from "@/features/ui/button"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/features/ui/sheet"
+
 import { CitationAction } from "./citation-action"
-import { useChatContext } from "../chat-context"
 
 interface SliderProps {
   name: string
@@ -52,12 +54,12 @@ export const CitationSlider: FC<SliderProps> = props => {
           <SheetHeader>
             <SheetTitle id={"Section" + props.order}>Citation for Section {props.order}</SheetTitle>
           </SheetHeader>
-          <div className="text-muted-foreground text-sm">{node}</div>
+          <div className="text-sm text-muted-foreground">{node}</div>
           <br></br>
           <SheetHeader>
             <SheetTitle id="citationSheetTitle">Understanding Citations</SheetTitle>
           </SheetHeader>
-          <div className="text-muted-foreground text-sm">
+          <div className="text-sm text-muted-foreground">
             <br></br>
             <p>
               The citation presented is a specific snippet from your document, selected by QChat through

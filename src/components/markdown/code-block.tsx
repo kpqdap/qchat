@@ -1,9 +1,10 @@
+import { ClipboardIcon } from "lucide-react"
 import { FC, memo } from "react"
 import { Prism } from "react-syntax-highlighter"
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism"
-import { ClipboardIcon } from "lucide-react"
-import { Button } from "@/features/ui/button"
+
 import { AI_NAME } from "@/features/theme/theme-config"
+import { Button } from "@/features/ui/button"
 
 export const fence = {
   render: "CodeBlock",
@@ -41,13 +42,13 @@ export const CodeBlock: FC<Props> = memo(({ language, children }): JSX.Element =
   }
 
   return (
-    <div className="group relative">
+    <div className="group relative z-10">
       <Prism language={language} style={atomDark} PreTag="pre">
         {children}
       </Prism>
       <Button
         onClick={handleCopy}
-        className="focus:bg-accent focus:text-link absolute right-2 top-2 h-7 p-1 text-sm"
+        className="absolute right-2 top-2 h-7 p-1 text-sm focus:bg-accent focus:text-link"
         title="Copy code"
       >
         <ClipboardIcon size={14} />

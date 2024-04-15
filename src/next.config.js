@@ -24,7 +24,7 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; img-src 'self'; font-src 'self' data:; connect-src 'self' https://qdap-dev-apim.azure-api.net https://qdap-prd-apim.developer.azure-api.net *.ai.qld.gov.au https://australiaeast-1.in.applicationinsights.azure.com/ https://australiaeast.livediagnostics.monitor.azure.com/; media-src 'self'; frame-src 'self'; object-src 'none';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; img-src 'self' https://www.google.com https://www.google.com.au; font-src 'self' data:; connect-src 'self' https://qdap-dev-apim.azure-api.net https://qdap-prd-apim.developer.azure-api.net *.ai.qld.gov.au https://australiaeast-1.in.applicationinsights.azure.com/ https://australiaeast.livediagnostics.monitor.azure.com/ https://analytics.google.com https://www.google-analytics.com https://stats.g.doubleclick.net; media-src 'self'; frame-src 'self'; object-src 'none'; upgrade-insecure-requests",
   },
   {
     key: "Referrer-Policy",
@@ -33,7 +33,7 @@ const securityHeaders = [
   {
     key: "Permissions-Policy",
     value:
-      "accelerometer=(),autoplay=(),camera=(),display-capture=(),encrypted-media=(),fullscreen=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),sync-xhr=(self),usb=(),xr-spatial-tracking=()",
+      "accelerometer=(),autoplay=(),camera=(),clipboard-read=(self),clipboard-write=(self),display-capture=(),encrypted-media=(),fullscreen=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),screen-wake-lock=(),sync-xhr=(self),usb=(),xr-spatial-tracking=()",
   },
   {
     key: "X-DNS-Prefetch-Control",
@@ -57,6 +57,10 @@ const securityHeaders = [
   },
 ]
 
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+})
+
 const nextConfig = {
   output: "standalone",
   compiler: {
@@ -79,6 +83,11 @@ const nextConfig = {
   },
   redirects() {
     return [
+      {
+        source: "/chatai",
+        destination: "/chat",
+        permanent: true,
+      },
       {
         source: "/login",
         destination: "/api/auth/signin/azure-ad",
@@ -128,4 +137,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(nextConfig)

@@ -1,9 +1,11 @@
-import ChatRow from "@/components/chat/chat-row"
-import { Card } from "@/features/ui/card"
 import { FC } from "react"
-import { AI_NAME } from "../theme/theme-config"
+
+import ChatRow from "@/components/chat/chat-row"
+import { ChatRole } from "@/features/chat/models"
+import { AI_NAME } from "@/features/theme/theme-config"
+import { Card } from "@/features/ui/card"
+
 import { FindAllChatsInThread, FindChatThreadById } from "./history-service"
-import { ChatRole } from "../chat/models"
 
 interface Props {
   chatThreadId: string
@@ -27,15 +29,12 @@ export const ChatReportingUI: FC<Props> = async props => {
             chats.response.map((message, index) => (
               <ChatRow
                 name={message.role === ChatRole.User ? chatThread.response.useName : AI_NAME}
-                message={message.content}
+                message={message}
                 type={message.role}
                 key={index}
                 chatMessageId={message.id}
                 chatThreadId={chatThread.response.id}
-                contentSafetyWarning={undefined}
-                feedback={undefined}
-                sentiment={undefined}
-                reason={undefined}
+                showAssistantButtons={true}
               />
             ))
           )}

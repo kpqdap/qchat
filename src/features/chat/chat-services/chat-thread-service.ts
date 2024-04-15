@@ -1,7 +1,13 @@
 "use server"
 import "server-only"
+import { SqlQuerySpec } from "@azure/cosmos"
+
+import { FindAllChatDocumentsForCurrentUser } from "./chat-document-service"
+import { FindAllChatMessagesForCurrentUser } from "./chat-message-service"
+
 import { getCurrentUser, getTenantId, userHashedId, userSession } from "@/features/auth/helpers"
-import { uniqueId } from "@/lib/utils"
+import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
+import { DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
 import {
   ChatMessageModel,
   ChatRecordType,
@@ -14,15 +20,11 @@ import {
   FeedbackType,
   PromptGPTProps,
 } from "@/features/chat/models"
-import { deleteDocuments } from "@/features/chat/chat-services/azure-cog-search/azure-cog-vector-store"
-import { DEFAULT_MONTHS_AGO } from "@/features/chat/constants"
-import { HistoryContainer } from "@/features/common/services/cosmos"
-import { ServerActionResponseAsync } from "@/features/common/server-action-response"
-import { SqlQuerySpec } from "@azure/cosmos"
-import { FindAllChatMessagesForCurrentUser } from "./chat-message-service"
-import { RedirectToChatThread } from "@/features/common/navigation-helpers"
-import { FindAllChatDocumentsForCurrentUser } from "./chat-document-service"
 import { xMonthsAgo } from "@/features/common/date-helper"
+import { RedirectToChatThread } from "@/features/common/navigation-helpers"
+import { ServerActionResponseAsync } from "@/features/common/server-action-response"
+import { HistoryContainer } from "@/features/common/services/cosmos"
+import { uniqueId } from "@/lib/utils"
 
 export const FindAllChatThreadForCurrentUser = async (): ServerActionResponseAsync<ChatThreadModel[]> => {
   try {
@@ -106,6 +108,7 @@ export const UpdateChatThreadTitle = async (
     const response = await FindChatThreadForCurrentUser(chatThreadId)
     if (response.status !== "OK") return response
     const chatThread = response.response
+    chatThread.previousChatName = chatThread.name
     chatThread.name = newTitle.substring(0, 30)
     return await UpsertChatThread(chatThread)
   } catch (error) {
@@ -221,7 +224,6 @@ export const CreateChatThread = async (): ServerActionResponseAsync<ChatThreadMo
       createdAt: new Date(),
       isDeleted: false,
       isDisabled: false,
-      contentSafetyWarning: "",
       chatType: ChatType.Simple,
       conversationStyle: ConversationStyle.Precise,
       conversationSensitivity: ConversationSensitivity.Official,
@@ -254,14 +256,14 @@ export const CreateChatThread = async (): ServerActionResponseAsync<ChatThreadMo
   }
 }
 
-export const InitChatSession = async (
-  props: PromptGPTProps
-): ServerActionResponseAsync<{
+export type InitChatSessionResponse = {
   chatThreadId: string
   updatedLastHumanMessage: ChatMessageModel
   chats: ChatMessageModel[]
   chatThread: ChatThreadModel
-}> => {
+}
+
+export const InitChatSession = async (props: PromptGPTProps): ServerActionResponseAsync<InitChatSessionResponse> => {
   const { messages, id: chatThreadId, chatType, conversationStyle, conversationSensitivity, chatOverFileName } = props
 
   const lastHumanMessage = messages[messages.length - 1]
@@ -277,14 +279,9 @@ export const InitChatSession = async (
   const updatedChatThreadResponse = await UpsertChatThread({
     ...currentChatThreadResponse.response,
     chatType: chatType,
-    chatCategory: "Uncategorised",
     chatOverFileName: chatOverFileName,
     conversationStyle: conversationStyle,
     conversationSensitivity: conversationSensitivity,
-    name: "New Chat",
-    previousChatName: "",
-    prompts: [],
-    selectedPrompt: "",
   })
   if (updatedChatThreadResponse.status !== "OK") return updatedChatThreadResponse
 
@@ -295,12 +292,12 @@ export const InitChatSession = async (
     userId: userId,
     tenantId: tenantId,
     context: "",
+    originalCompletion: "",
     type: ChatRecordType.Message,
     feedback: FeedbackType.None,
     sentiment: ChatSentiment.Neutral,
     reason: "",
     systemPrompt: "",
-    contentSafetyWarning: "",
     createdAt: new Date(),
     role: ChatRole.User,
   }
@@ -311,7 +308,7 @@ export const InitChatSession = async (
       chatThreadId,
       updatedLastHumanMessage,
       chats: chatMessagesResponse.response,
-      chatThread: currentChatThreadResponse.response,
+      chatThread: updatedChatThreadResponse.response,
     },
   }
 }

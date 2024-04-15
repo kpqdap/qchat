@@ -1,11 +1,12 @@
 "use client"
 
-import React from "react"
-import { useSession, signIn, signOut } from "next-auth/react"
 import { LogIn, LogOut } from "lucide-react"
+import { useSession, signIn, signOut } from "next-auth/react"
+import React from "react"
+
+import { signInProvider } from "@/app-global"
 import Typography from "@/components/typography"
 import { Button } from "@/features/ui/button"
-import { signInProvider } from "@/app-global"
 
 export const UserComponent: React.FC = () => {
   const { data: session, status } = useSession({ required: false })
@@ -23,7 +24,7 @@ export const UserComponent: React.FC = () => {
           aria-label="Log out"
           variant="link"
         >
-          <LogOut className="text-darkAltButton mr-2" size={20} aria-hidden="true" />
+          <LogOut className="mr-2 text-darkAltButton" size={20} aria-hidden="true" />
           <Typography variant="span">Log out</Typography>
         </Button>
       ) : (
@@ -33,7 +34,7 @@ export const UserComponent: React.FC = () => {
           aria-label="Log in"
           variant="link"
         >
-          <LogIn className="text-darkAltButton mr-2" size={20} aria-hidden="true" />
+          <LogIn className="mr-2 text-darkAltButton" size={20} aria-hidden="true" />
           <Typography variant="span">Log in</Typography>
         </Button>
       )}
