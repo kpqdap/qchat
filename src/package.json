@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@azure-rest/ai-translation-text": "^1.0.0-beta.1",
-    "@azure/ai-form-recognizer": "5.0.0-alpha.20240402.1",
+    "@azure/ai-form-recognizer": "5.0.0",
     "@azure/cosmos": "4.0.1-alpha.20240403.1",
     "@azure/identity": "^4.0.1",
     "@azure/keyvault-secrets": "4.8.1-alpha.20240403.1",
